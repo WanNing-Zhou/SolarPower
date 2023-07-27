@@ -1,16 +1,16 @@
 <template>
   <div class=filter-form>
     <el-form
-    :model="conditions"
-    status-icon
-    label-width="80px"
+        :model="conditions"
+        status-icon
+        label-width="80px"
     >
       <el-form-item label="选择设备:" prop="equipment">
-        <el-input v-model="conditions.equipment" placeholder="全部"  clearable />
+        <el-input v-model="conditions.equipment" placeholder="全部" clearable/>
       </el-form-item>
 
       <el-form-item label="时间维度:" prop="timeDimension">
-        <el-select v-model="conditions.timeDimension" class="m-2" placeholder="Select" >
+        <el-select v-model="conditions.timeDimension" class="m-2" placeholder="Select">
           <el-option
               v-for="item in timeDimensionOptions"
               :key="item.value"
@@ -21,65 +21,118 @@
 
       </el-form-item>
 
-      <el-form-item label="统计时间">
-
+      <el-form-item label="统计时间" prop="statisticalTime">
+        <el-date-picker
+            v-model="conditions.statisticalTime"
+            type="date"
+            placeholder="选择日期"
+            :disabled-date="disabledDate"
+            :shortcuts="shortcuts"
+        />
 
       </el-form-item>
-
-
-
+      <el-button type="primary" @click="handleConfirm">查询</el-button>
     </el-form>
+
+    <div class="data-operation">
+      <el-button>导入</el-button>
+      <el-button>导出</el-button>
+    </div>
+
   </div>
 </template>
 
 <script setup lang="ts">
 
-import {reactive, ref} from "vue";
+import {reactive,defineEmits, ref} from "vue";
+
+const emit = defineEmits(['confirm'])
 
 const conditions = reactive({
   equipment: '全部', // 设备
-  timeDimension:'1', //时间维度
+  timeDimension: '1', //时间维度
   statisticalTime: '',// 统计时间
 })
 
-const timeDimensionOptions= [
+
+const shortcuts = [
   {
-    value:'0',
-    label:'请选择'
+    text: '今日',
+    value: new Date(),
+  },
+  {
+    text: '昨日',
+    value: () => {
+      const date = new Date()
+      date.setTime(date.getTime() - 3600 * 1000 * 24)
+      return date
+    },
+  },
+  {
+    text: '一周前',
+    value: () => {
+      const date = new Date()
+      date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+      return date
+    },
+  },
+]
+
+// 时间维度选择
+const timeDimensionOptions = [
+  {
+    value: '0',
+    label: '请选择'
   },
   {
     value: '1',
-    label:'按日统计'
+    label: '按日统计'
   },
   {
     value: '2',
-    label:'按周统计'
+    label: '按周统计'
   },
   {
     value: '3',
-    label:'按月统计'
+    label: '按月统计'
   },
   {
     value: '4',
-    label:'按季度统计'
+    label: '按季度统计'
   },
 ]
+
+const disabledDate = (time: Date) => {
+  return time.getTime() > Date.now()
+}
+
+//表单提交
+const handleConfirm = ()=>{
+  emit('confirm',conditions)
+}
 
 </script>
 
 <style lang="scss" scoped>
 
-.filter-form{
+.filter-form {
   width: 100%;
   display: flex;
   justify-content: space-between;
-  .el-form{
+
+  .el-form {
     width: 100%;
     display: flex;
-    .el-form-item{
+
+    .el-form-item {
       width: 25%;
       display: flex;
+      margin:0  5px 0 5px;
     }
+  }
+
+  .data-operation{
+    display: flex;
   }
 
 }
