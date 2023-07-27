@@ -12,11 +12,10 @@
       <el-table-column prop="" label="平均发电量误差" width="180" />
     </el-table>
     <el-pagination
-        v-model:current-page="currentPage1"
-        :page-size="100"
-        :disabled="disabled"
-        :background="background"
-        layout="total, prev, pager, next"
+        v-model:current-page="paginationState.currentPage"
+        v-model:page-size="paginationState.pageSize"
+        :page-sizes="[5, 10, 15, 20, 40]"
+        layout="total,sizes, prev, pager, next,jumper"
         :total="1000"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -36,6 +35,22 @@ const tableData =reactive([
     },
 ])
 
+//分页数据
+const paginationState = reactive(
+    {
+      currentPage:1,
+      total:1000,
+      pageSize: 10,
+    }
+)
+
+const handleSizeChange = ()=>{
+
+}
+
+const handleCurrentChange = ()=>{
+
+}
 
 
 </script>
