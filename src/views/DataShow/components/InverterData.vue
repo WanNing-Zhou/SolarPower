@@ -1,11 +1,11 @@
 <template>
   <div class="inverter-data">
     <el-container>
-      <el-header height="40px">
+      <el-header height="38px">
         <filter-form @confirm="handFilter"/>
       </el-header>
       <el-main>
-
+        <inverter-data-table> </inverter-data-table>
       </el-main>
     </el-container>
   </div>
@@ -14,6 +14,7 @@
 <script setup lang="ts">
 
 import FilterForm from "@/views/DataShow/components/FilterForm.vue";
+import InverterDataTable from "@/views/DataShow/components/InverterDataTable.vue";
 
 interface Conditions {
   equipment: string // 设备
@@ -30,6 +31,9 @@ const handFilter = (conditions:Conditions)=>{
 <style lang="scss" scoped>
 
 .inverter-data{
+   :deep(.el-main){
+     padding: 0px;
+  }
 
 }
 

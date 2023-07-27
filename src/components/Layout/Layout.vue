@@ -12,7 +12,6 @@
           <el-main>
             <main-layout></main-layout>
           </el-main>
-          <el-footer>Footer</el-footer>
         </el-container>
       </el-container>
     </el-container>
@@ -31,6 +30,9 @@ import MainLayout from "@/components/MainLayout/MainLayout.vue";
 
   &:deep(.el-header){
     padding: 0;
+  }
+  &:deep(.el-main){
+    padding: 0px;
   }
 }
 
