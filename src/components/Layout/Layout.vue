@@ -9,7 +9,9 @@
           <side-layout/>
         </el-aside>
         <el-container>
-          <el-main>Main</el-main>
+          <el-main>
+            <main-layout></main-layout>
+          </el-main>
           <el-footer>Footer</el-footer>
         </el-container>
       </el-container>
@@ -21,6 +23,7 @@
 import Header from "@/components/HeaderLayout/HeaderLaout.vue";
 import HeaderLaout from "@/components/HeaderLayout/HeaderLaout.vue";
 import SideLayout from "@/components/SideLayout/SideLayout.vue";
+import MainLayout from "@/components/MainLayout/MainLayout.vue";
 </script>
 
 <style lang="scss" scoped>
