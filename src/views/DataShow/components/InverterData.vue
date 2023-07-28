@@ -5,9 +5,10 @@
         <filter-form @confirm="handFilter"/>
       </el-header>
       <el-main>
-        <inverter-data-table> </inverter-data-table>
+        <inverter-data-table @showInfo="showInfo"> </inverter-data-table>
       </el-main>
     </el-container>
+    <DetailDialog :detailData="detailData" :dialogVisible="detailDialogVisible" @close="handleClose" ></DetailDialog>
   </div>
 </template>
 
@@ -15,6 +16,8 @@
 
 import FilterForm from "@/views/DataShow/components/FilterForm.vue";
 import InverterDataTable from "@/views/DataShow/components/InverterDataTable.vue";
+import {ref} from "vue";
+import DetailDialog from "@/views/DataShow/components/DetailDialog.vue";
 
 interface Conditions {
   equipment: string // 设备
@@ -24,6 +27,23 @@ interface Conditions {
 
 const handFilter = (conditions:Conditions)=>{
   console.log(conditions)
+}
+
+//弹出框显示
+const detailDialogVisible = ref(false)
+// 详情值
+const detailData = ref({})
+const showInfo = (row)=>{
+  detailDialogVisible.value = true
+  detailData.value = row;
+  console.log('showInfo',row)
+}
+
+const handleClose  = ()=>{
+
+  //
+  detailDialogVisible.value = false;
+
 }
 
 </script>
