@@ -45,6 +45,7 @@
 
 import {computed, onMounted, reactive, ref} from "vue";
 import {inverterTestData} from "@/testData/inverterTestData.ts"
+import {Table} from "element-plus";
 
 /*const tableData =reactive([
     {
@@ -80,22 +81,23 @@ const paginationState = reactive(
 const setTableData = () => {
   const {currentPage,pageSize} = paginationState
   tableData.value = inverterTestData.slice((currentPage-1)*pageSize, currentPage*pageSize)
-
+  tableData.value.forEach(item=>{item.averageAbsoluteDeviation= ((1.0*(item.powerGeneration/evePowerGen.value)-1).toFixed(2)*100)})
+  console.log(tableData.value)
 }
-
+// 获取数据
 const getInverterData = () => {
   // tableData.value = inverterTestData;
   paginationState.total = inverterTestData.length
   setTableData();
 }
 
-
+// 当前页大小发生变化时触发
 const handleSizeChange = (val) => {
   console.log('size', val)
   setTableData();
 
 }
-
+// 当前页变化时触发
 const handleCurrentChange = (page) => {
   console.log('page',page)
   setTableData()
@@ -105,7 +107,6 @@ const handleCurrentChange = (page) => {
 const showInfo = (scope)=>{
   console.log('被点击了')
   emit('showInfo',scope.row.data)
-  console.log('scope', scope.row.data)
 }
 
 // 平均发电量
@@ -119,8 +120,8 @@ const evePowerGen = computed(()=>{
 
 // 计算误差
 const computedDis = (powerGen)=>{
-  console.log('powerGen',evePowerGen)
-  return 1.0*(powerGen/evePowerGen)-1
+  console.log('powerGen',evePowerGen.value)
+  return (1.0*(powerGen/evePowerGen.value)-1).toFixed(2)*100
 }
 
 
