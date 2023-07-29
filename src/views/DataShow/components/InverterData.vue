@@ -37,6 +37,8 @@ const showInfo = (row)=>{
   detailDialogVisible.value = true
   detailData.value = row;
   console.log('showInfo',row)
+
+
 }
 
 const handleClose  = ()=>{

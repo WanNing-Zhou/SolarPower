@@ -23,11 +23,14 @@
 
       <el-form-item label="统计时间" prop="statisticalTime">
         <el-date-picker
+            class="data-picker"
             v-model="conditions.statisticalTime"
-            type="date"
-            placeholder="选择日期"
+            type="daterange"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
             :disabled-date="disabledDate"
             :shortcuts="shortcuts"
+            range-separator="至"
         />
 
       </el-form-item>
@@ -55,7 +58,7 @@ const conditions = reactive({
 })
 
 
-const shortcuts = [
+/*const shortcuts = [
   {
     text: '今日',
     value: new Date(),
@@ -74,6 +77,38 @@ const shortcuts = [
       const date = new Date()
       date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
       return date
+    },
+  },
+]*/
+
+
+
+const shortcuts = [
+  {
+    text: 'Last week',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+      return [start, end]
+    },
+  },
+  {
+    text: 'Last month',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+      return [start, end]
+    },
+  },
+  {
+    text: 'Last 3 months',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+      return [start, end]
     },
   },
 ]
@@ -128,6 +163,9 @@ const handleConfirm = ()=>{
       width: 25%;
       display: flex;
       margin:0  5px 0 5px;
+      .data-picker{
+        width:40% !important;
+      }
     }
   }
 

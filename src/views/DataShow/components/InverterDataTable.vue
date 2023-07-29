@@ -4,23 +4,21 @@
       <el-table-column prop="designName" label="设备名称" sortable width="180"/>
       <el-table-column prop="totalStringCapacity" label="组串总容量(kWp)" sortable width="180"/>
       <el-table-column prop="powerGeneration" label="发电量(度)" sortable width="180"/>
-      <el-table-column prop="accumulatedPowerGeneration" label="累计发电量(度)" sortable width="180"/>
-      <el-table-column prop="equivalentPowerGenerationTime" label="等价发电时(kWh/kWp)" sortable width="180"/>
-      <el-table-column prop="peakACPower" label="峰值交流功率(kW)" sortable width="180"/>
-      <el-table-column prop="gridConnectionDuration" label="并网时长(h)" sortable width="180"/>
-      <el-table-column prop="powerRationingLoss" label="限电损失电量(度)" sortable width="180"/>
-      <el-table-column prop="averageAbsoluteDeviation" label="平均发电量误差" sortable width="180">
+      <el-table-column prop="averageGenPower" label="平均发电量" sortable width="180"/>
+      <el-table-column prop="averageGenPower" label="发电量误差" sortable width="180"/>
+      <el-table-column prop="averageAbsoluteDeviation" label="误差百分比" sortable width="180">
         <template #default="scope">
-          <span>{{computedDis(scope.row.powerGeneration)}}</span>
+          <span v-if="scope.row.averageAbsoluteDeviation>0">+{{ scope.row.averageAbsoluteDeviation }}%</span>
+          <span v-if="scope.row.averageAbsoluteDeviation<0">{{ scope.row.averageAbsoluteDeviation }}%</span>
         </template>
-
       </el-table-column>
+      <el-table-column prop="averageAbsoluteDeviation" label="标准单板日电量" sortable width="180"></el-table-column>
       <el-table-column label="操作" width="180">
         <template #default="scope">
           <el-button
-          type="primary"
-          size="small"
-          @click="showInfo(scope)"
+              type="primary"
+              size="small"
+              @click="showInfo(scope)"
           >
             详情
           </el-button>
@@ -59,6 +57,8 @@ import {Table} from "element-plus";
       gridConnectionDuration: 523,// 并网时长
       powerRationingLoss:33,// 限电损失量
       averageAbsoluteDeviation:'',//平均发电误差
+            averageGenPower: ''. //平均发电量
+      singleGenPower: '', //标转单板日电量
     },
 ])*/
 
@@ -79,14 +79,17 @@ const paginationState = reactive(
 
 
 const setTableData = () => {
-  const {currentPage,pageSize} = paginationState
-  tableData.value = inverterTestData.slice((currentPage-1)*pageSize, currentPage*pageSize)
-  tableData.value.forEach(item=>{item.averageAbsoluteDeviation= ((1.0*(item.powerGeneration/evePowerGen.value)-1).toFixed(2)*100)})
+  const {currentPage, pageSize} = paginationState
+  tableData.value = inverterTestData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
   console.log(tableData.value)
 }
 // 获取数据
 const getInverterData = () => {
   // tableData.value = inverterTestData;
+  inverterTestData.forEach(item => {
+    item.averageAbsoluteDeviation = (((1.0 * (item.powerGeneration / evePowerGen.value) - 1) * 100).toFixed(2))
+  })
+  console.log(inverterTestData)
   paginationState.total = inverterTestData.length
   setTableData();
 }
@@ -99,36 +102,36 @@ const handleSizeChange = (val) => {
 }
 // 当前页变化时触发
 const handleCurrentChange = (page) => {
-  console.log('page',page)
+  console.log('page', page)
   setTableData()
 }
 
 // 详情显示
-const showInfo = (scope)=>{
+const showInfo = (scope) => {
   console.log('被点击了')
-  emit('showInfo',scope.row.data)
+  console.log('被点击了', scope.row)
+  emit('showInfo', scope.row)
 }
 
 // 平均发电量
-const evePowerGen = computed(()=>{
-  const totalPowerGen = inverterTestData.reduce((res,item)=>{
+const evePowerGen = computed(() => {
+  const totalPowerGen = inverterTestData.reduce((res, item) => {
     return res + item.powerGeneration
-  },0)
-  return totalPowerGen/inverterTestData.length;
+  }, 0)
+  return totalPowerGen / inverterTestData.length;
 })
 
 
 // 计算误差
-const computedDis = (powerGen)=>{
-  console.log('powerGen',evePowerGen.value)
-  return (1.0*(powerGen/evePowerGen.value)-1).toFixed(2)*100
+const computedDis = (powerGen) => {
+  console.log('powerGen', evePowerGen.value)
+  return ((1.0 * (powerGen / evePowerGen.value) - 1) * 100).toFixed(2)
 }
 
 
 onMounted(() => {
   getInverterData()
 })
-
 
 
 </script>
