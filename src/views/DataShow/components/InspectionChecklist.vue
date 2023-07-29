@@ -36,11 +36,34 @@
 
 
       <el-form-item label-width="100">
-        <el-button>上传附件</el-button>
-        <el-button>提交</el-button>
+        <section class="btn-group">
+          <section>
+            <el-upload
+                v-model:file-list="fileList"
+                class="upload-demo"
+                multiple
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                :before-remove="beforeRemove"
+                :limit="3"
+                :on-exceed="handleExceed"
+            >
+              <el-button type="primary">选择文件</el-button>
+              <template #tip>
+                <div class="el-upload__tip">
+                  jpg/png files with a size less than 500KB.
+                </div>
+              </template>
+            </el-upload>
+          </section>
+          <section>
+            <el-button>提交</el-button>
+          </section>
+
+
+        </section>
+
       </el-form-item>
-
-
     </el-form>
 
   </div>
@@ -48,10 +71,53 @@
 
 <script setup lang="ts">
 
+import { ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+
+import type { UploadProps, UploadUserFile } from 'element-plus'
+
+const fileList = ref<UploadUserFile[]>([
+])
+
+// 移除操作
+const handleRemove: UploadProps['onRemove'] = (file, uploadFiles) => {
+  console.log(file, uploadFiles)
+}
+
+// 预览操作
+const handlePreview: UploadProps['onPreview'] = (uploadFile) => {
+  console.log(uploadFile)
+}
+
+// 文件超过处理
+const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
+  ElMessage.warning(
+      `The limit is 3, you selected ${files.length} files this time, add up to ${
+          files.length + uploadFiles.length
+      } totally`
+  )
+}
+
+
+// 删除钱操作
+const beforeRemove: UploadProps['beforeRemove'] = (uploadFile, uploadFiles) => {
+  return ElMessageBox.confirm(
+      `Cancel the transfer of ${uploadFile.name} ?`
+  ).then(
+      () => true,
+      () => false
+  )
+}
+
 </script>
 
 <style scoped>
   .inspection-checklist{
     width: 600px;
+
+    .btn-group{
+      display: flex;
+      justify-content: space-around;
+    }
   }
 </style>
