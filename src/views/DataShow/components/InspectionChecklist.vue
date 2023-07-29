@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="inspection-checklist">
     <el-form label-width="100" title="检巡单">
       <el-form-item label="工作类型">
         <el-input></el-input>
@@ -51,5 +51,7 @@
 </script>
 
 <style scoped>
-
+  .inspection-checklist{
+    width: 600px;
+  }
 </style>
