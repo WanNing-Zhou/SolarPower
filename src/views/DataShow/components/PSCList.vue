@@ -29,8 +29,10 @@
 
       <el-table-column label="操作">
         <template #default="scope">
-          <el-button v-if="scope.row.edit" type="text" size="small" @click="confirmAdd(scope.row)">
-            <i class="el-icon-check" aria-hidden="true"></i>
+          <el-button v-if="scope.row.edit" type="primary" size="small" @click="confirmAdd(scope.row)">
+            <el-icon :size="20">
+              <Checked />
+            </el-icon>
           </el-button>
           <div v-else>
             <el-button type="primary"  @click="editData(scope.row)">
@@ -60,6 +62,7 @@
 <script setup lang="ts">
 
 import {onMounted, reactive, ReactiveFlags, Ref, ref} from "vue";
+import {Checked} from "@element-plus/icons-vue";
 
 interface pscData{
   gatewayPower?:number | string //关口表电量
@@ -100,18 +103,31 @@ const addData  = () => {
 
 }
 
+// 对数据进行计算
+const computedData = (row:pscData)=>{
+  row.selfUseCharge = 4678;
+  row.onlineCharge = 4432;
+  row.selfUsePower = 4451;
+
+}
+
 //确认添加
-const confirmAdd = (row)=>{
+const confirmAdd = (row:pscData)=>{
+  //对数据进行计算
+  computedData(row)
+
   row.edit = false;
 }
 
 //修改
-const editData = (row)=>{
+const editData = (row:pscData)=>{
+  // 对出局重新计算
+  computedData(row)
   row.edit = true;
 }
 
 //删除
-const deleteData = (row, index)=>{
+const deleteData = (row:pscData, index:number)=>{
   tableData.value.splice(index, 1);
 }
 
