@@ -108,7 +108,6 @@ const computedData = (row:pscData)=>{
   row.selfUseCharge = 4678;
   row.onlineCharge = 4432;
   row.selfUsePower = 4451;
-
 }
 
 //确认添加

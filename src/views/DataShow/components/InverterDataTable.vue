@@ -102,14 +102,14 @@ const handleSizeChange = (val) => {
 }
 // 当前页变化时触发
 const handleCurrentChange = (page) => {
-  console.log('page', page)
+  // console.log('page', page)
   setTableData()
 }
 
 // 详情显示
 const showInfo = (scope) => {
-  console.log('被点击了')
-  console.log('被点击了', scope.row)
+  // console.log('被点击了')
+  // console.log('被点击了', scope.row)
   emit('showInfo', scope.row)
 }
 
