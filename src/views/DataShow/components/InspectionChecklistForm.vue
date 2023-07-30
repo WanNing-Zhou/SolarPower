@@ -94,7 +94,9 @@ const visible = computed(()=>{
 
 // 关闭前操作
 const handleBeforeClose = ()=>{
+  console.log('输入框关闭')
   emit('close')
+  console.log('visible',visible.value)
 }
 
 // 文件列表

@@ -95,7 +95,7 @@
 
       <el-button type="primary" @click="addData">添加数据</el-button>
     </div>
-    <InspectionChecklistForm @submit="" @close="handleConfirm" :dialogVisible="dialogVisible"></InspectionChecklistForm>
+    <InspectionChecklistForm @submit="handleConfirmAdd" @close="dialogClose" :dialogVisible="dialogVisible"></InspectionChecklistForm>
   </div>
 </template>
 
@@ -206,6 +206,11 @@ const dialogVisible = ref(false)
 const addData = () => {
   // dialog显示
   dialogVisible.value=true;
+}
+
+// dialog关闭
+const dialogClose = ()=>{
+  dialogVisible.value = false;
 }
 
 //确认添加
