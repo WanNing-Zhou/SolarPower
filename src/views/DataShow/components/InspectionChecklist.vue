@@ -95,8 +95,7 @@
 
       <el-button type="primary" @click="addData">添加数据</el-button>
     </div>
-
-
+    <InspectionChecklistForm @submit="" @close="handleConfirm" :dialogVisible="dialogVisible"></InspectionChecklistForm>
   </div>
 </template>
 
@@ -105,6 +104,7 @@
 import {Checked} from "@element-plus/icons-vue";
 import {Ref, ref} from "vue";
 import FilterForm from "@/views/DataShow/components/FilterForm.vue";
+import InspectionChecklistForm from "@/views/DataShow/components/InspectionChecklistForm.vue";
 
 interface InspectionChecklist {
   workType?: string; // 工作类型
@@ -162,7 +162,7 @@ const shortcuts = [
   },
 ]
 
-// 时间维度选择
+// 工作类型选择
 const workTypeOptions = [
   {
     value: '0',
@@ -199,15 +199,26 @@ const handleConfirm = () => {
 //table数据
 const tableData: Ref<Array<InspectionChecklist>> = ref([]);
 
+// dialog显示
+const dialogVisible = ref(false)
+
 //添加
 const addData = () => {
-  tableData.value.push({
-    edit: true,
-  });
-  console.log('添加数据触发', tableData.value)
-
+  // dialog显示
+  dialogVisible.value=true;
 }
 
+//确认添加
+const handleConfirmAdd = (data)=>{
+
+  // dialog隐藏
+  dialogVisible.value = false;
+}
+
+// dialog关闭
+const handleDialogClose = ()=>{
+  dialogVisible.value =false;
+}
 
 //确认添加
 const confirmAdd = (row: InspectionChecklist) => {

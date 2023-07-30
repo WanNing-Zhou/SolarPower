@@ -1,8 +1,8 @@
 // 录入工作单管理dialog
 
 <template>
-  <el-dialog  v-model="dialogVisible" class="inspection-checklist-form">
-    <el-form label-width="100" title="检巡单">
+  <el-dialog  v-model="visible" title="工作单录入" :before-close="handleBeforeClose" class="inspection-checklist-form">
+    <el-form label-width="100" title="工作单">
       <el-form-item label="工作类型">
         <el-input></el-input>
       </el-form-item>
@@ -59,7 +59,7 @@
             </el-upload>
           </section>
           <section>
-            <el-button>提交</el-button>
+            <el-button @click="workListSubmit">提交</el-button>
           </section>
 
 
@@ -68,17 +68,38 @@
       </el-form-item>
     </el-form>
 
-  </>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
 
-import { ref } from 'vue'
+import {computed, ref} from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 import type { UploadProps, UploadUserFile } from 'element-plus'
 
+const prop = defineProps({
+  dialogVisible:{
+    type:Boolean,
+    default: false
+  }
+})
+
+const emit = defineEmits(['close','submit'])
+
+// dialog显示
+const visible = computed(()=>{
+  return prop.dialogVisible;
+})
+
+// 关闭前操作
+const handleBeforeClose = ()=>{
+  emit('close')
+}
+
+// 文件列表
 const fileList = ref<UploadUserFile[]>([
+
 ])
 
 // 移除操作
@@ -101,7 +122,7 @@ const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
 }
 
 
-// 删除钱操作
+// 删除前操作
 const beforeRemove: UploadProps['beforeRemove'] = (uploadFile, uploadFiles) => {
   return ElMessageBox.confirm(
       `Cancel the transfer of ${uploadFile.name} ?`
@@ -109,6 +130,11 @@ const beforeRemove: UploadProps['beforeRemove'] = (uploadFile, uploadFiles) => {
       () => true,
       () => false
   )
+}
+
+// 提交数据
+const workListSubmit = ()=>{
+  emit('submit')
 }
 
 </script>
