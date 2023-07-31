@@ -1,6 +1,7 @@
 <template>
   <div class="inverter-data-table">
     <el-table :data="tableData" height="500px" border style="width: 100%">
+      <el-table-column prop="measurementPointName" label="计量点名称" sortable width="180"/>
       <el-table-column prop="designName" label="设备名称" sortable width="180"/>
       <el-table-column prop="totalStringCapacity" label="组串总容量(kWp)" sortable width="180"/>
       <el-table-column prop="powerGeneration" label="发电量(度)" sortable width="180"/>
@@ -13,17 +14,17 @@
         </template>
       </el-table-column>
       <el-table-column prop="averageAbsoluteDeviation" label="标准单板日电量" sortable width="180"></el-table-column>
-      <el-table-column label="操作" width="180">
-        <template #default="scope">
-          <el-button
-              type="primary"
-              size="small"
-              @click="showInfo(scope)"
-          >
-            详情
-          </el-button>
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="操作" width="180">-->
+<!--        <template #default="scope">-->
+<!--          <el-button-->
+<!--              type="primary"-->
+<!--              size="small"-->
+<!--              @click="showInfo(scope)"-->
+<!--          >-->
+<!--            详情-->
+<!--          </el-button>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
     </el-table>
 
     <el-pagination
@@ -59,6 +60,7 @@ import {Table} from "element-plus";
       averageAbsoluteDeviation:'',//平均发电误差
             averageGenPower: ''. //平均发电量
       singleGenPower: '', //标转单板日电量
+      measurementPointName: '', //计量点名称
     },
 ])*/
 

@@ -10,7 +10,7 @@
           <el-tabs v-model="activeName" class="demo-tabs">
             <el-tab-pane label="工作单管理" name="first"><inspection-checklist/></el-tab-pane>
             <el-tab-pane label="逆变器报表" name="second"><inverter-data/></el-tab-pane>
-            <el-tab-pane label="PCS报表" name="third"><PSCList/></el-tab-pane>
+            <el-tab-pane label="自用和上网报表" name="third"><PSCList/></el-tab-pane>
             <el-tab-pane label="储能报表" name="fourth">储能报表</el-tab-pane>
           </el-tabs>
       </el-main>

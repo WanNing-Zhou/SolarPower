@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+<script>
+    const arr1 = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'D1', 'D2'];
+    const arr2 = ['A', 'B', 'C', 'D'];
+
+    const result = arr2.reduce((acc, cur) => {
+        const prefix = cur; // 获取字符串
+
+        // 将数组 arr1 中以当前字符串为前缀的元素添加到 acc 中
+        const filtered = arr1.filter(item => item.startsWith(prefix));
+        return acc.concat(filtered, cur);
+    }, []);
+
+    console.log(result);
+</script>
+</body>
+</html>

@@ -38,8 +38,8 @@
     </el-form>
 
     <div class="data-operation">
-      <el-button>导入</el-button>
-      <el-button>导出</el-button>
+      <el-button>导入华为数据</el-button>
+      <el-button>导出分析结果</el-button>
     </div>
 
   </div>
