@@ -5,9 +5,8 @@
         <el-form
             :model="conditions"
             status-icon
-            label-width="80px"
         >
-          <el-form-item label="记录时间" prop="filterTime">
+          <el-form-item label-width="100px" label="记录时间" prop="filterTime">
             <el-date-picker
                 v-model="conditions.filterTime"
                 type="monthrange"
@@ -19,11 +18,14 @@
             />
 
           </el-form-item>
-
-          <el-button type="primary" @click="handleConfirm">查询</el-button>
+          <el-form-item>
+            <el-button type="primary" @click="handleConfirm">查询</el-button>
+          </el-form-item>
         </el-form>
 
-
+        <div class="data-operation">
+          <el-button>导出Excel</el-button>
+        </div>
 
       </el-header>
 
@@ -250,17 +252,16 @@ onMounted(() => {
 
 <style scoped>
 .PSC-list {
-  filter-from {
+  .filter-from {
     width: 100%;
     display: flex;
     justify-content: space-between;
 
     .el-form {
-      width: 100%;
+      width: 120px!important;
       display: flex;
 
       .el-form-item {
-        width: 25%;
         display: flex;
         margin: 0 5px 0 5px;
       }
