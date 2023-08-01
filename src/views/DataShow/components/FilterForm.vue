@@ -5,12 +5,12 @@
         status-icon
         label-width="80px"
     >
-      <el-form-item label="选择设备:" prop="equipment">
-        <el-input v-model="conditions.equipment" placeholder="全部" clearable/>
+      <el-form-item class="form-item-short" label="选择设备:" prop="equipment">
+        <el-input size="small" v-model="conditions.equipment" placeholder="全部" clearable/>
       </el-form-item>
 
-      <el-form-item label="时间维度:" prop="timeDimension">
-        <el-select v-model="conditions.timeDimension" class="m-2" placeholder="Select">
+      <el-form-item class="form-item-middle" label="时间维度:" prop="timeDimension">
+        <el-select size="small" v-model="conditions.timeDimension" class="m-2" placeholder="Select">
           <el-option
               v-for="item in timeDimensionOptions"
               :key="item.value"
@@ -21,8 +21,9 @@
 
       </el-form-item>
 
-      <el-form-item label="统计时间" prop="statisticalTime">
+      <el-form-item class="form-item-long" label="统计时间" width="200px" prop="statisticalTime">
         <el-date-picker
+            size="small"
             class="data-picker"
             v-model="conditions.statisticalTime"
             type="daterange"
@@ -32,9 +33,12 @@
             :shortcuts="shortcuts"
             range-separator="至"
         />
-
       </el-form-item>
-      <el-button type="primary" @click="handleConfirm">查询</el-button>
+
+      <el-form-item class="form-item-mini" label-width="20px">
+        <el-button type="primary" size="small" @click="handleConfirm">查询</el-button>
+      </el-form-item>
+
     </el-form>
 
     <div class="data-operation">
@@ -47,7 +51,7 @@
 
 <script setup lang="ts">
 
-import {reactive,defineEmits, ref} from "vue";
+import {reactive, defineEmits, ref} from "vue";
 
 const emit = defineEmits(['confirm'])
 
@@ -117,8 +121,8 @@ const disabledDate = (time: Date) => {
 }
 
 //表单提交
-const handleConfirm = ()=>{
-  emit('confirm',conditions)
+const handleConfirm = () => {
+  emit('confirm', conditions)
 }
 
 </script>
@@ -134,17 +138,33 @@ const handleConfirm = ()=>{
     width: 100%;
     display: flex;
 
-    .el-form-item {
-      width: 25%;
-      display: flex;
-      margin:0  5px 0 5px;
-      .data-picker{
-        width:40% !important;
-      }
+    .form-item-mini{
+      width: 50px;
     }
+
+    .form-item-short {
+      width: 200px;
+    }
+
+    .form-item-middle {
+      width: 280px;
+    }
+
+    .form-item-long{
+      width: 350px;
+    }
+
+    //.el-form-item {
+    //  width: 30%;
+    //  display: flex;
+    //  margin:0  5px 0 5px;
+    //  .data-picker{
+    //    width:40% !important;
+    //  }
+    //}
   }
 
-  .data-operation{
+  .data-operation {
     display: flex;
   }
 
