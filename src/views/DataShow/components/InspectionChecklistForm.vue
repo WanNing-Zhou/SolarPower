@@ -14,7 +14,7 @@
         </el-select>
       </el-form-item>
       <el-form-item  label-width="100"  label="编号">
-        <el-input v-model="checklistFrom.number"></el-input>
+        <el-input v-model="prop.addNumber"></el-input>
       </el-form-item>
       <el-form-item label-width="100"  label="工作人">
         <el-input v-model="checklistFrom.workerName"></el-input>
@@ -87,10 +87,11 @@
 
 <script setup lang="ts">
 
-import {computed, Ref, ref} from 'vue'
+import {computed, Ref, ref, watch} from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 import type { UploadProps, UploadUserFile } from 'element-plus'
+import {convertDateFormat} from "@/utils/dateUtils.ts";
 
 
 interface InspectionChecklist {
@@ -108,6 +109,10 @@ const prop = defineProps({
   dialogVisible:{
     type:Boolean,
     default: false
+  },
+  addNumber:{
+    type:String,
+    default:''
   }
 })
 
@@ -188,6 +193,10 @@ const beforeRemove: UploadProps['beforeRemove'] = (uploadFile, uploadFiles) => {
 
 // 提交数据
 const workListSubmit = ()=>{
+  checklistFrom.value.number = prop.addNumber
+  if (checklistFrom.value.startTime != null) {
+    checklistFrom.value.startTime = convertDateFormat(checklistFrom.value.startTime)
+  }
   emit('submit',checklistFrom.value)
 }
 

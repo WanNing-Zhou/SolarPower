@@ -2,7 +2,7 @@
   <div class="side-layout">
     <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick">
       <template #default="{ node, data }">
-        <router-link :to="'/datashow/'+data.id">{{ node.label }}</router-link>
+        <router-link :to="'/datashow/'+data.label">{{ node.label }}</router-link>
       </template>
     </el-tree>
   </div>

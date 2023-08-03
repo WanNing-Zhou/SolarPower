@@ -30,10 +30,9 @@
       </el-header>
 
       <el-main>
-        <el-table :data="tableData" size="small">
-          <el-table-column width="80px" prop="portName" label="站名"/>
-
-          <el-table-column prop="date" label="年月">
+        <el-table  :data="tableData" size="small" border>
+          <el-table-column  prop="portName" width="120" label="站名"/>
+          <el-table-column prop="date" label="年月" width="160">
             <template #default="scope">
               <el-date-picker
                   size="small"
@@ -47,7 +46,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="" label="计量点名称">
+          <el-table-column prop=""  label="计量点名称">
             <template #default="scope">
               <el-input size="small" v-if="scope.row.edit" v-model="scope.row.measurementPointName" placeholder="发电表总电量"></el-input>
               <span v-else>{{ scope.row.measurementPointName }}</span>
@@ -55,7 +54,7 @@
           </el-table-column>
 
           <!--      用户录入-->
-          <el-table-column prop="gatewayPower" width="150" label="发电表总电量">
+          <el-table-column prop="gatewayPower"  label="发电表总电量">
             <template #default="scope">
               <el-input size="small" v-if="scope.row.edit" v-model="scope.row.gatewayPower" placeholder="发电表总电量"></el-input>
               <span v-else>{{ scope.row.gatewayPower }}</span>
@@ -77,6 +76,7 @@
             </template>
           </el-table-column>
 
+
           <!--用户输入-->
           <el-table-column prop="selfUsePrice" width="100" label="自用电价">
             <template #default="scope">
@@ -85,20 +85,29 @@
             </template>
           </el-table-column>
 
+          <el-table-column prop="currentImg" width="100" label="现场照片">
+            <template #default="scope">
+<!--              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.onlinePrice" placeholder="上网电价"></el-input>-->
+              <!--              <span v-else>{{ scope.row.onlinePrice }}</span>-->
+              <el-button v-if="scope.row.edit" size="small" type="primary" link>上传图片</el-button>
+              <img :src="scope.row.currentImg">
+            </template>
+          </el-table-column>
 
 
-          <el-table-column prop="selfUsePower" label="自用电量">
+
+          <el-table-column prop="selfUsePower" width="60" label="自用电量">
 
           </el-table-column>
 
-          <el-table-column prop="onlineCharge" label="上网电费">
+          <el-table-column prop="onlineCharge" width="60"  label="上网电费">
           </el-table-column>
 
-          <el-table-column prop="selfUseCharge" label="自用电费">
+          <el-table-column prop="selfUseCharge" width="60"  label="自用电费">
 
           </el-table-column>
 
-          <el-table-column label="操作">
+          <el-table-column label="操作" width="200">
             <template #default="scope">
               <el-button v-if="scope.row.edit" type="primary" size="small" @click="confirmAdd(scope.row)">
                 <el-icon :size="20">
@@ -153,6 +162,7 @@ interface pscData {
   edit?: boolean //是否是编辑状态
   portName?: string | null | any//站名
   measurementPointName ?: string | null; // 计量点名称
+  currentImg?: string | null // 现场照片
 
 }
 

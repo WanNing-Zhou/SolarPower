@@ -26,6 +26,9 @@
   .title {
     text-align: center;
   }
+  p{
+    padding: 0 80px 0 80px;
+  }
 
 }
 </style>

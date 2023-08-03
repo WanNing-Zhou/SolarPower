@@ -5,7 +5,7 @@
  * @Date 23:27 2023/7/31
  **/
 
-export function convertDateFormat(dateString:string) {
+export function convertDateFormat(dateString :string) {
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -20,8 +20,10 @@ export function convertDateFormat(dateString:string) {
  * @Description 获取当前 '年-月-日'的时间
  * @Date 23:04 2023/8/3
  **/
-export function getCurrentDate(joinChar:string) {
-    joinChar = joinChar ? '' : joinChar
+export function getCurrentDate(joinChar ?: string) {
+    if(!joinChar){
+        joinChar = ''
+    }
     var currentDate = new Date();
     var year = currentDate.getFullYear();
     var month = (currentDate.getMonth() + 1).toString().padStart(2, '0');

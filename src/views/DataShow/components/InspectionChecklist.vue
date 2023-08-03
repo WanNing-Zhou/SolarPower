@@ -95,16 +95,17 @@
 
       <el-button type="primary" @click="addData">添加工作单</el-button>
     </div>
-    <InspectionChecklistForm @submit="handleConfirmAdd" @close="dialogClose" :dialogVisible="dialogVisible"></InspectionChecklistForm>
+    <InspectionChecklistForm :addNumber="addNum" @submit="handleConfirmAdd" @close="dialogClose" :dialogVisible="dialogVisible"></InspectionChecklistForm>
   </div>
 </template>
 
 <script setup lang="ts">
 
 import {Checked} from "@element-plus/icons-vue";
-import {Ref, ref} from "vue";
+import {computed, Ref, ref} from "vue";
 import FilterForm from "@/views/DataShow/components/FilterForm.vue";
 import InspectionChecklistForm from "@/views/DataShow/components/InspectionChecklistForm.vue";
+import {getCurrentDate} from "@/utils/dateUtils.ts";
 
 interface InspectionChecklist {
   workType?: string; // 工作类型
@@ -202,6 +203,9 @@ const tableData: Ref<Array<InspectionChecklist>> = ref([]);
 // dialog显示
 const dialogVisible = ref(false)
 
+const addNum = computed(()=>{
+  return  getCurrentDate() + '-' + (tableData.value.length +1);
+})
 //添加
 const addData = () => {
   // dialog显示
@@ -240,6 +244,7 @@ const editData = (row: InspectionChecklist) => {
 
 //删除
 const deleteData = (row: InspectionChecklist, index: number) => {
+
   tableData.value.splice(index, 1);
 }
 
