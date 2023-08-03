@@ -5,7 +5,7 @@
         <header-laout></header-laout>
       </el-header>
       <el-container>
-        <el-aside width="200px">
+        <el-aside width="250px">
           <side-layout/>
         </el-aside>
         <el-container>

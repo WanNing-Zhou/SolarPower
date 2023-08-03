@@ -12,3 +12,20 @@ export function convertDateFormat(dateString:string) {
 
     return `${year}-${month}`;
 }
+
+
+/**
+ * @MethodName getCurrentDate
+ * @Author 周万宁
+ * @Description 获取当前 '年-月-日'的时间
+ * @Date 23:04 2023/8/3
+ **/
+export function getCurrentDate(joinChar:string) {
+    joinChar = joinChar ? '' : joinChar
+    var currentDate = new Date();
+    var year = currentDate.getFullYear();
+    var month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    var day = currentDate.getDate().toString().padStart(2, '0');
+    var formattedDate = year + joinChar + month + joinChar + day;
+    return formattedDate;
+}

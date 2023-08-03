@@ -33,6 +33,27 @@
         <el-table :data="tableData" size="small">
           <el-table-column width="80px" prop="portName" label="站名"/>
 
+          <el-table-column prop="date" label="年月">
+            <template #default="scope">
+              <el-date-picker
+                  size="small"
+                  v-model="scope.row.date"
+                  type="month"
+                  placeholder="日期"
+                  v-if="scope.row.edit"
+              />
+              <!--          <el-input v-if="scope.row.edit" v-model="scope.row.date" placeholder="关口表电量"></el-input>-->
+              <span v-else>{{ scope.row.date }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column prop="" label="计量点名称">
+            <template #default="scope">
+              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.measurementPointName" placeholder="发电表总电量"></el-input>
+              <span v-else>{{ scope.row.measurementPointName }}</span>
+            </template>
+          </el-table-column>
+
           <!--      用户录入-->
           <el-table-column prop="gatewayPower" width="150" label="发电表总电量">
             <template #default="scope">
@@ -64,19 +85,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="date" label="年月">
-            <template #default="scope">
-              <el-date-picker
-                  size="small"
-                  v-model="scope.row.date"
-                  type="month"
-                  placeholder="日期"
-                  v-if="scope.row.edit"
-              />
-              <!--          <el-input v-if="scope.row.edit" v-model="scope.row.date" placeholder="关口表电量"></el-input>-->
-              <span v-else>{{ scope.row.date }}</span>
-            </template>
-          </el-table-column>
+
 
           <el-table-column prop="selfUsePower" label="自用电量">
 
@@ -143,6 +152,7 @@ interface pscData {
   date?: number | string //日期
   edit?: boolean //是否是编辑状态
   portName?: string | null | any//站名
+  measurementPointName ?: string | null; // 计量点名称
 
 }
 

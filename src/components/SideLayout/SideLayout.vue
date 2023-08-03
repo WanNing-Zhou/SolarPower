@@ -22,49 +22,21 @@ const handleNodeClick = (data: Tree) => {
 
 const data: Tree[] = [
   {
-    label: 'xxx公司',
+    label: '陕西信惠翔新能源有限公司',
     id: 'C1',
     children:
         [
           {
-            label: 'N1-T1',
+            label: '陕西中铁科技园区光伏电站',
             id: 'N1-T1',
           },
           {
-            label: 'N2-T1',
-            id: 'N2-T2',
-          },
-          {
-            label: 'N3-T1',
-            id: 'N3-T1',
-          },
-          {
-            label: 'N4-T1',
-            id: 'N4--T1',
-          },
-          {
-            label: 'N5--T1',
-            id: 'N5--T1',
-          },
-          {
-            label: 'N6-T1',
-            id: 'N6-T1',
-          },
-          {
-            label: 'N7-T1',
-            id: 'N7-T1',
-          },
-          {
-            label: 'N8-T1',
-            id: 'N8-T1',
-          },
-          {
-            label: 'N9-T1',
-            id: 'N9-T1',
-          },
-          {
-            label: 'N10-T1',
+            label: '神木富油科技能源有限公司',
             id: 'N10-T1',
+          },
+          {
+            label: '  西安京东亚一园站',
+            id: 'N2-T1',
           },
         ]
   }

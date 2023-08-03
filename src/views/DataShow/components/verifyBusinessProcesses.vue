@@ -1,5 +1,5 @@
 <template>
-  <div class="verif-business-rocesses">
+  <div class="verify-business-processes">
     <h2 class="title">数据异常核查业务流程</h2>
     <p>1、运监人员将需现场核查的逆变器相关信息的工单上报工作群，并通知核查人员。</p>
     <p>2、核查人员根据核查工单，应在规定时间内到现场核查处理。</p>
@@ -21,8 +21,8 @@
 
 </script>
 
-<style scoped>
-.verif-business-rocesses {
+<style lang="scss" scoped>
+.verify-business-processes {
   .title {
     text-align: center;
   }

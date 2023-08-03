@@ -2,21 +2,33 @@
 
 <template>
   <el-dialog  v-model="visible" title="工作单录入" :before-close="handleBeforeClose" class="inspection-checklist-form">
-    <el-form label-width="100" title="工作单">
+    <el-form v-model="checklistFrom" label-width="100" title="工作单">
       <el-form-item label="工作类型">
-        <el-input></el-input>
+        <el-select v-model="checklistFrom.workType" class="m-2" placeholder="请选择">
+          <el-option
+              v-for="item in workTypeOptions "
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label-width="100"  label="编号">
-        <el-input></el-input>
+      <el-form-item  label-width="100"  label="编号">
+        <el-input v-model="checklistFrom.number"></el-input>
       </el-form-item>
       <el-form-item label-width="100"  label="工作人">
-        <el-input></el-input>
+        <el-input v-model="checklistFrom.workerName"></el-input>
       </el-form-item>
       <el-form-item label-width="100"  label="发生时间">
-        <el-input></el-input>
+        <el-date-picker
+            v-model="checklistFrom.startTime"
+            type="date"
+            placeholder="请选择时间"
+        />
       </el-form-item>
       <el-form-item label-width="100"  label="内容描述">
         <el-input
+            v-model="checklistFrom.content"
             type="textarea"
             :autosize="{ minRows: 2, maxRows: 4 }"
         ></el-input>
@@ -24,6 +36,7 @@
 
       <el-form-item label-width="100"  label="现场情况">
         <el-input
+            v-model="checklistFrom.sceneSituation"
             type="textarea"
             :autosize="{ minRows: 2, maxRows: 4 }"
         ></el-input>
@@ -31,6 +44,7 @@
 
       <el-form-item label-width="100"  label="备注">
         <el-input
+            v-model="checklistFrom.remarks"
             type="textarea"
             :autosize="{ minRows: 2, maxRows: 4 }"
         ></el-input>
@@ -73,10 +87,22 @@
 
 <script setup lang="ts">
 
-import {computed, ref} from 'vue'
+import {computed, Ref, ref} from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 import type { UploadProps, UploadUserFile } from 'element-plus'
+
+
+interface InspectionChecklist {
+  workType?: string; // 工作类型
+  number?: string; //编号
+  startTime?: string; //发生时间
+  workerName?: string; // 工作人签字
+  content?: string; //内容描述
+  sceneSituation?: string; //现场情况
+  remarks?: string; // 备注
+  edit?: boolean; //编辑编辑状态
+}
 
 const prop = defineProps({
   dialogVisible:{
@@ -86,6 +112,32 @@ const prop = defineProps({
 })
 
 const emit = defineEmits(['close','submit'])
+
+const checklistFrom:Ref<InspectionChecklist> = ref({})
+
+// 工作类型选项
+const workTypeOptions = [
+  {
+    value: '0',
+    label: '请选择'
+  },
+  {
+    value: '1',
+    label: '选项1'
+  },
+  {
+    value: '2',
+    label: '选项2'
+  },
+  {
+    value: '3',
+    label: '选项3'
+  },
+  {
+    value: '4',
+    label: '选项4'
+  },
+]
 
 // dialog显示
 const visible = computed(()=>{
@@ -136,7 +188,7 @@ const beforeRemove: UploadProps['beforeRemove'] = (uploadFile, uploadFiles) => {
 
 // 提交数据
 const workListSubmit = ()=>{
-  emit('submit')
+  emit('submit',checklistFrom.value)
 }
 
 </script>

@@ -93,7 +93,7 @@
 
       </el-table>
 
-      <el-button type="primary" @click="addData">添加数据</el-button>
+      <el-button type="primary" @click="addData">添加工作单</el-button>
     </div>
     <InspectionChecklistForm @submit="handleConfirmAdd" @close="dialogClose" :dialogVisible="dialogVisible"></InspectionChecklistForm>
   </div>
@@ -165,23 +165,23 @@ const shortcuts = [
 // 工作类型选择
 const workTypeOptions = [
   {
-    value: '0',
+    value: '000',
     label: '请选择'
   },
   {
-    value: '1',
+    value: '001',
     label: '选项1'
   },
   {
-    value: '2',
+    value: '002',
     label: '选项2'
   },
   {
-    value: '3',
+    value: '003',
     label: '选项3'
   },
   {
-    value: '4',
+    value: '004',
     label: '选项4'
   },
 ]
@@ -214,8 +214,8 @@ const dialogClose = ()=>{
 }
 
 //确认添加
-const handleConfirmAdd = (data)=>{
-
+const handleConfirmAdd = (data:InspectionChecklist)=>{
+  tableData.value.push(data)
   // dialog隐藏
   dialogVisible.value = false;
 }
@@ -227,6 +227,7 @@ const handleDialogClose = ()=>{
 
 //确认添加
 const confirmAdd = (row: InspectionChecklist) => {
+
   //对数据进行计算
   row.edit = false;
 }
