@@ -3,7 +3,7 @@
     <el-container>
       <el-header height="30px">
         <div class="header-left">
-          <el-button link type="primary" @click="toLink('https://cn.fusionsolar.huawei.com/')">京东/富油/中站</el-button>
+          <el-button link type="primary" @click="toLink('https://cn.fusionsolar.huawei.com/')">京东/富油/中铁</el-button>
           <span> | </span>
           <el-button link type="primary" @click="toLink('https://www.ginlongcloud.com/#/station')">菲尔特</el-button>
           <span> | </span>
