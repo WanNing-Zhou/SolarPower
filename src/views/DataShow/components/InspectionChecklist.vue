@@ -8,7 +8,6 @@
 */
 <template>
   <div class="inspection-checklist">
-
     <el-container>
       <el-header class="checklist-filter-from" height="38px">
         <el-form

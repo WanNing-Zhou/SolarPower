@@ -30,8 +30,8 @@
       </el-header>
 
       <el-main>
-        <el-table  :data="tableData" size="small" border>
-          <el-table-column  prop="portName" width="120" label="站名"/>
+        <el-table :data="tableData" size="small" border>
+          <el-table-column prop="portName" width="120" label="站名"/>
           <el-table-column prop="date" label="年月" width="160">
             <template #default="scope">
               <el-date-picker
@@ -46,24 +46,27 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop=""  label="计量点名称">
+          <el-table-column prop="" label="计量点名称">
             <template #default="scope">
-              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.measurementPointName" placeholder="发电表总电量"></el-input>
+              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.measurementPointName"
+                        placeholder="发电表总电量"></el-input>
               <span v-else>{{ scope.row.measurementPointName }}</span>
             </template>
           </el-table-column>
 
           <!--      用户录入-->
-          <el-table-column prop="gatewayPower"  label="发电表总电量">
+          <el-table-column prop="gatewayPower" label="发电表总电量">
             <template #default="scope">
-              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.gatewayPower" placeholder="发电表总电量"></el-input>
+              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.gatewayPower"
+                        placeholder="发电表总电量"></el-input>
               <span v-else>{{ scope.row.gatewayPower }}</span>
             </template>
           </el-table-column>
           <!--用户输入-->
           <el-table-column prop="onlinePower" width="100" label="上网总电量">
             <template #default="scope">
-              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.onlinePower" placeholder="上网总电量"></el-input>
+              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.onlinePower"
+                        placeholder="上网总电量"></el-input>
               <span v-else>{{ scope.row.onlinePower }}</span>
             </template>
           </el-table-column>
@@ -71,7 +74,8 @@
           <!--用户输入-->
           <el-table-column prop="onlinePrice" width="100" label="上网电价">
             <template #default="scope">
-              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.onlinePrice" placeholder="上网电价"></el-input>
+              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.onlinePrice"
+                        placeholder="上网电价"></el-input>
               <span v-else>{{ scope.row.onlinePrice }}</span>
             </template>
           </el-table-column>
@@ -80,14 +84,15 @@
           <!--用户输入-->
           <el-table-column prop="selfUsePrice" width="100" label="自用电价">
             <template #default="scope">
-              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.selfUsePrice" placeholder="自用电价"></el-input>
+              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.selfUsePrice"
+                        placeholder="自用电价"></el-input>
               <span v-else>{{ scope.row.selfUsePrice }}</span>
             </template>
           </el-table-column>
 
           <el-table-column prop="currentImg" width="100" label="现场照片">
             <template #default="scope">
-<!--              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.onlinePrice" placeholder="上网电价"></el-input>-->
+              <!--              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.onlinePrice" placeholder="上网电价"></el-input>-->
               <!--              <span v-else>{{ scope.row.onlinePrice }}</span>-->
               <el-button v-if="scope.row.edit" size="small" type="primary" link>上传图片</el-button>
               <img :src="scope.row.currentImg">
@@ -95,15 +100,14 @@
           </el-table-column>
 
 
-
           <el-table-column prop="selfUsePower" width="60" label="自用电量">
 
           </el-table-column>
 
-          <el-table-column prop="onlineCharge" width="60"  label="上网电费">
+          <el-table-column prop="onlineCharge" width="60" label="上网电费">
           </el-table-column>
 
-          <el-table-column prop="selfUseCharge" width="60"  label="自用电费">
+          <el-table-column prop="selfUseCharge" width="60" label="自用电费">
 
           </el-table-column>
 
@@ -161,7 +165,7 @@ interface pscData {
   date?: number | string //日期
   edit?: boolean //是否是编辑状态
   portName?: string | null | any//站名
-  measurementPointName ?: string | null; // 计量点名称
+  measurementPointName?: string | null; // 计量点名称
   currentImg?: string | null // 现场照片
 
 }
@@ -207,6 +211,7 @@ const handleConfirm = () => {
 
 const testData: Array<pscData> = [
   {
+    portName: route.params.id,
     gatewayPower: 134,
     onlinePower: 13,
     selfUsePower: 4455,
@@ -215,6 +220,7 @@ const testData: Array<pscData> = [
     edit: false
   },
   {
+    portName: route.params.id,
     gatewayPower: 1344,
     onlinePower: 154,
     selfUsePower: 44455,
@@ -228,8 +234,16 @@ const tableData: Ref<Array<pscData>> = ref([{}])
 
 //添加
 const addData = () => {
+
+  const preData = tableData.value[tableData.value.length - 1]
+
   tableData.value.push({
+    portName: preData.portName,
+    date: preData.date,
+    onlinePrice: preData.onlinePrice, // 上网电价
+    selfUsePrice: preData.selfUsePrice, // 自用电价
     edit: true,
+    measurementPointName: preData.measurementPointName // 计量点名称
   });
   console.log('添加数据触发', tableData.value)
 
@@ -238,13 +252,13 @@ const addData = () => {
 // 对数据进行计算
 const computedData = (row: pscData) => {
   row.portName = route.params.id;
-  console.log('route',route)
+  console.log('route', route)
   row.date = convertDateFormat(<string>row.date)
-  console.log('row',row.gatewayPower, row.onlinePower)
-  console.log('row',row.onlinePower, row.onlineCharge)
+  console.log('row', row.gatewayPower, row.onlinePower)
+  console.log('row', row.onlinePower, row.onlineCharge)
   row.selfUsePower = row.gatewayPower - row.onlinePower; //自用电量 = 发电表总电量 - 上网电量
-  row.onlineCharge = row.onlinePower * row.onlinePrice; // 上网费用 = 上网电量 * 上网电价
-  row.selfUseCharge = row.selfUsePrice * row.onlinePower; // 自用电费 = 自用电量 * 上网电价
+  row.onlineCharge = (row.onlinePower * row.onlinePrice).toFixed(2); // 上网费用 = 上网电量 * 上网电价
+  row.selfUseCharge = (row.selfUsePrice * row.onlinePower).toFixed(2); // 自用电费 = 自用电量 * 上网电价
 }
 
 //确认添加
@@ -285,9 +299,11 @@ onMounted(() => {
     width: 100%;
     display: flex;
     justify-content: space-between;
+
     .el-form {
-      width: 120px!important;
+      width: 120px !important;
       display: flex;
+
       .el-form-item {
         display: flex;
         margin: 0 5px 0 5px;
