@@ -3,11 +3,14 @@
     <el-container>
       <el-header height="30px">
         <div class="header-left">
-          <el-button link type="primary" @click="toLink('https://cn.fusionsolar.huawei.com/')">陕西西安（京东/富油/中铁）</el-button>
+          <el-button link type="primary" @click="toLink('https://cn.fusionsolar.huawei.com/')">京东/富油/中站</el-button>
           <span> | </span>
-          <el-button link type="primary" @click="toLink('https://server-cn.growatt.com/login')">广东佛山（品柏/和旺/一厂/二厂）</el-button>
+          <el-button link type="primary" @click="toLink(' https://www.ginlongcloud.com/#/station')">菲尔特</el-button>
           <span> | </span>
-          <el-button link type="primary" @click="toLink('')">西安菲尔特</el-button>
+          <el-button link type="primary" @click="toLink('sems.com.cn')">三马架</el-button>
+          <span> | </span>
+          <el-button link type="primary" @click="toLink('https://server-cn.growatt.com/login')">品柏/和旺/一厂/二厂</el-button>
+
         </div>
 
 <!--        <div class="header-right">-->

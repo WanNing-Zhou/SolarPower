@@ -113,6 +113,7 @@ import {computed, Ref, ref} from "vue";
 import FilterForm from "@/views/DataShow/components/FilterForm.vue";
 import InspectionChecklistForm from "@/views/DataShow/components/InspectionChecklistForm.vue";
 import {getCurrentDate} from "@/utils/dateUtils.ts";
+import {formatNumber} from "@/utils/numberUtils.ts";
 
 interface InspectionChecklist {
   workType?: string; // 工作类型
@@ -211,7 +212,7 @@ const tableData: Ref<Array<InspectionChecklist>> = ref([]);
 const dialogVisible = ref(false)
 
 const addNum = computed(() => {
-  return getCurrentDate() + '-' + (tableData.value.length + 1);
+  return getCurrentDate() + '-' + formatNumber((tableData.value.length + 1),3);
 })
 //添加
 const addData = () => {
