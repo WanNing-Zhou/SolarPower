@@ -1,12 +1,11 @@
-
 /*  *
-  * @FileNAme src\views\DataShow\components\InspectionChecklist.vue
-  * @author 周万宁
-  * @create 2023/7/31-0:21
-  * @version
-  * @description
-  * @TODO: 编号需要自动生成
-  */
+* @FileNAme src\views\DataShow\components\InspectionChecklist.vue
+* @author 周万宁
+* @create 2023/7/31-0:21
+* @version
+* @description
+* @TODO: 编号需要自动生成
+*/
 <template>
   <div class="inspection-checklist">
 
@@ -27,26 +26,30 @@
               />
             </el-select>
           </el-form-item>
-            <el-form-item label="工作人:" prop="workerName">
-              <el-input v-model="conditions.workerName" placeholder="请输入" clearable/>
-            </el-form-item>
+          <el-form-item label="工作人:" prop="workerName">
+            <el-input v-model="conditions.workerName" placeholder="请输入" clearable/>
+          </el-form-item>
 
-            <el-form-item label="记录时间" prop="filterTime">
-              <el-date-picker
-                  class="data-picker"
-                  v-model="conditions.filterTime"
-                  type="daterange"
-                  start-placeholder="开始时间"
-                  end-placeholder="结束时间"
-                  :disabled-date="disabledDate"
-                  :shortcuts="shortcuts"
-                  range-separator="至"
-              />
+          <el-form-item label="记录时间" prop="filterTime">
+            <el-date-picker
+                class="data-picker"
+                v-model="conditions.filterTime"
+                type="daterange"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                :disabled-date="disabledDate"
+                :shortcuts="shortcuts"
+                range-separator="至"
+            />
 
-            </el-form-item>
-
+          </el-form-item>
+          <el-form-item label-width="0">
             <el-button type="primary" @click="handleConfirm">查询</el-button>
+          </el-form-item>
         </el-form>
+        <div class="btn-list">
+          <el-button @click="checkListPrint">打印</el-button>
+        </div>
       </el-header>
     </el-container>
 
@@ -95,7 +98,12 @@
 
       <el-button type="primary" @click="addData">添加工作单</el-button>
     </div>
-    <InspectionChecklistForm :addNumber="addNum" @submit="handleConfirmAdd" @close="dialogClose" :dialogVisible="dialogVisible"></InspectionChecklistForm>
+    <InspectionChecklistForm :addNumber="addNum" @submit="handleConfirmAdd" @close="dialogClose"
+                             :dialogVisible="dialogVisible"></InspectionChecklistForm>
+
+    <el-dialog v-model="chekListImgVisilbe">
+      <img src="/static/imgs/checkList.jpg">
+    </el-dialog>
   </div>
 </template>
 
@@ -203,30 +211,30 @@ const tableData: Ref<Array<InspectionChecklist>> = ref([]);
 // dialog显示
 const dialogVisible = ref(false)
 
-const addNum = computed(()=>{
-  return  getCurrentDate() + '-' + (tableData.value.length +1);
+const addNum = computed(() => {
+  return getCurrentDate() + '-' + (tableData.value.length + 1);
 })
 //添加
 const addData = () => {
   // dialog显示
-  dialogVisible.value=true;
+  dialogVisible.value = true;
 }
 
 // dialog关闭
-const dialogClose = ()=>{
+const dialogClose = () => {
   dialogVisible.value = false;
 }
 
 //确认添加
-const handleConfirmAdd = (data:InspectionChecklist)=>{
+const handleConfirmAdd = (data: InspectionChecklist) => {
   tableData.value.push(data)
   // dialog隐藏
   dialogVisible.value = false;
 }
 
 // dialog关闭
-const handleDialogClose = ()=>{
-  dialogVisible.value =false;
+const handleDialogClose = () => {
+  dialogVisible.value = false;
 }
 
 //确认添加
@@ -251,6 +259,13 @@ const deleteData = (row: InspectionChecklist, index: number) => {
 //提交数据
 const submitData = () => {
   alert(JSON.stringify(tableData.value))
+}
+
+// 打印功能
+const chekListImgVisilbe = ref(false);
+
+const checkListPrint  = ()=>{
+  chekListImgVisilbe.value = true;
 }
 
 

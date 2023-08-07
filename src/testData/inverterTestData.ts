@@ -1,4 +1,21 @@
-export const inverterTestData = [
+interface InverterData {
+    designName?: string//设备名称
+    dedignId?: string//设备ID
+    totalStringCapacity?: number //组串总容量
+    powerGeneration?: number //发电量
+    accumulatedPowerGeneration?: number,//累计发电量
+    equivalentPowerGenerationTime?: number//等价发电时
+    peakACPower?: number//峰值交流功率
+    gridConnectionDuration?: number// 并网时长
+    powerRationingLoss?: number// 限电损失量
+    averageAbsoluteDeviation?: number|string//平均发电误差
+    averageGenPower?: number//平均发电量
+    singleGenPower?: number//标转单板日电量
+    measurementPointName ?: string //计量点名称
+    portName?: string //电站名称
+}
+
+export const inverterTestData:Array<InverterData> = [
     {
         designName: 'Z-1',
         dedignId: 'Z-1',

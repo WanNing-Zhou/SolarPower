@@ -1,7 +1,7 @@
 <template>
   <div class="inverter-data-table">
     <el-table :data="tableData" height="500px"  border>
-      <el-table-column prop="measurementPointName" label="电站名称" sortable width="180"/>
+      <el-table-column prop="portName" label="电站名称" sortable width="180"/>
       <el-table-column prop="designName" label="设备名称" sortable width="180"/>
       <el-table-column prop="totalStringCapacity" label="组串总容量(kWp)" sortable width="180"/>
       <el-table-column prop="powerGeneration" label="发电量(度)" sortable width="180"/>
@@ -45,6 +45,10 @@
 import {computed, onMounted, reactive, ref} from "vue";
 import {inverterTestData} from "@/testData/inverterTestData.ts"
 import {Table} from "element-plus";
+import {useRoute} from "vue-router";
+
+const route = useRoute();
+
 
 /*const tableData =reactive([
     {
@@ -61,6 +65,7 @@ import {Table} from "element-plus";
             averageGenPower: ''. //平均发电量
       singleGenPower: '', //标转单板日电量
       measurementPointName: '', //计量点名称
+      portName:''. //电站名称
     },
 ])*/
 
@@ -79,7 +84,7 @@ const paginationState = reactive(
     }
 )
 
-
+// 设置页面显示数据
 const setTableData = () => {
   const {currentPage, pageSize} = paginationState
   tableData.value = inverterTestData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
@@ -88,8 +93,10 @@ const setTableData = () => {
 // 获取数据
 const getInverterData = () => {
   // tableData.value = inverterTestData;
+
   inverterTestData.forEach(item => {
     item.averageAbsoluteDeviation = (((1.0 * (item.powerGeneration / evePowerGen.value) - 1) * 100).toFixed(2))
+    item.portName = route.params.id;
   })
   console.log(inverterTestData)
   paginationState.total = inverterTestData.length
@@ -100,8 +107,8 @@ const getInverterData = () => {
 const handleSizeChange = (val) => {
   console.log('size', val)
   setTableData();
-
 }
+
 // 当前页变化时触发
 const handleCurrentChange = (page) => {
   // console.log('page', page)
@@ -129,6 +136,7 @@ const computedDis = (powerGen) => {
   console.log('powerGen', evePowerGen.value)
   return ((1.0 * (powerGen / evePowerGen.value) - 1) * 100).toFixed(2)
 }
+
 
 
 onMounted(() => {
