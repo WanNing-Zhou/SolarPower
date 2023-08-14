@@ -13,3 +13,13 @@ export interface DailyReportPhotovoltaicPowerPlantA{
     feierte ?: SalaryPortData | null
     edit ?: boolean | null
 }
+
+
+export interface DailyReportPhotovoltaicPowerPlantB{
+    date ?:Date | string | number | null //日期
+    baozhuang ?: SalaryPortData | null
+    keji  ?: SalaryPortData | null
+    yichang ?: SalaryPortData | null
+    erchang ?: SalaryPortData | null
+    edit ?: boolean | null
+}
