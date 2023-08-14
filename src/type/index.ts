@@ -23,3 +23,20 @@ export interface DailyReportPhotovoltaicPowerPlantB{
     erchang ?: SalaryPortData | null
     edit ?: boolean | null
 }
+
+export interface SalaryPortYearData {
+    capacity ?: string | number | null //容量
+    powerGeneration ?: string | number | null //发电量
+}
+export interface AnnualSummaryPhotovoltaicPowerStations{
+    date ?:Date | string | number | null //日期
+    jingdong ?: SalaryPortYearData | null
+    zhongtie ?: SalaryPortYearData | null
+    fuyou ?: SalaryPortYearData | null
+    feierte ?: SalaryPortYearData | null
+    baozhuang ?: SalaryPortYearData | null
+    keji  ?: SalaryPortYearData | null
+    yichang ?: SalaryPortYearData | null
+    erchang ?: SalaryPortData | null
+    edit ?: boolean | null
+}
