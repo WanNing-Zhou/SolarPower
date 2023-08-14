@@ -10,7 +10,11 @@
   <div class="daily-report-photovoltaic-power-plant">
     <el-container>
       <el-header>
-
+        <el-date-picker
+            v-model="tableMonth"
+            type="month"
+            placeholder="选择月份"
+        />
       </el-header>
       <el-main>
         <el-table :data="tableData">
@@ -43,21 +47,66 @@
             </el-table-column>
           </el-table-column>
           <el-table-column label="中铁">
-            <el-table-column prop="name" label="当天运行情况" width="120"/>
-            <el-table-column prop="name" label="日发电量Mwh" width="120"/>
-            <el-table-column prop="name" label="利用小时h" width="120"/>
+            <el-table-column prop="name" label="当天运行情况" width="120">
+              <template #default="scope">
+                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.measurementPointName"></el-input>
+                <span v-else>{{ scope.row.measurementPointName }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="name" label="日发电量Mwh" width="120">
+              <template #default="scope">
+                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.measurementPointName"></el-input>
+                <span v-else>{{ scope.row.measurementPointName }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="name" label="利用小时h" width="120">
+              <template #default="scope">
+                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.measurementPointName"></el-input>
+                <span v-else>{{ scope.row.measurementPointName }}</span>
+              </template>
+            </el-table-column>
           </el-table-column>
           <el-table-column label="富油">
-            <el-table-column prop="name" label="当天运行情况" width="120"/>
-            <el-table-column prop="name" label="日发电量Mwh" width="120"/>
-            <el-table-column prop="name" label="利用小时h" width="120"/>
+            <el-table-column prop="name" label="当天运行情况" width="120">
+              <template #default="scope">
+                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.measurementPointName"></el-input>
+                <span v-else>{{ scope.row.measurementPointName }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="name" label="日发电量Mwh" width="120">
+              <template #default="scope">
+                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.measurementPointName"></el-input>
+                <span v-else>{{ scope.row.measurementPointName }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="name" label="利用小时h" width="120">
+              <template #default="scope">
+                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.measurementPointName"></el-input>
+                <span v-else>{{ scope.row.measurementPointName }}</span>
+              </template>
+            </el-table-column>
           </el-table-column>
           <el-table-column label="菲尔特">
-            <el-table-column prop="name" label="当天运行情况" width="120"/>
-            <el-table-column prop="name" label="日发电量Mwh" width="120"/>
-            <el-table-column prop="name" label="利用小时h" width="120"/>
+            <el-table-column prop="name" label="当天运行情况" width="120">
+              <template #default="scope">
+                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.measurementPointName"></el-input>
+                <span v-else>{{ scope.row.measurementPointName }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="name" label="日发电量Mwh" width="120">
+              <template #default="scope">
+                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.measurementPointName"></el-input>
+                <span v-else>{{ scope.row.measurementPointName }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="name" label="利用小时h" width="120">
+              <template #default="scope">
+                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.measurementPointName"></el-input>
+                <span v-else>{{ scope.row.measurementPointName }}</span>
+              </template>
+            </el-table-column>
           </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column label="操作" fixed="right" width="150">
             <template #default="scope">
               <el-button v-if="scope.row.edit" type="primary" size="small" @click="confirmAdd(scope.row)">
                 <el-icon :size="20">
@@ -81,17 +130,17 @@
         </el-table>
       </el-main>
     </el-container>
-
-
   </div>
 </template>
 
 <script setup lang="ts">
 
-import {ref} from "vue";
+import {Ref, ref} from "vue";
 import {Checked} from "@element-plus/icons-vue";
-
-const tableData = ref([])
+// 表格数据
+const tableData = ref([{}])
+// 表格月份
+const tableMonth: Ref<Date> = ref(new Date())
 
 
 //确认添加
