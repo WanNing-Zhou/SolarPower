@@ -34,7 +34,8 @@
               <PowerStationSystem :imgUrls="imgUrls"></PowerStationSystem>
           </el-tab-pane>
           <el-tab-pane label="光伏电站年汇总表" name="six">
-            <AnnualSummaryPhotovoltaicPowerStations></AnnualSummaryPhotovoltaicPowerStations>
+<!--            <AnnualSummaryPhotovoltaicPowerStations></AnnualSummaryPhotovoltaicPowerStations>-->
+          <AnnualSummaryPhotovoltaicPowerStations1></AnnualSummaryPhotovoltaicPowerStations1>
           </el-tab-pane>
           <el-tab-pane label="光伏电站日报表A">
             <DailyReportPhotovoltaicPowerPlant></DailyReportPhotovoltaicPowerPlant>
@@ -60,6 +61,8 @@ import DailyReportPhotovoltaicPowerPlant from "@/views/DataShow/components/Daily
 import AnnualSummaryPhotovoltaicPowerStations
   from "@/views/DataShow/components/AnnualSummaryPhotovoltaicPowerStations.vue";
 import DailyReportPhotovoltaicPowerPlantB from "@/views/DataShow/components/DailyReportPhotovoltaicPowerPlantB.vue";
+import AnnualSummaryPhotovoltaicPowerStations1
+  from "@/views/DataShow/components/AnnualSummaryPhotovoltaicPowerStations1.vue";
 
 const activeName = ref('second')
 

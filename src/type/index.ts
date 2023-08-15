@@ -40,3 +40,11 @@ export interface AnnualSummaryPhotovoltaicPowerStations{
     erchang ?: SalaryPortData | null
     edit ?: boolean | null
 }
+
+
+export interface PortData {
+    name ?: string // 电站名称
+    index ?: number //序号
+    capacity ?: number[] // 容量
+    powerGeneration ?: number[] //发电量
+}

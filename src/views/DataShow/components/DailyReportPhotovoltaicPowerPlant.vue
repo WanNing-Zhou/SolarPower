@@ -17,7 +17,7 @@
         />
       </el-header>
       <el-main>
-        <el-table :data="tableData">
+        <el-table :header-cell-style="{'text-align':'center'}" :data="tableData">
           <!--  日期     -->
           <el-table-column prop="date" label="日期" width="150">
             <template #default="scope">
