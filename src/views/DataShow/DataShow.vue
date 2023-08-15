@@ -40,7 +40,7 @@
             <DailyReportPhotovoltaicPowerPlant></DailyReportPhotovoltaicPowerPlant>
           </el-tab-pane>
           <el-tab-pane label="光伏电站日报表B">
-            <DailyReportPhotovoltaicPowerPlant></DailyReportPhotovoltaicPowerPlant>
+            <DailyReportPhotovoltaicPowerPlantB></DailyReportPhotovoltaicPowerPlantB>
           </el-tab-pane>
         </el-tabs>
       </el-main>
@@ -59,6 +59,7 @@ import {imgUrls} from "@/testData/imgUrls.ts";
 import DailyReportPhotovoltaicPowerPlant from "@/views/DataShow/components/DailyReportPhotovoltaicPowerPlant.vue";
 import AnnualSummaryPhotovoltaicPowerStations
   from "@/views/DataShow/components/AnnualSummaryPhotovoltaicPowerStations.vue";
+import DailyReportPhotovoltaicPowerPlantB from "@/views/DataShow/components/DailyReportPhotovoltaicPowerPlantB.vue";
 
 const activeName = ref('second')
 
