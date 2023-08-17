@@ -5,12 +5,14 @@
  * @Date 23:27 2023/7/31
  **/
 
-export function convertDateFormat(dateString :string) {
+export function convertDateFormat(dateString :string, hasDate:boolean=false) {
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
-
+    const day = date.getDate();
+    if(hasDate) return `${year}-${month}-${day}`
     return `${year}-${month}`;
+
 }
 
 

@@ -19,4 +19,36 @@ export const protYearData: Array<PortData> = [
         capacity: [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3],
         powerGeneration: [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3]
     },
+    {
+        index: 4,
+        name: '和旺包装',
+        capacity: [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3],
+        powerGeneration: [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3]
+    },
+    {
+        index: 4,
+        name: '品柏科技',
+        capacity: [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3],
+        powerGeneration: [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3]
+    },
+
+    {
+        index: 4,
+        name: '中旗一厂',
+        capacity: [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3],
+        powerGeneration: [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3]
+    },
+
+    {
+        index: 4,
+        name: '中旗二厂',
+        capacity: [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3],
+        powerGeneration: [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3]
+    },
+    {
+        index: 4,
+        name: '西安菲尔特',
+        capacity: [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3],
+        powerGeneration: [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3]
+    },
 ]

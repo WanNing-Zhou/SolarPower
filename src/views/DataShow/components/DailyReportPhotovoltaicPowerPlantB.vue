@@ -22,92 +22,92 @@
           <el-table-column prop="date" label="日期" width="150">
             <template #default="scope">
               <el-input size="small" v-if="scope.row.edit" v-model="scope.row.date"></el-input>
-              <span v-else>{{ scope.row.date }}</span>
+              <span v-else>{{ convertDateFormat(scope.row.date,true) }}</span>
             </template>
           </el-table-column>
           <!--  京东    -->
           <el-table-column label="包装">
-            <el-table-column prop="jingdong.dailyOperationStatus" label="当天运行情况" width="120">
+            <el-table-column prop="baozhuang.dailyOperationStatus" label="当天运行情况" width="120">
               <template #default="scope">
                 <el-input size="small" v-if="scope.row.edit"
-                          v-model="scope.row.jingdong.dailyOperationStatus"></el-input>
-                <span v-else>{{ scope.row.jingdong.dailyOperationStatus }}</span>
+                          v-model="scope.row.baozhuang.dailyOperationStatus"></el-input>
+                <span v-else>{{ scope.row.baozhuang.dailyOperationStatus }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="jingdong.dailyPowerGeneration" label="日发电量Mwh" width="120">
+            <el-table-column prop="baozhuang.dailyPowerGeneration" label="日发电量Mwh" width="120">
               <template #default="scope">
                 <el-input size="small" v-if="scope.row.edit"
-                          v-model="scope.row.jingdong.dailyPowerGeneration"></el-input>
-                <span v-else>{{ scope.row.jingdong.dailyPowerGeneration }}</span>
+                          v-model="scope.row.baozhuang.dailyPowerGeneration"></el-input>
+                <span v-else>{{ scope.row.baozhuang.dailyPowerGeneration }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="jingdong.usageTime" label="利用小时h" width="120">
+            <el-table-column prop="baozhuang.usageTime" label="利用小时h" width="120">
               <template #default="scope">
-                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.jingdong.usageTime"></el-input>
-                <span v-else>{{ scope.row.jingdong.usageTime }}</span>
+                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.baozhuang.usageTime"></el-input>
+                <span v-else>{{ scope.row.baozhuang.usageTime }}</span>
               </template>
             </el-table-column>
           </el-table-column>
           <el-table-column label="科技">
-            <el-table-column prop="zhongtie.dailyOperationStatus" label="当天运行情况" width="120">
+            <el-table-column prop="keji.dailyOperationStatus" label="当天运行情况" width="120">
               <template #default="scope">
                 <el-input size="small" v-if="scope.row.edit"
-                          v-model="scope.row.zhongtie.dailyOperationStatus"></el-input>
-                <span v-else>{{ scope.row.zhongtie.dailyOperationStatus }}</span>
+                          v-model="scope.row.keji.dailyOperationStatus"></el-input>
+                <span v-else>{{ scope.row.keji.dailyOperationStatus }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="zhongtie.dailyPowerGeneration" label="日发电量Mwh" width="120">
+            <el-table-column prop="keji.dailyPowerGeneration" label="日发电量Mwh" width="120">
               <template #default="scope">
                 <el-input size="small" v-if="scope.row.edit"
-                          v-model="scope.row.zhongtie.dailyPowerGeneration"></el-input>
-                <span v-else>{{ scope.row.zhongtie.dailyPowerGeneration }}</span>
+                          v-model="scope.row.keji.dailyPowerGeneration"></el-input>
+                <span v-else>{{ scope.row.keji.dailyPowerGeneration }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="zhongtie.usageTime" label="利用小时h" width="120">
+            <el-table-column prop="keji.usageTime" label="利用小时h" width="120">
               <template #default="scope">
-                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.zhongtie.usageTime"></el-input>
-                <span v-else>{{ scope.row.zhongtie.usageTime }}</span>
+                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.keji.usageTime"></el-input>
+                <span v-else>{{ scope.row.keji.usageTime }}</span>
               </template>
             </el-table-column>
           </el-table-column>
           <el-table-column label="一厂">
-            <el-table-column prop="fuyou.dailyOperationStatus" label="当天运行情况" width="120">
+            <el-table-column prop="yichang.dailyOperationStatus" label="当天运行情况" width="120">
               <template #default="scope">
-                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.fuyou.dailyOperationStatus"></el-input>
-                <span v-else>{{ scope.row.fuyou.dailyOperationStatus }}</span>
+                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.yichang.dailyOperationStatus"></el-input>
+                <span v-else>{{ scope.row.yichang.dailyOperationStatus }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="fuyou.dailyPowerGeneration" label="日发电量Mwh" width="120">
+            <el-table-column prop="yichang.dailyPowerGeneration" label="日发电量Mwh" width="120">
               <template #default="scope">
-                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.fuyou.dailyPowerGeneration"></el-input>
-                <span v-else>{{ scope.row.fuyou.dailyPowerGeneration }}</span>
+                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.yichang.dailyPowerGeneration"></el-input>
+                <span v-else>{{ scope.row.yichang.dailyPowerGeneration }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="fuyou.usageTime" label="利用小时h" width="120">
+            <el-table-column prop="yichang.usageTime" label="利用小时h" width="120">
               <template #default="scope">
-                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.measurementPointName"></el-input>
-                <span v-else>{{ scope.row.measurementPointName }}</span>
+                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.usageTime"></el-input>
+                <span v-else>{{ scope.row.yichang.usageTime }}</span>
               </template>
             </el-table-column>
           </el-table-column>
           <el-table-column label="二厂">
             <el-table-column prop="name" label="当天运行情况" width="120">
               <template #default="scope">
-                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.fuyou.usageTime"></el-input>
-                <span v-else>{{ scope.row.fuyou.usageTime }}</span>
+                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.erchang.usageTime"></el-input>
+                <span v-else>{{ scope.row.erchang.usageTime }}</span>
               </template>
             </el-table-column>
             <el-table-column prop="feierte.dailyOperationStatus" label="日发电量Mwh" width="120">
               <template #default="scope">
                 <el-input size="small" v-if="scope.row.edit"
-                          v-model="scope.row.feierte.dailyOperationStatus"></el-input>
-                <span v-else>{{ scope.row.feierte.dailyOperationStatus }}</span>
+                          v-model="scope.row.erchang.dailyOperationStatus"></el-input>
+                <span v-else>{{ scope.row.erchang.dailyOperationStatus }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="feierte.usageTime" label="利用小时h" width="120">
+            <el-table-column prop="erchang.usageTime" label="利用小时h" width="120">
               <template #default="scope">
-                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.feierte.usageTime"></el-input>
-                <span v-else>{{ scope.row.feierte.usageTime }}</span>
+                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.erchang.usageTime"></el-input>
+                <span v-else>{{ scope.row.erchang.usageTime }}</span>
               </template>
             </el-table-column>
           </el-table-column>
@@ -142,9 +142,11 @@
 
 <script setup lang="ts">
 
-import {Ref, ref} from "vue";
+import {onMounted, Ref, ref} from "vue";
 import {Checked} from "@element-plus/icons-vue";
 import {DailyReportPhotovoltaicPowerPlantB, SalaryPortData} from "@/type";
+import {summaryBData} from "@/testData/SummaryB.ts";
+import {convertDateFormat} from "@/utils/dateUtils.ts";
 // 表格数据
 const tableData: Ref<Array<DailyReportPhotovoltaicPowerPlantB>> = ref([])
 
@@ -189,6 +191,9 @@ const deleteData = (row: DailyReportPhotovoltaicPowerPlantB, index: number) => {
   tableData.value.splice(index, 1);
 }
 
+onMounted(()=>{
+  tableData.value = summaryBData
+})
 
 </script>
 

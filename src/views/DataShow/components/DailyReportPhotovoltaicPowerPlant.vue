@@ -22,7 +22,7 @@
           <el-table-column prop="date" label="日期" width="150">
             <template #default="scope">
               <el-input size="small" v-if="scope.row.edit" v-model="scope.row.date"></el-input>
-              <span v-else>{{ scope.row.date }}</span>
+              <span v-else>{{convertDateFormat(scope.row.date,true) }}</span>
             </template>
           </el-table-column>
           <!--  京东    -->
@@ -142,9 +142,11 @@
 
 <script setup lang="ts">
 
-import {Ref, ref} from "vue";
+import {onMounted, Ref, ref} from "vue";
 import {Checked} from "@element-plus/icons-vue";
 import {DailyReportPhotovoltaicPowerPlantA} from "@/type";
+import {summaryDataA} from "@/testData/SummaryA.ts";
+import {convertDateFormat} from "@/utils/dateUtils.ts";
 // 表格数据
 const tableData: Ref<Array<DailyReportPhotovoltaicPowerPlantA>> = ref([])
 
@@ -189,6 +191,9 @@ const deleteData = (row: DailyReportPhotovoltaicPowerPlantA, index: number) => {
   tableData.value.splice(index, 1);
 }
 
+onMounted(()=>{
+  tableData.value = summaryDataA
+})
 
 </script>
 
