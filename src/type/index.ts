@@ -6,7 +6,7 @@ export interface SalaryPortData {
 }
 
 export interface DailyReportPhotovoltaicPowerPlantA{
-    date ?:Date | null //日期
+    date ?:Date |string //日期
     jingdong ?: SalaryPortData | null
     zhongtie ?: SalaryPortData | null
     fuyou ?: SalaryPortData | null

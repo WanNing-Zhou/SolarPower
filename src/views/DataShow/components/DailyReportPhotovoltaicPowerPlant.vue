@@ -156,12 +156,14 @@ const tableMonth: Ref<Date> = ref(new Date())
 // 添加数据
 const addData = () => {
 
+  let length = tableData.value.length + 1
   tableData.value.push({
     edit: true,
     jingdong: {},
     zhongtie: {},
     fuyou: {},
-    feierte: {}
+    feierte: {},
+    date: convertDateFormat(tableMonth.value) + '-' + (length > 9 ? length : `0${length}`)
   });
   console.log('添加数据触发', tableData.value)
 
@@ -169,6 +171,7 @@ const addData = () => {
 
 //确认添加
 const handleConfirmAdd = (data: DailyReportPhotovoltaicPowerPlantA) => {
+  data.date = new Date(new String(data.date))
   tableData.value.push(data)
 }
 
