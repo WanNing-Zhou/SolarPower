@@ -43,6 +43,9 @@
           <el-tab-pane label="光伏电站日报表B">
             <DailyReportPhotovoltaicPowerPlantB></DailyReportPhotovoltaicPowerPlantB>
           </el-tab-pane>
+          <el-tab-pane label="电站损失电量统计">
+            <StatisticsElectricityLoss></StatisticsElectricityLoss>
+          </el-tab-pane>
         </el-tabs>
       </el-main>
     </el-container>
@@ -63,6 +66,8 @@ import AnnualSummaryPhotovoltaicPowerStations
 import DailyReportPhotovoltaicPowerPlantB from "@/views/DataShow/components/DailyReportPhotovoltaicPowerPlantB.vue";
 import AnnualSummaryPhotovoltaicPowerStations1
   from "@/views/DataShow/components/AnnualSummaryPhotovoltaicPowerStations1.vue";
+import StatisticsElectricityLoss
+  from "@/views/DataShow/components/statisticsElectricityLoss/statisticsElectricityLoss.vue";
 
 const activeName = ref('second')
 

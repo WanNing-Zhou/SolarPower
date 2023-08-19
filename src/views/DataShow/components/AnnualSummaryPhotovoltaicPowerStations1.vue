@@ -12,9 +12,9 @@
         <table>
           <tr>
             <th>序号</th>
-            <th colspan="2">名称</th>
+            <th colspan="3">名称</th>
             <template v-for="item in 12">
-              <th>{{item + 1}}月</th>
+              <th>{{item }}月</th>
             </template>
             <th>总量</th>
             <th>备注</th>
@@ -24,6 +24,11 @@
             <TotalTableItem :portData="item"></TotalTableItem>
           </template>
         </table>
+        <section>
+          <div>总发电时长: </div>
+          <div>总容量:</div>
+          <div>总发电量:</div>
+        </section>
 
       </el-main>
     </el-container>

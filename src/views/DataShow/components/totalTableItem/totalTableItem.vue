@@ -4,18 +4,21 @@
     <td rowspan="2">{{portData.index}}</td>
     <th rowspan="2">{{portData.name}}</th>
     <th>容量</th>
-    <template v-for="item in portData?.capacity">
-      <td>{{item}}</td>
-    </template>
-    <td>{{sumCapacity}}</td>
-    <td rowspan="2">这是备注</td>
-  </tr>
-  <tr>
     <th>发电量</th>
     <template v-for="item in portData?.powerGeneration">
       <td>{{item}}</td>
     </template>
     <td>{{sumPowerGeneration}}</td>
+    <td rowspan="2">这是备注</td>
+  </tr>
+
+  <tr>
+    <td>{{portData.capacity}}</td>
+    <th>利用小时</th>
+    <template v-for="item in portData?.usageDuration">
+      <td>{{item}}</td>
+    </template>
+    <td>{{sumUsageDuration}}</td>
   </tr>
 </template>
 
@@ -31,9 +34,9 @@ const porps = defineProps({
 })
 
 // 总容量
-const sumCapacity = computed(()=>{
+const sumUsageDuration = computed(()=>{
   let sum  = 0;
-  porps.portData?.capacity?.forEach(item=>sum+=item)
+  porps.portData?.usageDuration?.forEach(item=>sum+=item)
   return sum;
 })
 // 总发电量
