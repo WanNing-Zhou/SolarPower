@@ -23,6 +23,11 @@ export const summaryBData: Array<DailyReportPhotovoltaicPowerPlantB> = [
             dailyPowerGeneration: 7,
             usageTime: 8,
         },
+        sanmajia: {
+            dailyOperationStatus: '正常',
+            dailyPowerGeneration: 7,
+            usageTime: 8,
+        },
     },
     {
         date: new Date("2023-08-02"),
@@ -42,6 +47,11 @@ export const summaryBData: Array<DailyReportPhotovoltaicPowerPlantB> = [
             usageTime: 6,
         },
         erchang: {
+            dailyOperationStatus: '正常',
+            dailyPowerGeneration: 7,
+            usageTime: 8,
+        },
+        sanmajia: {
             dailyOperationStatus: '正常',
             dailyPowerGeneration: 7,
             usageTime: 8,
@@ -69,6 +79,11 @@ export const summaryBData: Array<DailyReportPhotovoltaicPowerPlantB> = [
             dailyPowerGeneration: 7,
             usageTime: 8,
         },
+        sanmajia: {
+            dailyOperationStatus: '正常',
+            dailyPowerGeneration: 7,
+            usageTime: 8,
+        },
     },
     {
         date: new Date("2023-08-04"),
@@ -92,6 +107,11 @@ export const summaryBData: Array<DailyReportPhotovoltaicPowerPlantB> = [
             dailyPowerGeneration: 7,
             usageTime: 8,
         },
+        sanmajia: {
+            dailyOperationStatus: '正常',
+            dailyPowerGeneration: 7,
+            usageTime: 8,
+        },
     },
     {
         date: new Date("2023-08-05"),
@@ -111,6 +131,11 @@ export const summaryBData: Array<DailyReportPhotovoltaicPowerPlantB> = [
             usageTime: 6,
         },
         erchang: {
+            dailyOperationStatus: '正常',
+            dailyPowerGeneration: 7,
+            usageTime: 8,
+        },
+        sanmajia: {
             dailyOperationStatus: '正常',
             dailyPowerGeneration: 7,
             usageTime: 8,
