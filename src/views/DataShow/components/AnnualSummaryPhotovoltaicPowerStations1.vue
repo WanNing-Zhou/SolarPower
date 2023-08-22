@@ -23,8 +23,8 @@
           <template v-for="item in protYearData">
             <TotalTableItem :portData="item"></TotalTableItem>
           </template>
-          <tr>
-            <!--    <th rowspan="2" colspan="2">单元格 1</th>-->
+<!--          <tr>
+            &lt;!&ndash;    <th rowspan="2" colspan="2">单元格 1</th>&ndash;&gt;
             <td rowspan="2"></td>
             <th rowspan="2">合计</th>
             <th>总容量</th>
@@ -43,7 +43,7 @@
               <td>{{ item }}</td>
             </template>
             <td>{{ sumTotalUsageDuration }}</td>
-          </tr>
+          </tr>-->
         </table>
 
       </el-main>

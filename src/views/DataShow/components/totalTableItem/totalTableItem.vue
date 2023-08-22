@@ -3,8 +3,8 @@
 <!--    <th rowspan="2" colspan="2">单元格 1</th>-->
     <td rowspan="2">{{portData.index}}</td>
     <th rowspan="2">{{portData.name}}</th>
-    <th>容量</th>
-    <th>发电量</th>
+    <th>容量Mwh</th>
+    <th>发电量{{portData.unit ? portData.unit : '万kwh'}}</th>
     <template v-for="item in portData?.powerGeneration">
       <td>{{item}}</td>
     </template>
@@ -14,7 +14,7 @@
 
   <tr>
     <td>{{portData.capacity}}</td>
-    <th>利用小时</th>
+    <th>利用小时h</th>
     <template v-for="item in portData?.usageDuration">
       <td>{{item}}</td>
     </template>

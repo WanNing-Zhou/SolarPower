@@ -33,8 +33,14 @@
           <el-tab-pane label="电站系统图" name="five">
               <PowerStationSystem :imgUrls="imgUrls"></PowerStationSystem>
           </el-tab-pane>
-          <el-tab-pane label="光伏电站年汇总表" name="six">
-<!--            <AnnualSummaryPhotovoltaicPowerStations></AnnualSummaryPhotovoltaicPowerStations>-->
+
+          <el-tab-pane label="电站报表" name="portTable">
+            <PowerStationReport></PowerStationReport>
+          </el-tab-pane>
+
+
+<!--          <el-tab-pane label="光伏电站年汇总表" name="six">
+&lt;!&ndash;            <AnnualSummaryPhotovoltaicPowerStations></AnnualSummaryPhotovoltaicPowerStations>&ndash;&gt;
           <AnnualSummaryPhotovoltaicPowerStations1></AnnualSummaryPhotovoltaicPowerStations1>
           </el-tab-pane>
           <el-tab-pane label="光伏电站日报表A">
@@ -45,7 +51,7 @@
           </el-tab-pane>
           <el-tab-pane label="电站损失电量统计">
             <StatisticsElectricityLoss></StatisticsElectricityLoss>
-          </el-tab-pane>
+          </el-tab-pane>-->
         </el-tabs>
       </el-main>
     </el-container>
@@ -68,6 +74,7 @@ import AnnualSummaryPhotovoltaicPowerStations1
   from "@/views/DataShow/components/AnnualSummaryPhotovoltaicPowerStations1.vue";
 import StatisticsElectricityLoss
   from "@/views/DataShow/components/statisticsElectricityLoss/statisticsElectricityLoss.vue";
+import PowerStationReport from "@/views/DataShow/components/powerStationReport/powerStationReport.vue";
 
 const activeName = ref('second')
 

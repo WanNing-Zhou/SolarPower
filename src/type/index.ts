@@ -49,6 +49,7 @@ export interface PortData {
     capacity?: number //容量
     usageDuration?: number[] // 使用时长
     powerGeneration?: number[] //发电量
+    unit? : string  // 单位
 }
 
 
