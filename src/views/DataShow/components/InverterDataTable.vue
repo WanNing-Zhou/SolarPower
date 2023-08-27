@@ -1,30 +1,49 @@
-<template>
+<template xmlns="http://www.w3.org/1999/html">
   <div class="inverter-data-table">
-    <el-table :data="tableData" height="500px"  border>
+    <el-table :data="tableData" height="500px" border>
       <el-table-column prop="portName" label="电站名称" sortable width="180"/>
       <el-table-column prop="designName" label="设备名称" sortable width="180"/>
       <el-table-column prop="totalStringCapacity" label="组串总容量(kWp)" sortable width="180"/>
-      <el-table-column prop="powerGeneration" label="发电量(度)" sortable width="180"/>
-      <el-table-column prop="averageGenPower" label="平均发电量" sortable width="180"/>
+      <el-table-column prop="powerGeneration" label="实际发电量(度)" sortable width="180"/>
+
+      <el-table-column prop="standardPowerGeneration" label="标准容量发电量(度/kWp)" sortable width="180"/>
+      <el-table-column prop="calculatePowerGeneration" label="计算发电量(度)" sortable width="180"/>
+
+      <!--      <el-table-column prop="averageGenPower" label="平均发电量" sortable width="180"/>-->
       <el-table-column prop="averageGenPower" label="发电量误差" sortable width="180"/>
       <el-table-column prop="averageAbsoluteDeviation" label="误差百分比" sortable width="180">
+
         <template #default="scope">
           <span v-if="scope.row.averageAbsoluteDeviation>0">+{{ scope.row.averageAbsoluteDeviation }}%</span>
           <span v-if="scope.row.averageAbsoluteDeviation<0">{{ scope.row.averageAbsoluteDeviation }}%</span>
         </template>
       </el-table-column>
+      <el-table-column prop="adjustmentCoefficient" label="调整系数" width="180">
+        <template #default="scope">
+          <el-input v-if="editRow == scope.row.dedignId" v-model="scope.row.adjustmentCoefficient" @blur="editRow= '' "/>
+          <div style="height:100%" v-else @dblclick="editRow = scope.row.dedignId">{{ scope.row.adjustmentCoefficient ? scope.row.adjustmentCoefficient : '1'  }} </div>
+        </template>
+      </el-table-column>
       <el-table-column prop="averageAbsoluteDeviation" label="标准单板日电量" sortable width="180"></el-table-column>
-<!--      <el-table-column label="操作" width="180">-->
-<!--        <template #default="scope">-->
-<!--          <el-button-->
-<!--              type="primary"-->
-<!--              size="small"-->
-<!--              @click="showInfo(scope)"-->
-<!--          >-->
-<!--            详情-->
-<!--          </el-button>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column label="操作" width="180">
+              <template #default="scope">
+                &lt;!&ndash;                  <el-button&ndash;&gt;
+                &lt;!&ndash;                      type="primary"&ndash;&gt;
+                &lt;!&ndash;                      size="small"&ndash;&gt;
+                &lt;!&ndash;                      @click="showInfo(scope)"&ndash;&gt;
+                &lt;!&ndash;                  >&ndash;&gt;
+                &lt;!&ndash;                    详情&ndash;&gt;
+                &lt;!&ndash;                  </el-button> &ndash;&gt;
+
+                <el-button
+                    type="primary"
+                    size="small"
+                    @click="edit(scope)"
+                >
+                  编辑
+                </el-button>
+              </template>
+            </el-table-column>-->
     </el-table>
 
     <el-pagination
@@ -44,7 +63,6 @@
 
 import {computed, onMounted, reactive, ref} from "vue";
 import {inverterTestData} from "@/testData/inverterTestData.ts"
-import {Table} from "element-plus";
 import {useRoute} from "vue-router";
 
 const route = useRoute();
@@ -66,6 +84,9 @@ const route = useRoute();
       singleGenPower: '', //标转单板日电量
       measurementPointName: '', //计量点名称
       portName:''. //电站名称
+      standardPowerGeneration: '', //标准容量发电量
+      calculatePowerGeneration: '', // 计算发电量
+      adjustmentCoefficient: '', //调整系数
     },
 ])*/
 
@@ -96,7 +117,7 @@ const getInverterData = () => {
 
   inverterTestData.forEach(item => {
     item.averageAbsoluteDeviation = (((1.0 * (item.powerGeneration / evePowerGen.value) - 1) * 100).toFixed(2))
-    item.portName = route.params.id;
+    item.portName = route.params.id as string;
   })
   console.log(inverterTestData)
   paginationState.total = inverterTestData.length
@@ -122,6 +143,12 @@ const showInfo = (scope) => {
   emit('showInfo', scope.row)
 }
 
+// 编辑
+const editRow = ref('')
+const edit = (scope) => {
+  emit('editInfo', scope.row)
+}
+
 // 平均发电量
 const evePowerGen = computed(() => {
   const totalPowerGen = inverterTestData.reduce((res, item) => {
@@ -136,7 +163,6 @@ const computedDis = (powerGen) => {
   console.log('powerGen', evePowerGen.value)
   return ((1.0 * (powerGen / evePowerGen.value) - 1) * 100).toFixed(2)
 }
-
 
 
 onMounted(() => {
