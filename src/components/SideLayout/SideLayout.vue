@@ -17,7 +17,7 @@ interface Tree {
 }
 
 const handleNodeClick = (data: Tree) => {
-  console.log(data)
+  // console.log(data)
 }
 
 const data: Tree[] = [
@@ -35,7 +35,7 @@ const data: Tree[] = [
             id: 'N10-T1',
           },
           {
-            label: '  西安京东亚一园站',
+            label: '西安京东亚一园站',
             id: 'N2-T1',
           },
         ]

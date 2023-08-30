@@ -14,3 +14,10 @@ export function getInverterTableData(params:InverterParams){
          params
      })
  }
+
+export function InverterExport(){
+    return Request('/api/inverter/export',{
+        method: "get",
+        responseType: 'blob',
+    })
+}

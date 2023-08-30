@@ -1,6 +1,6 @@
 <template xmlns="http://www.w3.org/1999/html">
   <div class="inverter-data-table">
-    <el-table :data="tableData" height="500px" border>
+    <el-table :data="tableData" height="450px" border>
       <el-table-column prop="powerStationName" label="电站名称" sortable width="180"/>
       <el-table-column prop="inverterName" label="设备名称" sortable width="180"/>
       <el-table-column prop="inverterTotalCapacity" label="组串总容量(kWp)" sortable width="180"/>

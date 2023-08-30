@@ -44,7 +44,7 @@
     <div class="data-operation">
       <el-button size="small">重新计算</el-button>
       <el-button size="small">导入华为数据</el-button>
-      <el-button size="small">导出分析结果</el-button>
+      <el-button size="small" @click="exportFile">导出分析结果</el-button>
     </div>
 
   </div>
@@ -53,6 +53,7 @@
 <script setup lang="ts">
 
 import {reactive, defineEmits, ref, onMounted} from "vue";
+import {InverterExport} from "@/api/apiInverter.ts";
 
 const emit = defineEmits(['confirm'])
 
@@ -130,6 +131,18 @@ const disabledDate = (time: Date) => {
 //表单提交
 const handleConfirm = () => {
   emit('confirm', conditions)
+}
+
+// 导出数据
+const exportFile = () => {
+  InverterExport().then(res=>{
+    const url = URL.createObjectURL(new Blob([res.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', '逆变器报表.xlsx');
+    document.body.appendChild(link);
+    link.click();
+  })
 }
 
 </script>

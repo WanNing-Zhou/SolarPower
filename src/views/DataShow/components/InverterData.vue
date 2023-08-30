@@ -16,7 +16,7 @@
 
 import FilterForm from "@/views/DataShow/components/FilterForm.vue";
 import InverterDataTable from "@/views/DataShow/components/InverterDataTable.vue";
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import DetailDialog from "@/views/DataShow/components/DetailDialog.vue";
 import {getInverterTableData} from "@/api/apiInverter.ts";
 import {useRoute} from "vue-router";
@@ -34,6 +34,18 @@ const route = useRoute();
 const stationName = computed(() => {
   return route.params.id as string
 })
+
+
+watch(stationName,()=>{
+  const end = new Date()
+  const start = new Date()
+  start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+  getTableData({
+    stationName: stationName.value,
+    startTime: convertDateFormat(start, true),
+    endTime: convertDateFormat(end, true)
+  })
+},{deep:true})
 
 const tableData = ref([])
 
