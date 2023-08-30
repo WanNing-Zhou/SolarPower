@@ -1,27 +1,26 @@
 <template xmlns="http://www.w3.org/1999/html">
   <div class="inverter-data-table">
     <el-table :data="tableData" height="500px" border>
-      <el-table-column prop="portName" label="电站名称" sortable width="180"/>
-      <el-table-column prop="designName" label="设备名称" sortable width="180"/>
-      <el-table-column prop="totalStringCapacity" label="组串总容量(kWp)" sortable width="180"/>
+      <el-table-column prop="powerStationName" label="电站名称" sortable width="180"/>
+      <el-table-column prop="inverterName" label="设备名称" sortable width="180"/>
+      <el-table-column prop="inverterTotalCapacity" label="组串总容量(kWp)" sortable width="180"/>
       <el-table-column prop="powerGeneration" label="实际发电量(度)" sortable width="180"/>
 
-      <el-table-column prop="standardPowerGeneration" label="标准容量发电量(度/kWp)" sortable width="180"/>
-      <el-table-column prop="calculatePowerGeneration" label="计算发电量(度)" sortable width="180"/>
+      <el-table-column prop="standPowerGeneration" label="标准容量发电量(度/kWp)" sortable width="180"/>
+      <el-table-column prop="computedPowerGeneration" label="计算发电量(度)" sortable width="180"/>
 
       <!--      <el-table-column prop="averageGenPower" label="平均发电量" sortable width="180"/>-->
-      <el-table-column prop="averageGenPower" label="发电量误差" sortable width="180"/>
-      <el-table-column prop="averageAbsoluteDeviation" label="误差百分比" sortable width="180">
+      <el-table-column prop="powerGenerationDeviation" label="发电量误差" sortable width="180"/>
+      <el-table-column prop="powerGenerationDeviationRatio" label="误差百分比" sortable width="180">
 
-        <template #default="scope">
-          <span v-if="scope.row.averageAbsoluteDeviation>0">+{{ scope.row.averageAbsoluteDeviation }}%</span>
-          <span v-if="scope.row.averageAbsoluteDeviation<0">{{ scope.row.averageAbsoluteDeviation }}%</span>
-        </template>
       </el-table-column>
-      <el-table-column prop="adjustmentCoefficient" label="调整系数" width="180">
+      <el-table-column prop="factors" label="调整系数" width="180">
         <template #default="scope">
-          <el-input v-if="editRow == scope.row.dedignId" v-model="scope.row.adjustmentCoefficient" @blur="editRow= '' "/>
-          <div style="height:100%" v-else @dblclick="editRow = scope.row.dedignId">{{ scope.row.adjustmentCoefficient ? scope.row.adjustmentCoefficient : '1'  }} </div>
+          <el-input v-if="editRow == scope.row.dedignId" v-model="scope.row.factors"
+                    @blur="editRow= '' "/>
+          <div style="height:100%" v-else @dblclick="editRow = scope.row.dedignId">
+            {{ scope.row.factors }}
+          </div>
         </template>
       </el-table-column>
       <el-table-column prop="averageAbsoluteDeviation" label="标准单板日电量" sortable width="180"></el-table-column>
@@ -61,9 +60,17 @@
 
 <script setup lang="ts">
 
-import {computed, onMounted, reactive, ref} from "vue";
-import {inverterTestData} from "@/testData/inverterTestData.ts"
+import {computed, onMounted, PropType, reactive, ref} from "vue";
+// import {inverterTestData} from "@/testData/inverterTestData.ts"
 import {useRoute} from "vue-router";
+import {Inverter} from "@/type/inverter.ts";
+
+
+const props = defineProps({
+  tableData: {
+    type: Object as PropType<Inverter[]>
+  }
+})
 
 const route = useRoute();
 
@@ -106,13 +113,13 @@ const paginationState = reactive(
 )
 
 // 设置页面显示数据
-const setTableData = () => {
+/*const setTableData = () => {
   const {currentPage, pageSize} = paginationState
   tableData.value = inverterTestData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
   console.log(tableData.value)
-}
+}*/
 // 获取数据
-const getInverterData = () => {
+/*const getInverterData = () => {
   // tableData.value = inverterTestData;
 
   inverterTestData.forEach(item => {
@@ -122,18 +129,16 @@ const getInverterData = () => {
   console.log(inverterTestData)
   paginationState.total = inverterTestData.length
   setTableData();
-}
+}*/
 
 // 当前页大小发生变化时触发
 const handleSizeChange = (val) => {
   console.log('size', val)
-  setTableData();
 }
 
 // 当前页变化时触发
 const handleCurrentChange = (page) => {
   // console.log('page', page)
-  setTableData()
 }
 
 // 详情显示
@@ -149,6 +154,7 @@ const edit = (scope) => {
   emit('editInfo', scope.row)
 }
 
+/*
 // 平均发电量
 const evePowerGen = computed(() => {
   const totalPowerGen = inverterTestData.reduce((res, item) => {
@@ -168,6 +174,7 @@ const computedDis = (powerGen) => {
 onMounted(() => {
   getInverterData()
 })
+*/
 
 
 </script>
