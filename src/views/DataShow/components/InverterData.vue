@@ -37,36 +37,36 @@ const stationName = computed(() => {
 
 
 watch(stationName,()=>{
-  const end = new Date()
-  const start = new Date()
-  start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-  getTableData({
-    stationName: stationName.value,
-    startTime: convertDateFormat(start, true),
-    endTime: convertDateFormat(end, true)
-  })
+
+  getTableData()
 },{deep:true})
 
 const tableData = ref([])
 
 // 获取表单数据
-const getTableData = (data: InverterParams) => {
-  getInverterTableData(data).then(res => {
-    tableData.value = res.data
-  })
+const getTableData = (data ?: InverterParams) => {
+  if(data){
+    const end = new Date()
+    const start = new Date()
+    start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+    data = {
+      stationName: stationName.value,
+      startTime: convertDateFormat(start, true),
+      endTime: convertDateFormat(end, true)
+    }
+  }
+  if(data){
+    getInverterTableData(data).then(res => {
+      tableData.value = res.data
+    })
+  }
 }
 
 // 加载时计算
 onMounted(() => {
   console.log('api', import.meta.env.VITE_APP_BASE_API)
-  const end = new Date()
-  const start = new Date()
-  start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-  getTableData({
-    stationName: stationName.value,
-    startTime: convertDateFormat(start, true),
-    endTime: convertDateFormat(end, true)
-  })
+
+  getTableData()
 })
 
 // 筛选
