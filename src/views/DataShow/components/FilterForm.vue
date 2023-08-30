@@ -52,20 +52,26 @@
 
 <script setup lang="ts">
 
-import {reactive, defineEmits, ref} from "vue";
+import {reactive, defineEmits, ref, onMounted} from "vue";
 
 const emit = defineEmits(['confirm'])
 
 const conditions = reactive({
   equipment: '全部', // 设备
   timeDimension: '1', //时间维度
-  statisticalTime: '',// 统计时间
+  statisticalTime: [],// 统计时间
 })
 
+onMounted(() => {
+  const end = new Date()
+  const start = new Date()
+  start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+  conditions.statisticalTime = [start, end]
+})
 
 const shortcuts = [
   {
-    text: 'Last week',
+    text: '最近一周',
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -74,7 +80,7 @@ const shortcuts = [
     },
   },
   {
-    text: 'Last month',
+    text: '最近一个月',
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -83,7 +89,7 @@ const shortcuts = [
     },
   },
   {
-    text: 'Last 3 months',
+    text: '最近三天',
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -139,7 +145,7 @@ const handleConfirm = () => {
     width: 100%;
     display: flex;
 
-    .form-item-mini{
+    .form-item-mini {
       width: 50px;
     }
 
@@ -151,7 +157,7 @@ const handleConfirm = () => {
       width: 280px;
     }
 
-    .form-item-long{
+    .form-item-long {
       width: 350px;
     }
 

@@ -5,10 +5,10 @@
         <filter-form @confirm="handFilter"/>
       </el-header>
       <el-main>
-        <inverter-data-table @showInfo="showInfo"> </inverter-data-table>
+        <inverter-data-table :table-data="tableData" @showInfo="showInfo"></inverter-data-table>
       </el-main>
     </el-container>
-    <DetailDialog :detailData="detailData" :dialogVisible="detailDialogVisible" @close="handleClose" ></DetailDialog>
+    <DetailDialog :detailData="detailData" :dialogVisible="detailDialogVisible" @close="handleClose"></DetailDialog>
   </div>
 </template>
 
@@ -16,45 +16,81 @@
 
 import FilterForm from "@/views/DataShow/components/FilterForm.vue";
 import InverterDataTable from "@/views/DataShow/components/InverterDataTable.vue";
-import {ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import DetailDialog from "@/views/DataShow/components/DetailDialog.vue";
+import {getInverterTableData} from "@/api/apiInverter.ts";
+import {useRoute} from "vue-router";
+import {InverterParams} from "@/type/request/inverter.ts";
+import {convertDateFormat} from "@/utils/dateUtils.ts";
 
 interface Conditions {
   equipment: string // 设备
-  timeDimension:string //时间维度
-  statisticalTime:string// 统计时间
+  timeDimension: string //时间维度
+  statisticalTime: string// 统计时间
 }
 
-const handFilter = (conditions:Conditions)=>{
-  console.log(conditions)
+const route = useRoute();
+// 电站名称
+const stationName = computed(() => {
+  return route.params.id as string
+})
+
+const tableData = ref([])
+
+// 获取表单数据
+const getTableData = (data: InverterParams) => {
+  getInverterTableData(data).then(res => {
+    tableData.value = res.data
+  })
+}
+
+// 加载时计算
+onMounted(() => {
+  console.log('api', import.meta.env.VITE_APP_BASE_API)
+  const end = new Date()
+  const start = new Date()
+  start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+  getTableData({
+    stationName: stationName.value,
+    startTime: convertDateFormat(start, true),
+    endTime: convertDateFormat(end, true)
+  })
+})
+
+// 筛选
+const handFilter = (conditions: Conditions) => {
+  const startTime = conditions.statisticalTime[0];
+  const endTime = conditions.statisticalTime[1]
+  getTableData({
+    stationName: stationName.value,
+    startTime: convertDateFormat(startTime, true),
+    endTime: convertDateFormat(endTime, true)
+  })
 }
 
 //弹出框显示
 const detailDialogVisible = ref(false)
+
 // 详情值
 const detailData = ref({})
-const showInfo = (row)=>{
+
+const showInfo = (row) => {
   detailDialogVisible.value = true
   detailData.value = row;
-  console.log('showInfo',row)
-
-
+  console.log('showInfo', row)
 }
 
-const handleClose  = ()=>{
-
+const handleClose = () => {
   //
   detailDialogVisible.value = false;
-
 }
-
 </script>
 
 <style lang="scss" scoped>
 
-.inverter-data{
-   :deep(.el-main){
-     padding: 0px;
+.inverter-data {
+  :deep(.el-main) {
+    padding: 0px;
   }
 
 }
