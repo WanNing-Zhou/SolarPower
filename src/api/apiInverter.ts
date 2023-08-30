@@ -21,3 +21,10 @@ export function InverterExport(){
         responseType: 'blob',
     })
 }
+
+
+export function invertImport(params:{fildId: string}){
+    return Request.get('/api/inverter/import',{
+        params
+    })
+}

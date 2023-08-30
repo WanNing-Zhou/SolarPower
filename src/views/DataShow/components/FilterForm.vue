@@ -36,14 +36,15 @@
       </el-form-item>
 
       <el-form-item class="form-item-mini" label-width="20px">
-        <el-button type="primary" size="small" @click="handleConfirm">查询</el-button>
+        <el-button type="primary" size="small" ref="searchBtn" @click="handleConfirm">查询</el-button>
       </el-form-item>
 
     </el-form>
 
     <div class="data-operation">
-      <el-button size="small">重新计算</el-button>
-      <el-button size="small">导入华为数据</el-button>
+      <input id="inverterUpload" ref="fileUpload" @change="upload" style="display: none" type="file">
+      <el-button size="small" >重新计算</el-button>
+      <el-button size="small" @click="uploadHandle">导入华为数据</el-button>
       <el-button size="small" @click="exportFile">导出分析结果</el-button>
     </div>
 
@@ -52,8 +53,9 @@
 
 <script setup lang="ts">
 
-import {reactive, defineEmits, ref, onMounted} from "vue";
-import {InverterExport} from "@/api/apiInverter.ts";
+import {reactive, defineEmits, ref, onMounted, Ref, Component} from "vue";
+import {InverterExport, invertImport} from "@/api/apiInverter.ts";
+import {uploadFile} from "@/api/upload.ts";
 
 const emit = defineEmits(['confirm'])
 
@@ -143,6 +145,32 @@ const exportFile = () => {
     document.body.appendChild(link);
     link.click();
   })
+}
+
+const fileUpload = ref()
+// 文件上传辅助函数
+const uploadHandle = ()=>{
+  const inputUpload:HTMLElement = document.querySelector('#inverterUpload');
+  inputUpload.click() // 触发文件输入款的点击
+}
+
+const searchBtn: Ref = ref()
+// 上传文件
+const upload = ()=>{
+  const file = fileUpload.value.files[0]
+  const formData = new FormData()
+  console.log(file)
+  formData.append('file', file);
+  formData.append('type', file.type);
+  uploadFile({file, type: file.type}).then(res=>{
+
+    const fildId = res.data.fildId;
+    invertImport({fildId}).then(res=>{
+      // 导入数据后重新获取数据
+      searchBtn.value.click();
+    })
+  })
+  // uploadFile()
 }
 
 </script>
