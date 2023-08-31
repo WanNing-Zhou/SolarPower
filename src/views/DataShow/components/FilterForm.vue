@@ -164,8 +164,9 @@ const upload = ()=>{
   formData.append('type','inverter_report');
   uploadFile(formData).then(res=>{
 
-    const fildId = res.data.fildId;
+    const fildId = res.data;
     invertImport({fildId}).then(res=>{
+      console.log('res', res)
       // 导入数据后重新获取数据
       searchBtn.value.click();
     })
