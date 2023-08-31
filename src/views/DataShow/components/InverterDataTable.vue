@@ -101,8 +101,6 @@ const route = useRoute();
 const emit = defineEmits(['showInfo'])
 
 
-// table数据
-const tableData = ref([{}])
 //分页数据
 const paginationState = reactive(
     {

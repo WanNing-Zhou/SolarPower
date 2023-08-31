@@ -5,7 +5,7 @@
         <filter-form @confirm="handFilter"/>
       </el-header>
       <el-main>
-        <inverter-data-table :table-data="tableData" @showInfo="showInfo"></inverter-data-table>
+        <inverter-data-table :tableData="tableData" @showInfo="showInfo"></inverter-data-table>
       </el-main>
     </el-container>
     <DetailDialog :detailData="detailData" :dialogVisible="detailDialogVisible" @close="handleClose"></DetailDialog>
@@ -57,6 +57,7 @@ const getTableData = (data ?: InverterParams) => {
   }
 
   getInverterTableData(data).then(res => {
+    console.log('tableData', res)
     tableData.value = res.data
   })
 }
