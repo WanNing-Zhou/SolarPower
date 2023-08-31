@@ -19,6 +19,11 @@ export function InverterExport(){
     return Request('/api/inverter/export',{
         method: "get",
         responseType: 'blob',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json; charset=utf-8',
+            withCredentials: true,
+        }
     })
 }
 

@@ -137,14 +137,23 @@ const handleConfirm = () => {
 
 // 导出数据
 const exportFile = () => {
-  InverterExport().then(res=>{
-    const url = URL.createObjectURL(new Blob([res.data]));
+/*  InverterExport().then(res=>{
+    console.log('res', res)
+/!*    const url = URL.createObjectURL(new Blob([res.data]));
+    console.log('url', url)
     const link = document.createElement('a');
     link.href = url;
     link.setAttribute('download', '逆变器报表.xlsx');
     document.body.appendChild(link);
-    link.click();
-  })
+    link.click();*!/
+  })*/
+
+  const link = document.createElement('a');
+  link.href = `${import.meta.env.VITE_APP_BASE_API}/api/inverter/export`;
+  link.setAttribute('download', '逆变器报表.xlsx');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link)
 }
 
 const fileUpload = ref()
