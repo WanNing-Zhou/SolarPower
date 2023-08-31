@@ -43,7 +43,7 @@
 
     <div class="data-operation">
       <input id="inverterUpload" ref="fileUpload" @change="upload" style="display: none" type="file">
-      <el-button size="small" >重新计算</el-button>
+      <el-button size="small">重新计算</el-button>
       <el-button size="small" @click="uploadHandle">导入华为数据</el-button>
       <el-button size="small" @click="exportFile">导出分析结果</el-button>
     </div>
@@ -56,6 +56,7 @@
 import {reactive, defineEmits, ref, onMounted, Ref, Component} from "vue";
 import {InverterExport, invertImport} from "@/api/apiInverter.ts";
 import {uploadFile} from "@/api/upload.ts";
+import {ElMessage} from "element-plus";
 
 const emit = defineEmits(['confirm'])
 
@@ -92,7 +93,7 @@ const shortcuts = [
     },
   },
   {
-    text: '最近三天',
+    text: '最近三个月',
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -137,16 +138,16 @@ const handleConfirm = () => {
 
 // 导出数据
 const exportFile = () => {
-/*  InverterExport().then(res=>{
-    console.log('res', res)
-/!*    const url = URL.createObjectURL(new Blob([res.data]));
-    console.log('url', url)
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', '逆变器报表.xlsx');
-    document.body.appendChild(link);
-    link.click();*!/
-  })*/
+  /*  InverterExport().then(res=>{
+      console.log('res', res)
+  /!*    const url = URL.createObjectURL(new Blob([res.data]));
+      console.log('url', url)
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', '逆变器报表.xlsx');
+      document.body.appendChild(link);
+      link.click();*!/
+    })*/
 
   const link = document.createElement('a');
   link.href = `${import.meta.env.VITE_APP_BASE_API}/api/inverter/export`;
@@ -158,26 +159,29 @@ const exportFile = () => {
 
 const fileUpload = ref()
 // 文件上传辅助函数
-const uploadHandle = ()=>{
-  const inputUpload:HTMLElement = document.querySelector('#inverterUpload');
+const uploadHandle = () => {
+  const inputUpload: HTMLElement = document.querySelector('#inverterUpload');
   inputUpload.click() // 触发文件输入款的点击
 }
 
 const searchBtn: Ref = ref()
 // 上传文件
-const upload = ()=>{
+const upload = () => {
   const file = fileUpload.value.files[0]
   const formData = new FormData()
   console.log(file)
   formData.append('file', file);
-  formData.append('type','inverter_report');
-  uploadFile(formData).then(res=>{
+  formData.append('type', 'inverter_report');
+  uploadFile(formData).then(res => {
 
     const fildId = res.data;
-    invertImport({fildId}).then(res=>{
+    invertImport({fildId}).then(res => {
       console.log('res', res)
       // 导入数据后重新获取数据
       searchBtn.value.click();
+      ElMessage({message: '上传成功', type: 'success'})
+    }).catch(err => {
+      ElMessage({message: '上传失败请稍后再试', type: 'error'})
     })
   })
   // uploadFile()
