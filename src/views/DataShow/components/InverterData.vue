@@ -32,20 +32,20 @@ interface Conditions {
 const route = useRoute();
 // 电站名称
 const stationName = computed(() => {
+  console.log('电站名称:', route.params.id)
   return route.params.id as string
 })
 
-
-watch(stationName,()=>{
+watch(stationName, () => {
 
   getTableData()
-},{deep:true})
+}, {deep: true})
 
 const tableData = ref([])
 
 // 获取表单数据
 const getTableData = (data ?: InverterParams) => {
-  if(data){
+  if (!data) {
     const end = new Date()
     const start = new Date()
     start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
@@ -55,11 +55,10 @@ const getTableData = (data ?: InverterParams) => {
       endTime: convertDateFormat(end, true)
     }
   }
-  if(data){
-    getInverterTableData(data).then(res => {
-      tableData.value = res.data
-    })
-  }
+
+  getInverterTableData(data).then(res => {
+    tableData.value = res.data
+  })
 }
 
 // 加载时计算

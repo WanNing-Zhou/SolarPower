@@ -161,8 +161,8 @@ const upload = ()=>{
   const formData = new FormData()
   console.log(file)
   formData.append('file', file);
-  formData.append('type', file.type);
-  uploadFile({file, type: file.type}).then(res=>{
+  formData.append('type','inverter_report');
+  uploadFile(formData).then(res=>{
 
     const fildId = res.data.fildId;
     invertImport({fildId}).then(res=>{
