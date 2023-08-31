@@ -7,6 +7,7 @@
     "dev": "vite",
     "pro": "vite --mode pro",
     "build_dev": "vite build --mode development",
+    "build_pro": "vite build --mode production",
     "preview": "vite preview"
   },
   "dependencies": {
