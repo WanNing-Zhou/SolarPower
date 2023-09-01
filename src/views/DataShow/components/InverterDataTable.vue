@@ -152,27 +152,6 @@ const edit = (scope) => {
   emit('editInfo', scope.row)
 }
 
-/*
-// 平均发电量
-const evePowerGen = computed(() => {
-  const totalPowerGen = inverterTestData.reduce((res, item) => {
-    return res + item.powerGeneration
-  }, 0)
-  return totalPowerGen / inverterTestData.length;
-})
-
-
-// 计算误差
-const computedDis = (powerGen) => {
-  console.log('powerGen', evePowerGen.value)
-  return ((1.0 * (powerGen / evePowerGen.value) - 1) * 100).toFixed(2)
-}
-
-
-onMounted(() => {
-  getInverterData()
-})
-*/
 
 
 </script>

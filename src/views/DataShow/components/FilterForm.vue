@@ -138,17 +138,6 @@ const handleConfirm = () => {
 
 // 导出数据
 const exportFile = () => {
-  /*  InverterExport().then(res=>{
-      console.log('res', res)
-  /!*    const url = URL.createObjectURL(new Blob([res.data]));
-      console.log('url', url)
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', '逆变器报表.xlsx');
-      document.body.appendChild(link);
-      link.click();*!/
-    })*/
-
   const link = document.createElement('a');
   link.href = `${import.meta.env.VITE_APP_BASE_API}/api/inverter/export`;
   link.setAttribute('download', '逆变器报表.xlsx');
@@ -179,12 +168,15 @@ const upload = () => {
       console.log('res', res)
       // 导入数据后重新获取数据
       searchBtn.value.click();
-      ElMessage({message: '上传成功', type: 'success'})
+      ElMessage({message: '数据导入成功', type: 'success'})
     }).catch(err => {
-      ElMessage({message: '上传失败请稍后再试', type: 'error'})
+      ElMessage({message: '数据导入失败请稍后再试', type: 'error'})
     })
+    // 清空选择的文件
+    fileUpload.value.files.pop();
+  }).catch(error=>{
+    console.log('文件上传失败')
   })
-  // uploadFile()
 }
 
 </script>

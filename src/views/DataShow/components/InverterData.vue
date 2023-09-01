@@ -48,7 +48,7 @@ const getTableData = (data ?: InverterParams) => {
   if (!data) {
     const end = new Date()
     const start = new Date()
-    start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+    start.setTime(start.getTime() - 3600 * 1000 * 24 *3) // 最近三天数据
     data = {
       stationName: stationName.value,
       startTime: convertDateFormat(start, true),
