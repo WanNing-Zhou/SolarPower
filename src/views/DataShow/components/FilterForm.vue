@@ -53,8 +53,8 @@
 
 <script setup lang="ts">
 
-import {reactive, defineEmits, ref, onMounted, Ref, Component} from "vue";
-import {InverterExport, invertImport} from "@/api/apiInverter.ts";
+import {reactive, defineEmits, ref, onMounted, Ref, Component, nextTick} from "vue";
+import {getInverterTableData, InverterExport, invertImport} from "@/api/apiInverter.ts";
 import {uploadFile} from "@/api/upload.ts";
 import {ElMessage} from "element-plus";
 
@@ -93,11 +93,11 @@ const shortcuts = [
     },
   },
   {
-    text: '最近三个月',
+    text: '最近三天',
     value: () => {
       const end = new Date()
       const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 3)
       return [start, end]
     },
   },
@@ -165,17 +165,16 @@ const upload = () => {
 
     const fildId = res.data;
     invertImport({fildId}).then(res => {
-      console.log('res', res)
-      // 导入数据后重新获取数据
-      searchBtn.value.click();
+      // console.log('res', res)
       ElMessage({message: '数据导入成功', type: 'success'})
+      // 重新获取数据
+      emit('confirm', conditions)
     }).catch(err => {
+      // console.log('err', err)
       ElMessage({message: '数据导入失败请稍后再试', type: 'error'})
     })
-    // 清空选择的文件
-    fileUpload.value.files.pop();
   }).catch(error=>{
-    console.log('文件上传失败')
+    console.log('文件上传失败', error)
   })
 }
 
