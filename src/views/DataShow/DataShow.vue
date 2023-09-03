@@ -82,7 +82,6 @@ const toLink = (url)=>{
   // const url = ''
   window.open(url, '_blank')
 }
-
 </script>
 
 <style lang="scss" scoped>
