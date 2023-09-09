@@ -2,20 +2,16 @@
   <div class="PSC-list">
     <el-container>
       <el-header class="filter-from" height="38px">
-        <el-form
-            :model="conditions"
-            status-icon
-        >
+        <el-form :model="conditions" status-icon>
+          <el-form-item   class="form-item-short" label="电站:" prop="">
+            <el-input v-model="conditions.workerName"  size="small" placeholder="全部" clearable />
+          </el-form-item>
+          <el-form-item class="form-item-short" label="计量点:" prop="">
+            <el-input size="small"  placeholder="全部" clearable />
+          </el-form-item>
           <el-form-item label-width="100px" label="记录时间" prop="filterTime">
-            <el-date-picker
-                v-model="conditions.filterTime"
-                type="monthrange"
-                unlink-panels
-                range-separator="To"
-                start-placeholder="Start month"
-                end-placeholder="End month"
-                :shortcuts="shortcuts"
-            />
+            <el-date-picker v-model="conditions.filterTime" type="monthrange" unlink-panels range-separator="To"
+              start-placeholder="Start month" end-placeholder="End month" :shortcuts="shortcuts" />
 
           </el-form-item>
           <el-form-item>
@@ -30,17 +26,11 @@
       </el-header>
 
       <el-main>
-        <el-table :data="tableData" size="small" border>
-          <el-table-column prop="portName" width="120" label="站名"/>
+        <el-table :data="tableData" show-summary size="small" border>
+          <el-table-column prop="portName" width="120" label="站名" />
           <el-table-column prop="date" label="年月" width="160">
             <template #default="scope">
-              <el-date-picker
-                  size="small"
-                  v-model="scope.row.date"
-                  type="month"
-                  placeholder="日期"
-                  v-if="scope.row.edit"
-              />
+              <el-date-picker size="small" v-model="scope.row.date" type="month" placeholder="日期" v-if="scope.row.edit" />
               <!--          <el-input v-if="scope.row.edit" v-model="scope.row.date" placeholder="关口表电量"></el-input>-->
               <span v-else>{{ scope.row.date }}</span>
             </template>
@@ -49,7 +39,7 @@
           <el-table-column prop="" label="计量点名称">
             <template #default="scope">
               <el-input size="small" v-if="scope.row.edit" v-model="scope.row.measurementPointName"
-                        placeholder="发电表总电量"></el-input>
+                placeholder="发电表总电量"></el-input>
               <span v-else>{{ scope.row.measurementPointName }}</span>
             </template>
           </el-table-column>
@@ -58,15 +48,14 @@
           <el-table-column prop="gatewayPower" label="发电表总电量">
             <template #default="scope">
               <el-input size="small" v-if="scope.row.edit" v-model="scope.row.gatewayPower"
-                        placeholder="发电表总电量"></el-input>
+                placeholder="发电表总电量"></el-input>
               <span v-else>{{ scope.row.gatewayPower }}</span>
             </template>
           </el-table-column>
           <!--用户输入-->
           <el-table-column prop="onlinePower" width="100" label="上网总电量">
             <template #default="scope">
-              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.onlinePower"
-                        placeholder="上网总电量"></el-input>
+              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.onlinePower" placeholder="上网总电量"></el-input>
               <span v-else>{{ scope.row.onlinePower }}</span>
             </template>
           </el-table-column>
@@ -74,8 +63,7 @@
           <!--用户输入-->
           <el-table-column prop="onlinePrice" width="100" label="上网电价">
             <template #default="scope">
-              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.onlinePrice"
-                        placeholder="上网电价"></el-input>
+              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.onlinePrice" placeholder="上网电价"></el-input>
               <span v-else>{{ scope.row.onlinePrice }}</span>
             </template>
           </el-table-column>
@@ -84,8 +72,7 @@
           <!--用户输入-->
           <el-table-column prop="selfUsePrice" width="100" label="自用电价">
             <template #default="scope">
-              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.selfUsePrice"
-                        placeholder="自用电价"></el-input>
+              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.selfUsePrice" placeholder="自用电价"></el-input>
               <span v-else>{{ scope.row.selfUsePrice }}</span>
             </template>
           </el-table-column>
@@ -115,18 +102,18 @@
             <template #default="scope">
               <el-button v-if="scope.row.edit" type="primary" size="small" @click="confirmAdd(scope.row)">
                 <el-icon :size="20">
-                  <Checked/>
+                  <Checked />
                 </el-icon>
               </el-button>
               <div v-else>
                 <el-button type="primary" @click="editData(scope.row)">
                   <el-icon :size="20">
-                    <Edit/>
+                    <Edit />
                   </el-icon>
                 </el-button>
-                <el-button type="primary" @click="deleteData(scope.row,scope.$index)">
+                <el-button type="primary" @click="deleteData(scope.row, scope.$index)">
                   <el-icon :size="20">
-                    <Delete/>
+                    <Delete />
                   </el-icon>
                 </el-button>
               </div>
@@ -147,10 +134,10 @@
 
 <script setup lang="ts">
 
-import {onMounted, reactive, ReactiveFlags, Ref, ref} from "vue";
-import {Checked} from "@element-plus/icons-vue";
-import {convertDateFormat} from "@/utils/dateUtils.ts";
-import {useRoute} from "vue-router";
+import { onMounted, reactive, ReactiveFlags, Ref, ref } from "vue";
+import { Checked } from "@element-plus/icons-vue";
+import { convertDateFormat } from "@/utils/dateUtils.ts";
+import { useRoute } from "vue-router";
 
 const route = useRoute()
 
@@ -303,6 +290,16 @@ onMounted(() => {
     .el-form {
       width: 120px !important;
       display: flex;
+      .form-item-short {
+        display: flex;
+        float: left;
+        margin-right: 50px;
+        width: 200px;
+        .el-input{
+          width: 200px;
+        }
+       
+      }
 
       .el-form-item {
         display: flex;
@@ -311,5 +308,4 @@ onMounted(() => {
     }
   }
 }
-
 </style>

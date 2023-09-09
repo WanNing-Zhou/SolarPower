@@ -5,11 +5,11 @@
         status-icon
         label-width="80px"
     >
-      <el-form-item class="form-item-short" label="选择设备:" prop="equipment">
+      <el-form-item class="form-item-short" label="选择电站:" prop="equipment">
         <el-input size="small" v-model="conditions.equipment" placeholder="全部" clearable/>
       </el-form-item>
 
-      <el-form-item class="form-item-middle" label="时间维度:" prop="timeDimension">
+      <!-- <el-form-item class="form-item-middle" label="时间维度:" prop="timeDimension">
         <el-select size="small" v-model="conditions.timeDimension" class="m-2" placeholder="Select">
           <el-option
               v-for="item in timeDimensionOptions"
@@ -19,7 +19,7 @@
           />
         </el-select>
 
-      </el-form-item>
+      </el-form-item> -->
 
       <el-form-item class="form-item-long" label="统计时间" width="200px" prop="statisticalTime">
         <el-date-picker
