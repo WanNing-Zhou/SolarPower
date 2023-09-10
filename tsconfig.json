@@ -19,6 +19,7 @@
       "@/*": [
         "src/*"
       ],
+      "vuex" : ["./node_modules/vuex/types"]//解决找不到vuex模块的问题
     },
 
 

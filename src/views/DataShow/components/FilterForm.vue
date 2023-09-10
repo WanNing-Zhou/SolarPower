@@ -43,7 +43,7 @@
 
     <div class="data-operation">
       <input id="inverterUpload" ref="fileUpload" @change="upload" style="display: none" type="file">
-      <el-button size="small">重新计算</el-button>
+      <el-button size="small" @click="reCount">重新计算</el-button>
       <el-button size="small" @click="uploadHandle">导入华为数据</el-button>
       <el-button size="small" @click="exportFile">导出分析结果</el-button>
     </div>
@@ -53,18 +53,22 @@
 
 <script setup lang="ts">
 
-import {reactive, defineEmits, ref, onMounted, Ref, Component, nextTick} from "vue";
-import {getInverterTableData, InverterExport, invertImport} from "@/api/apiInverter.ts";
+import {reactive, defineEmits, ref, onMounted, Ref,PropType, Component, nextTick} from "vue";
+import {getInverterTableData, InverterExport, invertImport, ReCount} from "@/api/apiInverter.ts";
 import {uploadFile} from "@/api/upload.ts";
 import {ElMessage} from "element-plus";
+import { InverterParam } from "@/type/inverter.ts";
+import mitts from '@/utils/bus'
+import {useStore} from 'vuex'
 
 const emit = defineEmits(['confirm'])
-
+const store = useStore()
 const conditions = reactive({
   equipment: '全部', // 设备
   timeDimension: '1', //时间维度
   statisticalTime: [],// 统计时间
 })
+
 
 onMounted(() => {
   const end = new Date()
@@ -178,6 +182,18 @@ const upload = () => {
   })
 }
 
+
+//重新计算
+const reCount = ()=>{
+  //参数从store中获取值
+  ReCount(store.state.invertParam).then(res =>{
+
+    console.log('res',res)
+
+  })
+  console.log('vuex',store.state.invertParam)
+
+}
 </script>
 
 <style lang="scss" scoped>

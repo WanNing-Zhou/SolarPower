@@ -2,7 +2,7 @@
   <div class="inverter-data">
     <el-container>
       <el-header height="38px">
-        <filter-form @confirm="handFilter"/>
+        <filter-form  @confirm="handFilter" />
       </el-header>
       <el-main>
         <inverter-data-table :tableData="tableData" @showInfo="showInfo"></inverter-data-table>
@@ -16,12 +16,15 @@
 
 import FilterForm from "@/views/DataShow/components/FilterForm.vue";
 import InverterDataTable from "@/views/DataShow/components/InverterDataTable.vue";
-import {computed, onMounted, ref, watch} from "vue";
+import { computed, onMounted, ref, watch, reactive } from "vue";
 import DetailDialog from "@/views/DataShow/components/DetailDialog.vue";
-import {getInverterTableData} from "@/api/apiInverter.ts";
-import {useRoute} from "vue-router";
-import {InverterParams} from "@/type/request/inverter.ts";
-import {convertDateFormat} from "@/utils/dateUtils.ts";
+import { getInverterTableData } from "@/api/apiInverter.ts";
+import { useRoute } from "vue-router";
+import { InverterParams } from "@/type/request/inverter.ts";
+import { convertDateFormat } from "@/utils/dateUtils.ts";
+import { InverterParam } from "@/type/inverter.ts";
+
+
 
 interface Conditions {
   equipment: string // 设备
@@ -39,16 +42,16 @@ const stationName = computed(() => {
 watch(stationName, () => {
 
   getTableData()
-}, {deep: true})
+}, { deep: true })
 
 const tableData = ref([])
 
 // 获取表单数据
-const getTableData = (data ?: InverterParams) => {
+const getTableData = (data?: InverterParams) => {
   if (!data) {
     const end = new Date()
     const start = new Date()
-    start.setTime(start.getTime() - 3600 * 1000 * 24 *3) // 最近三天数据
+    start.setTime(start.getTime() - 3600 * 1000 * 24 * 3) // 最近三天数据
     data = {
       stationName: stationName.value,
       startTime: convertDateFormat(start, true),
@@ -57,6 +60,7 @@ const getTableData = (data ?: InverterParams) => {
   }
 
   getInverterTableData(data).then(res => {
+    console.log('逆变器报表查询参数data', data)
     console.log('tableData', res)
     tableData.value = res.data
   })
@@ -85,7 +89,6 @@ const detailDialogVisible = ref(false)
 
 // 详情值
 const detailData = ref({})
-
 const showInfo = (row) => {
   detailDialogVisible.value = true
   detailData.value = row;
@@ -96,15 +99,16 @@ const handleClose = () => {
   //
   detailDialogVisible.value = false;
 }
+
+
+
 </script>
 
 <style lang="scss" scoped>
-
 .inverter-data {
   :deep(.el-main) {
     padding: 0px;
   }
 
 }
-
 </style>

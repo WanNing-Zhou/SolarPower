@@ -18,9 +18,14 @@ export interface Inverter{
     // 调整系数
     factors: number;
     // 预留字段
-    analysisComment: string,
+    averageAbsoluteDeviation: string,
 }
-
+//重新计算参数
+export interface InverterParam{
+    stationName:string,
+    inverterName:string,
+    factors:number
+}
 
 
 

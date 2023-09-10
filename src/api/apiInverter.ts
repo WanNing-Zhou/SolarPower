@@ -7,6 +7,7 @@
    */
 import Request from "@/utils/request.ts";
 import {InverterParams} from "@/type/request/inverter.ts";
+import {InverterParam} from "@/type/inverter.ts"
 
 
 export function getInverterTableData(params:InverterParams){
@@ -32,4 +33,16 @@ export function invertImport(params:{fildId: string}){
     return Request.get('/api/inverter/import',{
         params
     })
+}
+
+//重新计算
+export function ReCount(params:InverterParam[]){
+    //传递后端为@RequestBody形式对象数组方式
+    return Request({
+        url:'/api/inverter/factors',
+        method: 'post',
+        data:params//这是关键
+
+    })
+
 }

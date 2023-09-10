@@ -10,10 +10,11 @@
   <section class="statistics-electricity-loss">
     <el-container>
       <el-header class="filter-from" height="38px">
-        <el-select v-model="LossCondition.name" class="m-2" placeholder="选择电站" >
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" clearable/>
+        <el-select v-model="LossCondition.name" class="m-2" placeholder="选择电站">
+          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" clearable />
         </el-select>
-        <el-date-picker v-model="searchTime" type="date" placeholder="选择年" />
+        <el-date-picker v-model="LossCondition.endTime" type="daterange" start-placeholder="年度开始时间"
+          end-placeholder="选择时间" />
       </el-header>
 
       <el-main>
@@ -162,16 +163,16 @@ interface LosslistConditions {
   endTime?: Date[]//截止时间
 }
 //获取当前年份的1月1号
-const getStartDate = (date:Date)=>{
+const getStartDate = (date: Date) => {
 
-date.setMonth(0)
-date.setDate(1)
-return date
+  date.setMonth(0)
+  date.setDate(1)
+  return date
 }
 //赋予初始值
 const LossCondition = ref<LosslistConditions>({
-  name:'',
-  endTime:[getStartDate(new Date()),new Date()]
+  name: '',
+  endTime: [getStartDate(new Date()), new Date()]
 })
 //电站下拉框选项
 const options = [
@@ -198,28 +199,27 @@ const getSummaries = (param: SummaryMethodProps) => {
   const { columns, data } = param
   const sums: string[] = []
   columns.forEach((column, index) => {
-    if(index !==7 && index !==1 && index !==5)
-    {
+    if (index !== 7 && index !== 1 && index !== 5) {
       if (index === 0) {
-      sums[index] = '合计'
-      return
-    }
-    const values = data.map((item) => Number(item[column.property]))
-    if (!values.every((value) => Number.isNaN(value))) {
-      sums[index] = ` ${values.reduce((prev, curr) => {
-        const value = Number(curr)
-        if (!Number.isNaN(value)) {
-          return prev + curr
-        } else {
-          return prev
-        }
-      }, 0)}`
-    } else {
-      sums[index] = ''
+        sums[index] = '合计'
+        return
+      }
+      const values = data.map((item) => Number(item[column.property]))
+      if (!values.every((value) => Number.isNaN(value))) {
+        sums[index] = ` ${values.reduce((prev, curr) => {
+          const value = Number(curr)
+          if (!Number.isNaN(value)) {
+            return prev + curr
+          } else {
+            return prev
+          }
+        }, 0)}`
+      } else {
+        sums[index] = ''
+      }
     }
   }
-    }
-)
+  )
 
   return sums
 }
@@ -227,4 +227,8 @@ const getSummaries = (param: SummaryMethodProps) => {
 
 <style lang="scss" scoped>
 .statistics-electricity-loss {}
+.el-select {
+  width: 220px;
+  margin-right: 50px;
+}
 </style>

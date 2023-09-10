@@ -13,6 +13,7 @@ import zhCN from "element-plus/dist/locale/zh-cn.mjs" //中文
 import App from './App.vue'
 import router from "@/router/index.ts";
 import './style.css'
+import store from '@/store/index.ts'
 
 
 const app =createApp(App)
@@ -24,3 +25,4 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.use(ElementPlus, {locale:zhCN})
 app.use(router)
 app.mount('#app')
+app.use(store)
