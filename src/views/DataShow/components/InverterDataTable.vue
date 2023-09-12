@@ -1,6 +1,6 @@
 <template xmlns="http://www.w3.org/1999/html">
   <div class="inverter-data-table">
-    <el-table :data="tableData" height="450px" border>
+    <el-table :data="tableData.value" height="450px" border>
       <el-table-column prop="powerStationName" label="电站名称" sortable width="180" />
       <el-table-column prop="inverterName" label="设备名称" sortable width="180" />
       <el-table-column prop="inverterTotalCapacity" label="组串总容量(kWp)" sortable width="180" />
@@ -60,96 +60,26 @@
 
 <script setup lang="ts">
 
-import { computed, onMounted, PropType, reactive, ref, Ref } from "vue";
+import { computed, onMounted, PropType, reactive, ref, Ref, watch } from "vue";
 // import {inverterTestData} from "@/testData/inverterTestData.ts"
 import { useRoute } from "vue-router";
-import { InverterParam, Inverter } from "@/type/inverter.ts";
+import { InverterParam, Inverter, InverterPageParams } from "@/type/inverter.ts";
 import mitts from '@/utils/bus'
-import {useStore} from 'vuex'
-
+import { useStore } from 'vuex'
+import { PageSearch } from '@/api/apiInverter'
 
 // const props = defineProps({
 //   tableData: {
 //     type: Object as PropType<Inverter[]>
 //   }
 // })
+const tableData: Inverter[] = reactive([])
 
 const store = useStore()
 
 const route = useRoute();
-//测试数据
-// const tableData: Inverter[] = [{
-//   powerStationName: '西安京东亚一园站',
-//   inverterName: 'N19-7#-5B-20-110',
-//   inverterTotalCapacity: 168.21,
-//   powerGeneration: 930.0,
-//   standPowerGeneration: 10.81,
-//   computedPowerGeneration: 839.35,
-//   powerGenerationDeviation: 4.99,
-//   powerGenerationDeviationRatio: '90.69',
-//   factors: 1,
-//   averageAbsoluteDeviation: ''
-// },
-// {
-//   powerStationName: '西安京东亚一园站',
-//   inverterName: 'N19-7#-5B-20-111',
-//   inverterTotalCapacity: 168.21,
-//   powerGeneration: 930.0,
-//   standPowerGeneration: 10.81,
-//   computedPowerGeneration: 839.35,
-//   powerGenerationDeviation: 4.99,
-//   powerGenerationDeviationRatio: '90.69',
-//   factors: 1,
-//   averageAbsoluteDeviation: ''
-// },
-// {
-//   powerStationName: '西安京东亚一园站',
-//   inverterName: 'N19-7#-5B-20-112',
-//   inverterTotalCapacity: 168.21,
-//   powerGeneration: 930.0,
-//   standPowerGeneration: 10.81,
-//   computedPowerGeneration: 839.35,
-//   powerGenerationDeviation: 4.99,
-//   powerGenerationDeviationRatio: '90.69',
-//   factors: 1,
-//   averageAbsoluteDeviation: ''
-// },
-// {
-//   powerStationName: '西安京东亚一园站',
-//   inverterName: 'N19-7#-5B-20-113',
-//   inverterTotalCapacity: 168.21,
-//   powerGeneration: 930.0,
-//   standPowerGeneration: 10.81,
-//   computedPowerGeneration: 839.35,
-//   powerGenerationDeviation: 4.99,
-//   powerGenerationDeviationRatio: '90.69',
-//   factors: 1,
-//   averageAbsoluteDeviation: ''
-// },
-// {
-//   powerStationName: '西安京东亚一园站',
-//   inverterName: 'N19-7#-5B-20-114',
-//   inverterTotalCapacity: 168.21,
-//   powerGeneration: 930.0,
-//   standPowerGeneration: 10.81,
-//   computedPowerGeneration: 839.35,
-//   powerGenerationDeviation: 4.99,
-//   powerGenerationDeviationRatio: '90.69',
-//   factors: 0.6,
-//   averageAbsoluteDeviation: ''
-// },
-// {
-//   powerStationName: '西安京东亚一园站',
-//   inverterName: 'N19-7#-5B-20-115',
-//   inverterTotalCapacity: 168.21,
-//   powerGeneration: 930.0,
-//   standPowerGeneration: 10.81,
-//   computedPowerGeneration: 839.35,
-//   powerGenerationDeviation: 4.99,
-//   powerGenerationDeviationRatio: '90.69',
-//   factors: 1,
-//   averageAbsoluteDeviation: ''
-// }]
+
+
 // const tableData: = 
 
 // const tableData =reactive([
@@ -183,8 +113,8 @@ let InverterParamData: InverterParam[] = reactive([])
 //调整系数发生变化时加入数组
 const watchFactors = (row: Inverter) => {
   const map = new Map()
-//定义参数对象类型
-  const invertParamObject:InverterParam  = reactive({})
+  //定义参数对象类型
+  const invertParamObject: InverterParam = reactive({})
   invertParamObject.stationName = row.powerStationName
   invertParamObject.inverterName = row.inverterName
   invertParamObject.factors = row.factors
@@ -193,20 +123,20 @@ const watchFactors = (row: Inverter) => {
 
   // InverterParamData = InverterParamData.filter(key => !map.has(key.inverterName) && map.set(key.inverterName, 1))
   // InverterParamData = InverterParamData.filter((item) => !map.has(item.inverterName.toString()) && map.set(item.inverterName.toString()))
-  InverterParamData = unique(InverterParamData,'inverterName')
-  console.log('InverterParamData',InverterParamData)
+  InverterParamData = unique(InverterParamData, 'inverterName')
+  console.log('InverterParamData', InverterParamData)
   // emit('showInfo',InverterParamData)
   // mitts.emit('getInvertParamData',InverterParamData)
   //上传store的参数
-  store.commit('setInvertParam',InverterParamData)
-  
+  store.commit('setInvertParam', InverterParamData)
+
 
 
 }
-  //去重函数
-  function unique(arr:InverterParam[], name:string) {
+//去重函数
+function unique(arr: InverterParam[], name: string) {
   const hash = {}
-  return arr.reduce((acc:InverterParam[], cru:any) => {
+  return arr.reduce((acc: InverterParam[], cru: any) => {
     if (!hash[cru[name]]) {
       hash[cru[name]] = { index: acc.length }
       acc.push(cru)
@@ -223,13 +153,54 @@ const watchFactors = (row: Inverter) => {
 
 
 //分页数据
-const paginationState = reactive(
+const paginationState: InverterPageParams = reactive(
   {
     currentPage: 1,
-    total: 1000,
+    total: 0,
     pageSize: 10,
   }
 )
+//分页查询条件
+const pageCondition: InverterPageParams = reactive({
+  stationName: '',
+  page: 1,
+  pageSize: 10
+})
+
+//监听vuex中分页总数
+//1.返回监听字段分页总数
+const getShowState = computed(() => {
+  return store.state.total
+})
+
+//2.更新分页总数据
+//监听计算函数返回的字段
+watch(getShowState, () => {
+  paginationState.total = store.state.total
+}, {
+  immediate: true,
+  deep: true
+})
+//监听vuex中重新计算被点击的标志
+//1.返回监听标志
+const getStateFlag = computed(()=>{
+  return store.state.flag
+})
+//2.判断flag的值
+watch(getStateFlag,()=>{
+  if(store.state.flag)
+  {
+    console.log('监听flag',pageCondition)
+    getInvertTableData(pageCondition)
+  }
+},{
+  immediate: true,
+  deep: true
+})
+
+
+
+
 
 // 设置页面显示数据
 /*const setTableData = () => {
@@ -251,13 +222,23 @@ const paginationState = reactive(
 }*/
 
 // 当前页大小发生变化时触发
-const handleSizeChange = (val) => {
+const handleSizeChange = (val: number) => {
+  //修改页面大小
+  pageCondition.pageSize = val
+  getInvertTableData(pageCondition)
+  console.log('页面查询条件', pageCondition)
+
   console.log('size', val)
 }
 
 // 当前页变化时触发
-const handleCurrentChange = (page) => {
-  // console.log('page', page)
+const handleCurrentChange = (page: number) => {
+
+  //修改当前页数
+  pageCondition.page = page
+  getInvertTableData(pageCondition)
+  console.log('页面查询条件', pageCondition)
+  console.log('page', page)
 }
 
 // 详情显示
@@ -273,7 +254,27 @@ const handleCurrentChange = (page) => {
 //   emit('editInfo', scope.row)
 // }
 
+//获取逆变器报表的数据
+const getInvertTableData = (pageCondition: InverterPageParams) => {
 
+  PageSearch(pageCondition).then(res => {
+    tableData.value = res.data.data
+    console.log('分页结果', res.data.data)
+    console.log('tableData', tableData.value)
+
+  })
+}
+
+onMounted(() => {
+
+
+  pageCondition.page = 1
+  pageCondition.pageSize = 10
+  pageCondition.stationName = route.params.id
+
+  getInvertTableData(pageCondition)
+
+})
 
 </script>
 

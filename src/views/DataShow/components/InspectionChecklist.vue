@@ -10,45 +10,26 @@
   <div class="inspection-checklist">
     <el-container>
       <el-header class="checklist-filter-from" height="38px">
-        <el-form
-            :model="conditions"
-            status-icon
-            label-width="80px"
-        >
+        <el-form :model="conditions" status-icon label-width="80px">
           <el-form-item label="工作类型:" prop="workType">
             <el-select v-model="conditions.workType" class="m-2" placeholder="请选择">
-              <el-option
-                  v-for="item in workTypeOptions "
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-              />
+              <el-option v-for="item in workTypeOptions " :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
           <el-form-item label="工作人:" prop="workerName">
-            <el-input v-model="conditions.workerName" placeholder="请输入" clearable/>
+            <el-input v-model="conditions.workerName" placeholder="请输入" clearable />
           </el-form-item>
 
           <el-form-item label="记录时间" prop="filterTime">
-            <el-date-picker
-                class="data-picker"
-                v-model="conditions.filterTime"
-                type="daterange"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间"
-                :disabled-date="disabledDate"
-                :shortcuts="shortcuts"
-                range-separator="至"
-            />
+            <el-date-picker class="data-picker" v-model="conditions.filterTime" type="daterange" start-placeholder="开始时间"
+              end-placeholder="结束时间" :disabled-date="disabledDate" :shortcuts="shortcuts" range-separator="至" />
 
           </el-form-item>
-          <el-form-item label-width="0">
+          <el-form-item label-width="50">
             <el-button type="primary" @click="handleConfirm">查询</el-button>
           </el-form-item>
         </el-form>
-        <div class="btn-list">
-          <el-button @click="checkListPrint">打印</el-button>
-        </div>
+
       </el-header>
     </el-container>
 
@@ -74,23 +55,33 @@
         <el-table-column label="操作">
           <template #default="scope">
             <el-button v-if="scope.row.edit" type="primary" size="small" @click="confirmAdd(scope.row)">
-              <el-icon :size="20">
-                <Checked/>
+              <el-icon :size="10">
+                <Checked />
               </el-icon>
             </el-button>
             <div v-else>
               <el-button type="primary" @click="editData(scope.row)">
-                <el-icon :size="20">
-                  <Edit/>
+                <el-icon :size="12">
+                  <Edit />
                 </el-icon>
               </el-button>
-              <el-button type="primary" @click="deleteData(scope.row,scope.$index)">
-                <el-icon :size="20">
-                  <Delete/>
+              <el-button type="primary" @click="deleteData(scope.row, scope.$index)">
+                <el-icon :size="12">
+                  <Delete />
                 </el-icon>
               </el-button>
             </div>
           </template>
+        </el-table-column>
+        <el-table-column>
+          <el-button type="success">
+            打印<el-icon class="el-icon--right">
+              <Download />
+            </el-icon>
+
+          </el-button>
+
+
         </el-table-column>
 
       </el-table>
@@ -98,7 +89,7 @@
       <el-button type="primary" @click="addData">添加工作单</el-button>
     </div>
     <InspectionChecklistForm :addNumber="addNum" @submit="handleConfirmAdd" @close="dialogClose"
-                             :dialogVisible="dialogVisible"></InspectionChecklistForm>
+      :dialogVisible="dialogVisible"></InspectionChecklistForm>
 
     <el-dialog v-model="chekListImgVisilbe">
       <img src="/static/imgs/checkList.jpg">
@@ -108,12 +99,12 @@
 
 <script setup lang="ts">
 
-import {Checked} from "@element-plus/icons-vue";
-import {computed, Ref, ref} from "vue";
+import { Checked } from "@element-plus/icons-vue";
+import { computed, Ref, ref } from "vue";
 import FilterForm from "@/views/DataShow/components/FilterForm.vue";
 import InspectionChecklistForm from "@/views/DataShow/components/InspectionChecklistForm.vue";
-import {getCurrentDate} from "@/utils/dateUtils.ts";
-import {formatNumber} from "@/utils/numberUtils.ts";
+import { getCurrentDate } from "@/utils/dateUtils.ts";
+import { formatNumber } from "@/utils/numberUtils.ts";
 
 interface InspectionChecklist {
   workType?: string; // 工作类型
@@ -212,7 +203,7 @@ const tableData: Ref<Array<InspectionChecklist>> = ref([]);
 const dialogVisible = ref(false)
 
 const addNum = computed(() => {
-  return getCurrentDate() + '-' + formatNumber((tableData.value.length + 1),3);
+  return getCurrentDate() + '-' + formatNumber((tableData.value.length + 1), 3);
 })
 //添加
 const addData = () => {
@@ -264,7 +255,7 @@ const submitData = () => {
 // 打印功能
 const chekListImgVisilbe = ref(false);
 
-const checkListPrint  = ()=>{
+const checkListPrint = () => {
   chekListImgVisilbe.value = true;
 }
 
@@ -272,7 +263,6 @@ const checkListPrint  = ()=>{
 </script>
 
 <style scoped>
-
 .inspection-checklist {
   .checklist-filter-from {
     width: 100%;
@@ -299,5 +289,4 @@ const checkListPrint  = ()=>{
     }
   }
 }
-
 </style>

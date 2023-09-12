@@ -11,3 +11,10 @@ export interface User {
     age: number,
     name: string,
 }
+//返回数据类型
+export interface Res{
+  code:number,
+  data?:string,
+  message?:string
+
+}

@@ -60,12 +60,12 @@ import {ElMessage} from "element-plus";
 import { InverterParam } from "@/type/inverter.ts";
 import mitts from '@/utils/bus'
 import {useStore} from 'vuex'
+import {Res} from '@/type/request/requestType'
 
 const emit = defineEmits(['confirm'])
 const store = useStore()
 const conditions = reactive({
   equipment: '全部', // 设备
-  timeDimension: '1', //时间维度
   statisticalTime: [],// 统计时间
 })
 
@@ -138,6 +138,7 @@ const disabledDate = (time: Date) => {
 //表单提交
 const handleConfirm = () => {
   emit('confirm', conditions)
+  
 }
 
 // 导出数据
@@ -186,9 +187,15 @@ const upload = () => {
 //重新计算
 const reCount = ()=>{
   //参数从store中获取值
-  ReCount(store.state.invertParam).then(res =>{
-
-    console.log('res',res)
+  ReCount(store.state.invertParam).then((res:Res) =>{
+    if(res.code===200)
+    {
+      ElMessage({message: res.message, type: 'success'})
+      store.commit('setFlag',true)
+    }else
+    {
+      ElMessage({message: '操作失败', type: 'error'})
+    }
 
   })
   console.log('vuex',store.state.invertParam)

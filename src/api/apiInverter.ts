@@ -6,7 +6,7 @@
    * @description 逆变器报表api
    */
 import Request from "@/utils/request.ts";
-import {InverterParams} from "@/type/request/inverter.ts";
+import {InverterParams,InverterPageParams} from "@/type/request/inverter.ts";
 import {InverterParam} from "@/type/inverter.ts"
 
 
@@ -45,4 +45,10 @@ export function ReCount(params:InverterParam[]){
 
     })
 
+}
+//逆变器报表分页查询
+export function PageSearch(params:InverterPageParams){
+    return Request.get('/api/inverter/page',{
+        params
+    })
 }

@@ -5,7 +5,7 @@
         <header-laout></header-laout>
       </el-header>
       <el-container>
-        <el-aside width="250px">
+        <el-aside style="background-color: white" width="250px">
           <side-layout/>
         </el-aside>
         <el-container>
@@ -27,7 +27,6 @@ import MainLayout from "@/components/MainLayout/MainLayout.vue";
 
 <style lang="scss" scoped>
 .common-layout{
-
   &:deep(.el-header){
     padding: 0;
   }

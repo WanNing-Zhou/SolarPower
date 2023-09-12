@@ -16,14 +16,14 @@
 
 import FilterForm from "@/views/DataShow/components/FilterForm.vue";
 import InverterDataTable from "@/views/DataShow/components/InverterDataTable.vue";
-import { computed, onMounted, ref, watch, reactive } from "vue";
+import { computed, onMounted, ref, watch, reactive,onBeforeMount } from "vue";
 import DetailDialog from "@/views/DataShow/components/DetailDialog.vue";
 import { getInverterTableData } from "@/api/apiInverter.ts";
 import { useRoute } from "vue-router";
 import { InverterParams } from "@/type/request/inverter.ts";
 import { convertDateFormat } from "@/utils/dateUtils.ts";
 import { InverterParam } from "@/type/inverter.ts";
-
+import {useStore} from 'vuex'
 
 
 interface Conditions {
@@ -31,7 +31,8 @@ interface Conditions {
   timeDimension: string //时间维度
   statisticalTime: string// 统计时间
 }
-
+//使用useStore
+const store = useStore()
 const route = useRoute();
 // 电站名称
 const stationName = computed(() => {
@@ -62,12 +63,15 @@ const getTableData = (data?: InverterParams) => {
   getInverterTableData(data).then(res => {
     console.log('逆变器报表查询参数data', data)
     console.log('tableData', res)
-    tableData.value = res.data
+    // tableData.value = res.data
+    //将返回的总体数据放到vuex中
+    store.commit('setTotal',res.data)
+
   })
 }
 
 // 加载时计算
-onMounted(() => {
+onBeforeMount(() => {
   console.log('api', import.meta.env.VITE_APP_BASE_API)
 
   getTableData()

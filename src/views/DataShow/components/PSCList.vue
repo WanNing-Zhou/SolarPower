@@ -3,11 +3,11 @@
     <el-container>
       <el-header class="filter-from" height="38px">
         <el-form :model="conditions" status-icon>
-          <el-form-item   class="form-item-short" label="电站:" prop="">
-            <el-input v-model="conditions.workerName"  size="small" placeholder="全部" clearable />
+          <el-form-item class="form-item-short" label="电站:" prop="">
+            <el-input v-model="conditions.workerName" size="small" placeholder="全部" clearable />
           </el-form-item>
           <el-form-item class="form-item-short" label="计量点:" prop="">
-            <el-input size="small"  placeholder="全部" clearable />
+            <el-input size="small" placeholder="全部" clearable />
           </el-form-item>
           <el-form-item label-width="100px" label="记录时间" prop="filterTime">
             <el-date-picker v-model="conditions.filterTime" type="monthrange" unlink-panels range-separator="To"
@@ -26,7 +26,7 @@
       </el-header>
 
       <el-main>
-        <el-table :data="tableData" show-summary size="small" border>
+        <el-table :data="tableData" show-summary size="small" border :summary-method="getSummaries">
           <el-table-column prop="portName" width="120" label="站名" />
           <el-table-column prop="date" label="年月" width="160">
             <template #default="scope">
@@ -138,6 +138,7 @@ import { onMounted, reactive, ReactiveFlags, Ref, ref } from "vue";
 import { Checked } from "@element-plus/icons-vue";
 import { convertDateFormat } from "@/utils/dateUtils.ts";
 import { useRoute } from "vue-router";
+import type { TableColumnCtx } from 'element-plus';
 
 const route = useRoute()
 
@@ -277,6 +278,40 @@ onMounted(() => {
   tableData.value = testData;
 })
 
+interface SummaryMethodProps<T = pscData> {
+  columns: TableColumnCtx<T>[]
+  data: T[]
+}
+//合计
+const getSummaries = (param: SummaryMethodProps) => {
+  const { columns, data } = param
+  const sums: string[] = []
+  columns.forEach((column, index) => {
+    if (index !== 7 && index !== 1 && index !== 2) {
+      if (index === 0) {
+        sums[index] = '合计'
+        return
+      }
+      const values = data.map((item) => Number(item[column.property]))
+      if (!values.every((value) => Number.isNaN(value))) {
+        sums[index] = ` ${values.reduce((prev, curr) => {
+          const value = Number(curr)
+          if (!Number.isNaN(value)) {
+            return prev + curr
+          } else {
+            return prev
+          }
+        }, 0)}`
+      } else {
+        sums[index] = ''
+      }
+    }
+  }
+  )
+
+  return sums
+}
+
 </script>
 
 
@@ -290,15 +325,17 @@ onMounted(() => {
     .el-form {
       width: 120px !important;
       display: flex;
+
       .form-item-short {
         display: flex;
         float: left;
         margin-right: 50px;
         width: 200px;
-        .el-input{
+
+        .el-input {
           width: 200px;
         }
-       
+
       }
 
       .el-form-item {
