@@ -199,7 +199,7 @@ const handleConfirm = () => {
 
 const testData: Array<pscData> = [
   {
-    portName: route.params.id,
+    portName: route.params.label,
     gatewayPower: 134,
     onlinePower: 13,
     selfUsePower: 4455,
@@ -208,7 +208,7 @@ const testData: Array<pscData> = [
     edit: false
   },
   {
-    portName: route.params.id,
+    portName: route.params.label,
     gatewayPower: 1344,
     onlinePower: 154,
     selfUsePower: 44455,
@@ -239,7 +239,7 @@ const addData = () => {
 
 // 对数据进行计算
 const computedData = (row: pscData) => {
-  row.portName = route.params.id;
+  row.portName = route.params.label;
   console.log('route', route)
   row.date = convertDateFormat(<string>row.date)
   console.log('row', row.gatewayPower, row.onlinePower)

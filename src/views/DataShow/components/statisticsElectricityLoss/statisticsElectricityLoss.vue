@@ -133,7 +133,7 @@ const addData = () => {
 
   const preData = tableData.value[tableData.value.length - 1]
   tableData.value.push({
-    portName: route.params?.id as string,
+    portName: route.params?.label as string,
     date: new Date(),
     edit: true,
   });

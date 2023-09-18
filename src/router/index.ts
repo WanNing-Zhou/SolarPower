@@ -18,7 +18,7 @@ const router = createRouter({
     routes: [
         {path: '/', component: Home, redirect: '/home'}, // 当访问根路径 / 时，重定向到 /home
         {path: '/home', component: Home},
-        {path: '/datashow/:id', component: DataShow} // 这里的路由配置需要调整一下
+        {path: '/datashow/:id/:label/', component: DataShow} // 这里的路由配置需要调整一下
     ]
 });
 

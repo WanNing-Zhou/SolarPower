@@ -24,5 +24,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 
 app.use(ElementPlus, {locale:zhCN})
 app.use(router)
+app.use(store)//注意顺序，先使用后挂载
 app.mount('#app')
-app.use(store)
+

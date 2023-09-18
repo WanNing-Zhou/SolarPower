@@ -66,7 +66,9 @@ import { useRoute } from "vue-router";
 import { InverterParam, Inverter, InverterPageParams } from "@/type/inverter.ts";
 import mitts from '@/utils/bus'
 import { useStore } from 'vuex'
-import { PageSearch } from '@/api/apiInverter'
+import { PageSearch, getInverterTableData } from '@/api/apiInverter'
+import { InverterParams } from '@/type/request/inverter'
+import {Res} from '@/type/request/requestType'
 
 // const props = defineProps({
 //   tableData: {
@@ -124,10 +126,10 @@ const watchFactors = (row: Inverter) => {
   // InverterParamData = InverterParamData.filter(key => !map.has(key.inverterName) && map.set(key.inverterName, 1))
   // InverterParamData = InverterParamData.filter((item) => !map.has(item.inverterName.toString()) && map.set(item.inverterName.toString()))
   InverterParamData = unique(InverterParamData, 'inverterName')
-  console.log('InverterParamData', InverterParamData)
   // emit('showInfo',InverterParamData)
   // mitts.emit('getInvertParamData',InverterParamData)
   //上传store的参数
+
   store.commit('setInvertParam', InverterParamData)
 
 
@@ -149,7 +151,10 @@ function unique(arr: InverterParam[], name: string) {
 
 
 
+//逆变器查询条件
+const InverterCondition: InverterParams = reactive({
 
+})
 
 
 //分页数据
@@ -183,19 +188,54 @@ watch(getShowState, () => {
 })
 //监听vuex中重新计算被点击的标志
 //1.返回监听标志
-const getStateFlag = computed(()=>{
+const getStateFlag = computed(() => {
   return store.state.flag
 })
 //2.判断flag的值
-watch(getStateFlag,()=>{
-  if(store.state.flag)
-  {
-    console.log('监听flag',pageCondition)
-    getInvertTableData(pageCondition)
+watch(getStateFlag, () => {
+  if (store.state.flag) {
+
+
+    //当重新计算被点击时，清空调整系数参数的数组
+    InverterParamData = store.state.invertParam
+    store.commit('setFlag', false)
+
+    InverterCondition.stationName = pageCondition.stationName
+    InverterCondition.startTime = store.state.InverterstartTime
+    InverterCondition.endTime = store.state.InverterendTime
+
+
+    //重新分析逆变器数据
+    getInverterTableData(InverterCondition).then((res:Res)=>{
+      if(res.code===200)
+      {
+        console.log('重新分析',res)
+        //重新分页
+        getInvertTableData(pageCondition)
+
+      }
+    })
+
+
+    //     将重新计算标志设为false，重置一下
+    // store.commit('setFlag', false)
   }
-},{
+}, {
   immediate: true,
   deep: true
+})
+//监听vuex中查询被点击的标志
+//1.返回查询标志
+const getInverterSearchFlag = computed(() => {
+  return store.state.InverterSearchFlag
+})
+//2.判断查询标志
+watch(getInverterSearchFlag, () => {
+  // if (store.state.InverterSearchFlag) {
+  //   console.log('获取逆变器的值')
+  //   getInvertTableData(pageCondition)
+  // }
+  getInvertTableData(pageCondition)
 })
 
 
@@ -226,9 +266,7 @@ const handleSizeChange = (val: number) => {
   //修改页面大小
   pageCondition.pageSize = val
   getInvertTableData(pageCondition)
-  console.log('页面查询条件', pageCondition)
 
-  console.log('size', val)
 }
 
 // 当前页变化时触发
@@ -237,8 +275,7 @@ const handleCurrentChange = (page: number) => {
   //修改当前页数
   pageCondition.page = page
   getInvertTableData(pageCondition)
-  console.log('页面查询条件', pageCondition)
-  console.log('page', page)
+
 }
 
 // 详情显示
@@ -258,9 +295,9 @@ const handleCurrentChange = (page: number) => {
 const getInvertTableData = (pageCondition: InverterPageParams) => {
 
   PageSearch(pageCondition).then(res => {
+    console.log('res', res)
     tableData.value = res.data.data
-    console.log('分页结果', res.data.data)
-    console.log('tableData', tableData.value)
+
 
   })
 }
@@ -270,7 +307,7 @@ onMounted(() => {
 
   pageCondition.page = 1
   pageCondition.pageSize = 10
-  pageCondition.stationName = route.params.id
+  pageCondition.stationName = route.params.label
 
   getInvertTableData(pageCondition)
 

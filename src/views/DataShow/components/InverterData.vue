@@ -28,7 +28,7 @@ import {useStore} from 'vuex'
 
 interface Conditions {
   equipment: string // 设备
-  timeDimension: string //时间维度
+  // timeDimension: string //时间维度
   statisticalTime: string// 统计时间
 }
 //使用useStore
@@ -36,8 +36,8 @@ const store = useStore()
 const route = useRoute();
 // 电站名称
 const stationName = computed(() => {
-  console.log('电站名称:', route.params.id)
-  return route.params.id as string
+  console.log('电站名称:', route.params.label)
+  return route.params.label as string
 })
 
 watch(stationName, () => {
@@ -63,9 +63,15 @@ const getTableData = (data?: InverterParams) => {
   getInverterTableData(data).then(res => {
     console.log('逆变器报表查询参数data', data)
     console.log('tableData', res)
-    // tableData.value = res.data
+    
     //将返回的总体数据放到vuex中
     store.commit('setTotal',res.data)
+    //将时间放到vuex中
+    store.commit('seteInverterstartTime',data?.startTime)
+    store.commit('setInverterendTime',data?.endTime)
+
+
+  
 
   })
 }

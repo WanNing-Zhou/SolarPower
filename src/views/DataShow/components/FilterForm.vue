@@ -1,12 +1,8 @@
 <template>
   <div class=filter-form>
-    <el-form
-        :model="conditions"
-        status-icon
-        label-width="80px"
-    >
+    <el-form :model="conditions" status-icon label-width="80px">
       <el-form-item class="form-item-short" label="选择电站:" prop="equipment">
-        <el-input size="small" v-model="conditions.equipment" placeholder="全部" clearable/>
+        <el-input size="small" v-model="conditions.equipment" placeholder="全部" clearable />
       </el-form-item>
 
       <!-- <el-form-item class="form-item-middle" label="时间维度:" prop="timeDimension">
@@ -22,17 +18,9 @@
       </el-form-item> -->
 
       <el-form-item class="form-item-long" label="统计时间" width="200px" prop="statisticalTime">
-        <el-date-picker
-            size="small"
-            class="data-picker"
-            v-model="conditions.statisticalTime"
-            type="daterange"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            :disabled-date="disabledDate"
-            :shortcuts="shortcuts"
-            range-separator="至"
-        />
+        <el-date-picker size="small" class="data-picker" v-model="conditions.statisticalTime" type="daterange"
+          start-placeholder="开始时间" end-placeholder="结束时间" :disabled-date="disabledDate" :shortcuts="shortcuts"
+          range-separator="至" />
       </el-form-item>
 
       <el-form-item class="form-item-mini" label-width="20px">
@@ -53,14 +41,14 @@
 
 <script setup lang="ts">
 
-import {reactive, defineEmits, ref, onMounted, Ref,PropType, Component, nextTick} from "vue";
-import {getInverterTableData, InverterExport, invertImport, ReCount} from "@/api/apiInverter.ts";
-import {uploadFile} from "@/api/upload.ts";
-import {ElMessage} from "element-plus";
+import { reactive, defineEmits, ref, onMounted, Ref, PropType, Component, nextTick } from "vue";
+import { getInverterTableData, InverterExport, invertImport, ReCount } from "@/api/apiInverter.ts";
+import { uploadFile } from "@/api/upload.ts";
+import { ElMessage } from "element-plus";
 import { InverterParam } from "@/type/inverter.ts";
 import mitts from '@/utils/bus'
-import {useStore} from 'vuex'
-import {Res} from '@/type/request/requestType'
+import { useStore } from 'vuex'
+import { Res } from '@/type/request/requestType'
 
 const emit = defineEmits(['confirm'])
 const store = useStore()
@@ -138,7 +126,9 @@ const disabledDate = (time: Date) => {
 //表单提交
 const handleConfirm = () => {
   emit('confirm', conditions)
-  
+  //查询被点击后触发
+  store.commit('setInverterSearchFlag', !store.state.InverterSearchFlag)
+
 }
 
 // 导出数据
@@ -169,42 +159,44 @@ const upload = () => {
   uploadFile(formData).then(res => {
 
     const fildId = res.data;
-    invertImport({fildId}).then(res => {
+    console.log('fildld',fildId)
+    invertImport({ fildId }).then(res => {
       // console.log('res', res)
-      ElMessage({message: '数据导入成功', type: 'success'})
+      ElMessage({ message: '数据导入成功', type: 'success' })
       // 重新获取数据
       emit('confirm', conditions)
     }).catch(err => {
       // console.log('err', err)
-      ElMessage({message: '数据导入失败请稍后再试', type: 'error'})
+      ElMessage({ message: '数据导入失败请稍后再试', type: 'error' })
     })
-  }).catch(error=>{
+  }).catch(error => {
     console.log('文件上传失败', error)
   })
 }
 
 
 //重新计算
-const reCount = ()=>{
+const reCount = () => {
   //参数从store中获取值
-  ReCount(store.state.invertParam).then((res:Res) =>{
-    if(res.code===200)
-    {
-      ElMessage({message: res.message, type: 'success'})
-      store.commit('setFlag',true)
-    }else
-    {
-      ElMessage({message: '操作失败', type: 'error'})
+  ReCount(store.state.invertParam).then((res: Res) => {
+    console.log('res', res)
+    if (res.code === 200) {
+      ElMessage({ message: res.message + ',更改了' + res.data + '条数据', type: 'success' })
+      store.commit('setFlag', true)
+      //清空调整系数的数组
+      store.commit('setInvertParam', [])
+
+    } else {
+      ElMessage({ message: '操作失败', type: 'error' })
     }
 
   })
-  console.log('vuex',store.state.invertParam)
+  console.log('vuex', store.state.invertParam)
 
 }
 </script>
 
 <style lang="scss" scoped>
-
 .filter-form {
   width: 100%;
   display: flex;
@@ -245,5 +237,4 @@ const reCount = ()=>{
   }
 
 }
-
 </style>
