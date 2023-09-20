@@ -4,17 +4,17 @@
       <el-table-column prop="powerStationName" label="电站名称" sortable width="180" />
       <el-table-column prop="inverterName" label="设备名称" sortable width="180" />
       <el-table-column prop="inverterTotalCapacity" label="组串总容量(kWp)" sortable width="180" />
-      <el-table-column prop="powerGeneration" label="实际发电量(度)" sortable width="180" />
+      <el-table-column prop="powerGeneration" label="实际发电量(度)" sortable width="120" />
 
-      <el-table-column prop="standPowerGeneration" label="标准容量发电量(度/kWp)" sortable width="180" />
-      <el-table-column prop="computedPowerGeneration" label="计算发电量(度)" sortable width="180" />
+      <el-table-column prop="standPowerGeneration" label="标准容量发电量(度/kWp)" sortable width="120" />
+      <el-table-column prop="computedPowerGeneration" label="计算发电量(度)" sortable width="150" />
 
       <!--      <el-table-column prop="averageGenPower" label="平均发电量" sortable width="180"/>-->
-      <el-table-column prop="powerGenerationDeviation" label="发电量误差" sortable width="180" />
-      <el-table-column prop="powerGenerationDeviationRatio" label="误差百分比" sortable width="180">
+      <el-table-column prop="powerGenerationDeviation" label="发电量误差" sortable width="120" />
+      <el-table-column prop="powerGenerationDeviationRatio" label="误差百分比" sortable width="120">
 
       </el-table-column>
-      <el-table-column prop="factors" label="调整系数" width="180">
+      <el-table-column prop="factors" label="调整系数" width="90">
         <!-- <template #default="scope">
           <el-input v-if="editRow == scope.row.dedignId" v-model="scope.row.factors"
                     @blur="editRow= '' "/>
@@ -29,7 +29,7 @@
 
         </template>
       </el-table-column>
-      <el-table-column prop="averageAbsoluteDeviation" label="标准单板日电量" sortable width="180"></el-table-column>
+      <!-- <el-table-column prop="averageAbsoluteDeviation" label="标准单板日电量" sortable width="180"></el-table-column> -->
       <!--      <el-table-column label="操作" width="180">
               <template #default="scope">
                 &lt;!&ndash;                  <el-button&ndash;&gt;
@@ -78,33 +78,10 @@ import {Res} from '@/type/request/requestType'
 const tableData: Inverter[] = reactive([])
 
 const store = useStore()
-
 const route = useRoute();
 
 
-// const tableData: = 
 
-// const tableData =reactive([
-//     {
-//       designName:'Z-1', //设备名称
-//       dedignId:'Z-1',//设备ID
-//       totalStringCapacity:31.2, //组串总容量
-//       powerGeneration: 33, //发电量
-//       accumulatedPowerGeneration:1024,//累计发电量
-//       equivalentPowerGenerationTime: 55,//等价发电时
-//       peakACPower: 21, //峰值交流功率
-//       gridConnectionDuration: 523,// 并网时长
-//       powerRationingLoss:33,// 限电损失量
-//       averageAbsoluteDeviation:'',//平均发电误差
-//       averageGenPower: ''. //平均发电量
-//       singleGenPower: '', //标转单板日电量
-//       measurementPointName: '', //计量点名称
-//       portName:''. //电站名称
-//       standardPowerGeneration: '', //标准容量发电量
-//       calculatePowerGeneration: '', // 计算发电量
-//       adjustmentCoefficient: '', //调整系数
-//     },
-// ])
 
 // emit
 const emit = defineEmits(['showInfo'])
@@ -182,8 +159,12 @@ const getShowState = computed(() => {
 //监听计算函数返回的字段
 watch(getShowState, () => {
   paginationState.total = store.state.total
+  // pageCondition.stationName = route.params.label
+  // console.log('163行查询参数',pageCondition)
+  // getInvertTableData(pageCondition)
+
 }, {
-  immediate: true,
+  // immediate: true,
   deep: true
 })
 //监听vuex中重新计算被点击的标志
@@ -235,7 +216,25 @@ watch(getInverterSearchFlag, () => {
   //   console.log('获取逆变器的值')
   //   getInvertTableData(pageCondition)
   // }
+  pageCondition.stationName = store.state.stationName
   getInvertTableData(pageCondition)
+})
+
+//监听左侧电站，如果电站的路由发生变化时就调用分页查询
+//计算电站
+const stationRouter = computed(()=>{
+  return route.params.label as string
+})
+//监听
+watch(stationRouter,(newdata,old)=>{
+  // console.log('新值',newdata,old)
+  pageCondition.stationName = route.params.label
+  console.log('分页逆变器查询参数',pageCondition)
+  getInvertTableData(pageCondition)
+
+
+},{
+  deep:true
 })
 
 
@@ -294,6 +293,7 @@ const handleCurrentChange = (page: number) => {
 //获取逆变器报表的数据
 const getInvertTableData = (pageCondition: InverterPageParams) => {
 
+  console.log('分页查询条件',pageCondition)
   PageSearch(pageCondition).then(res => {
     console.log('res', res)
     tableData.value = res.data.data
@@ -305,11 +305,7 @@ const getInvertTableData = (pageCondition: InverterPageParams) => {
 onMounted(() => {
 
 
-  pageCondition.page = 1
-  pageCondition.pageSize = 10
-  pageCondition.stationName = route.params.label
-
-  getInvertTableData(pageCondition)
+  
 
 })
 

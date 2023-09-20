@@ -8,9 +8,9 @@
           <el-option v-for="item in workTypeOptions " :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
-      <el-form-item label-width="100" label="编号">
+      <!-- <el-form-item label-width="100" label="编号">
         <el-input v-model="prop.addNumber"></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label-width="100" label="工作人">
         <el-input v-model="checklistFrom.man"></el-input>
       </el-form-item>
@@ -34,8 +34,9 @@
       <el-form-item label-width="100">
         <section class="btn-group">
           <section>
+            <!-- :TODO  参照导入华为数据的上传去开发 -->
             <el-upload v-model:file-list="fileList" class="upload-demo" multiple
-              action="http://localhost:8080/api/file/upload1" :on-preview="handlePreview" :on-remove="handleRemove"
+              action="http://124.220.61.93:8080/api/file/upload1" :on-preview="handlePreview" :on-remove="handleRemove"
               :before-remove="beforeRemove" :limit="8" :on-exceed="handleExceed" :on-success="successUpLoad">
               <el-button type="primary">选择文件</el-button>
               <template #tip>
@@ -90,10 +91,11 @@ const prop = defineProps({
 const emit = defineEmits(['close', 'submit'])
 
 let checklistFrom: Ref<addConditions> = ref({})
-
+// 文件列表
+let fileList = ref<UploadUserFile[]>([])
 // 工作类型选项
 const workTypeOptions = [
-{
+  {
     value: '0000',
     label: '请选择'
   },
@@ -117,7 +119,17 @@ const workTypeOptions = [
 
 // dialog显示
 const visible = computed(() => {
+
   return prop.dialogVisible;
+})
+
+watch(visible, (a, b) => {
+  console.log(a, b)
+
+
+
+}, {
+  deep: true
 })
 
 // 关闭前操作
@@ -125,44 +137,13 @@ const handleBeforeClose = () => {
   console.log('输入框关闭')
   emit('close')
   console.log('visible', visible.value)
-  // checklistFrom.value = []
+
 
 }
 
-// 文件列表
-let fileList = ref<UploadUserFile[]>([
-
-])
-
-// // 移除操作
-// const handleRemove: UploadProps['onRemove'] = (file, uploadFiles) => {
-//   console.log(file, uploadFiles)
-// }
-
-// // 预览操作
-// const handlePreview: UploadProps['onPreview'] = (uploadFile) => {
-//   console.log(uploadFile)
-// }
-
-// // 文件超过处理
-// const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
-//   ElMessage.warning(
-//       `The limit is 3, you selected ${files.length} files this time, add up to ${
-//           files.length + uploadFiles.length
-//       } totally`
-//   )
-// }
 
 
-// // 删除前操作
-// const beforeRemove: UploadProps['beforeRemove'] = (uploadFile, uploadFiles) => {
-//   return ElMessageBox.confirm(
-//       `Cancel the transfer of ${uploadFile.name} ?`
-//   ).then(
-//       () => true,
-//       () => false
-//   )
-// }
+
 const handleRemove: UploadProps['onRemove'] = (file, uploadFiles) => {
   console.log(file, uploadFiles)
 }
@@ -194,11 +175,11 @@ const successUpLoad = () => {
 }
 
 // 提交数据--文件上传
-const workListSubmit = () => {
-  console.log(prop.addNumber)
-  checklistFrom.value.id = prop.addNumber
+const workListSubmit = async () => {
+  // checklistFrom.value.id = prop.addNumber
   if (checklistFrom.value.date != null) {
     checklistFrom.value.date = convertDateFormat(checklistFrom.value.date, true)
+    console.log(checklistFrom.value.date)
   }
   checklistFrom.value.companyNumber = store.state.companyNumber
   checklistFrom.value.stationNumber = route.params.id
@@ -237,7 +218,7 @@ const workListSubmit = () => {
       })
 
     } else {
-      uploadPhotoAndVideo(file).then((res: Res) => {
+      await uploadPhotoAndVideo(file).then((res: Res) => {
         console.log('文件', res)
         if (res.code === 200) {
           ElMessage({
@@ -247,23 +228,15 @@ const workListSubmit = () => {
           fileName = fileName + res.data + '#'
           console.log(fileName)
           checklistFrom.value.photoAndVideo = fileName
-
-
         }
 
       })
 
-      console.log('checklistFrom.value', checklistFrom.value)
-      emit('submit',checklistFrom.value)
-
-      // checklistFrom.value = []
-      // fileList = []
- 
     }
 
-
-
   }
+  console.log('checklistFrom.value', checklistFrom.value)
+  emit('submit', checklistFrom.value)
 
 
 

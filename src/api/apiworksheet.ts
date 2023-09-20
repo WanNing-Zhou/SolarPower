@@ -9,7 +9,7 @@ import {workSheetCondition,deleteWorkSheetCondition,addConditions} from '@/type/
 import {editConditions} from '@/type/request/worksheet'
 //查询工作单请求
 export function getWorkSheet(params:workSheetCondition){
-    return Request.get('/api/worksheet/query',{
+    return Request.get('/api/worksheet/',{
         params
     }
         
@@ -19,7 +19,7 @@ export function getWorkSheet(params:workSheetCondition){
 
 //删除工作单请求
 export function deleteWorkSheet(params:deleteWorkSheetCondition){
-    return Request.delete('/api/worksheet/delete',{
+    return Request.delete('/api/worksheet/',{
         params
     })
 }
@@ -33,7 +33,7 @@ export function printWorkSheet(params:string){
 //添加工作单的请求
 export function addWorkSheet(params:addConditions){
 
-    return Request('/api/worksheet/add',{
+    return Request('/api/worksheet/',{
         method: 'post',
 
         data: params
@@ -43,7 +43,7 @@ export function addWorkSheet(params:addConditions){
 
 //修改工作单请求
 export function editWorkSheet(params:editConditions){
-    return Request('/api/worksheet/edit',{
+    return Request('/api/worksheet/',{
         method: 'put',
 
         data: params

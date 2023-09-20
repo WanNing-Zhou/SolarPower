@@ -28,7 +28,6 @@ import {useStore} from 'vuex'
 
 interface Conditions {
   equipment: string // 设备
-  // timeDimension: string //时间维度
   statisticalTime: string// 统计时间
 }
 //使用useStore
@@ -60,6 +59,7 @@ const getTableData = (data?: InverterParams) => {
     }
   }
 
+  //获得数据得总数
   getInverterTableData(data).then(res => {
     console.log('逆变器报表查询参数data', data)
     console.log('tableData', res)
@@ -83,15 +83,18 @@ onBeforeMount(() => {
   getTableData()
 })
 
-// 筛选
+// 筛选---拿到查询的参数
 const handFilter = (conditions: Conditions) => {
   const startTime = conditions.statisticalTime[0];
   const endTime = conditions.statisticalTime[1]
   getTableData({
-    stationName: stationName.value,
+    stationName: conditions.equipment,
     startTime: convertDateFormat(startTime, true),
     endTime: convertDateFormat(endTime, true)
   })
+
+  //存入电站的名称
+  store.commit('setStationName',conditions.equipment)
 }
 
 //弹出框显示

@@ -14,6 +14,7 @@ const store = createStore({
             InverterendTime:'',//逆变器查询结束时间
             companyNumber:'',//公司编号
             EditTableData:'',//编辑数据
+            stationName:'',//电站名称---用于逆变器报表的查询条件
         }
     },
     mutations : {
@@ -57,6 +58,11 @@ const store = createStore({
         setEditTableData(state:any,EditTableData:any)
         {
             state.EditTableData = EditTableData
+        },
+        //设置电站名称
+        setStationName(state:any,stationName:string)
+        {
+            state.stationName = stationName
         }
     }
 })

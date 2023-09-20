@@ -2,8 +2,12 @@
   <div class=filter-form>
     <el-form :model="conditions" status-icon label-width="80px">
       <el-form-item class="form-item-short" label="选择电站:" prop="equipment">
-        <el-input size="small" v-model="conditions.equipment" placeholder="全部" clearable />
+        <!-- <el-input size="small" v-model="conditions.equipment" placeholder="全部" clearable /> -->
+        <el-select v-model="conditions.equipment" class="m-2" placeholder="选择电站" size="small" >
+        <el-option v-for="item in options" :key="item.value"  :label="item.label" :value="item.value" />
+      </el-select>
       </el-form-item>
+
 
       <!-- <el-form-item class="form-item-middle" label="时间维度:" prop="timeDimension">
         <el-select size="small" v-model="conditions.timeDimension" class="m-2" placeholder="Select">
@@ -58,6 +62,22 @@ const conditions = reactive({
 })
 
 
+const options = [
+  {
+    value: '陕西中铁科技园区光伏电站',
+    label: '陕西中铁科技园区光伏电站'
+  },
+  {
+    value: '神木富油科技能源有限公司',
+    label: '神木富油科技能源有限公司'
+  },
+  {
+    value: '西安京东亚一园站',
+    label: '西安京东亚一园站'
+  },
+]
+
+
 onMounted(() => {
   const end = new Date()
   const start = new Date()
@@ -95,29 +115,8 @@ const shortcuts = [
   },
 ]
 
-// 时间维度选择
-const timeDimensionOptions = [
-  {
-    value: '0',
-    label: '请选择'
-  },
-  {
-    value: '1',
-    label: '按日统计'
-  },
-  {
-    value: '2',
-    label: '按周统计'
-  },
-  {
-    value: '3',
-    label: '按月统计'
-  },
-  {
-    value: '4',
-    label: '按季度统计'
-  },
-]
+
+
 
 const disabledDate = (time: Date) => {
   return time.getTime() > Date.now()
@@ -125,6 +124,7 @@ const disabledDate = (time: Date) => {
 
 //表单提交
 const handleConfirm = () => {
+  console.log('conditions',conditions)
   emit('confirm', conditions)
   //查询被点击后触发
   store.commit('setInverterSearchFlag', !store.state.InverterSearchFlag)
@@ -159,7 +159,7 @@ const upload = () => {
   uploadFile(formData).then(res => {
 
     const fildId = res.data;
-    console.log('fildld',fildId)
+    console.log('fildld', fildId)
     invertImport({ fildId }).then(res => {
       // console.log('res', res)
       ElMessage({ message: '数据导入成功', type: 'success' })

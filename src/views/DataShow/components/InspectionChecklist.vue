@@ -94,9 +94,9 @@
     </div>
     <!-- 添加工作单 -->
     <InspectionChecklistForm :addNumber="addNum" @submit="handleConfirmAdd" @close="dialogClose"
-      :dialogVisible="dialogVisible"></InspectionChecklistForm>
-      <!-- 编辑工作单 -->
-      <InspectionEditFrom :EditdialogVisible="EditdialogVisible" @closeEdit="EditdialogClose"></InspectionEditFrom>
+      :dialogVisible="dialogVisible" ></InspectionChecklistForm>
+    <!-- 编辑工作单 -->
+    <InspectionEditFrom :EditdialogVisible="EditdialogVisible" @closeEdit="EditdialogClose"></InspectionEditFrom>
 
 
     <!-- <el-dialog v-model="chekListImgVisilbe">
@@ -114,14 +114,14 @@ import InspectionChecklistForm from "@/views/DataShow/components/InspectionCheck
 import { convertDateFormat, getCurrentDate } from "@/utils/dateUtils.ts";
 import { formatNumber } from "@/utils/numberUtils.ts";
 import { InverterParam, Inverter, InverterPageParams } from "@/type/inverter.ts";
-import { workSheetCondition, deleteWorkSheetCondition,addConditions } from "@/type/request/worksheet"
+import { workSheetCondition, deleteWorkSheetCondition, addConditions } from "@/type/request/worksheet"
 import { useStore } from 'vuex'
 import { useRoute } from "vue-router";
 import { getWorkSheet, deleteWorkSheet, printWorkSheet, addWorkSheet } from '@/api/apiworksheet'
 import { Res } from '@/type/request/requestType'
 import { ElMessage } from "element-plus";
 import InspectionEditFrom from "./totalTableItem/InspectionEditFrom.vue";
-import {InspectionChecklist} from '@/type/worksheet'
+import { InspectionChecklist } from '@/type/worksheet'
 
 
 //使用store
@@ -149,6 +149,8 @@ const conditions: workSheetCondition = reactive({
   pageSize: 10,//页面大小
   filterTime: [],//过滤时间
   total: 0,//分页总数
+  // type:'',//工作类型
+  // workman:'',//工作人
 
 
 
@@ -205,7 +207,7 @@ const shortcuts = [
 
 // 工作类型选择
 const workTypeOptions = [
-{
+  {
     value: '0000',
     label: '请选择'
   },
@@ -245,13 +247,26 @@ const dialogVisible = ref(false)
 //编辑的 dialog显示
 const EditdialogVisible = ref(false)
 
+
+
 const addNum = computed(() => {
   return getCurrentDate() + '-' + formatNumber((tableData.value.length + 1), 3);
 })
 //添加
 const addData = () => {
   // dialog显示
-  dialogVisible.value = true;
+  if (store.state.companyNumber !== route.params.id) {
+    dialogVisible.value = true;
+
+  } else {
+    ElMessage(
+      {
+        type: 'error',
+        message: '请先选择电站 -__-!'
+      }
+
+    )
+  }
 }
 
 //添加 dialog关闭
@@ -259,7 +274,7 @@ const dialogClose = () => {
   dialogVisible.value = false;
 }
 //修改 dialog关闭
-const EditdialogClose = ()=>{
+const EditdialogClose = () => {
   EditdialogVisible.value = false
 
 }
@@ -270,22 +285,27 @@ const handleConfirmAdd = (data: addConditions) => {
 
 
   // tableData.value.push(data)
-  console.log('data',data)
+  console.log('data', data)
 
-  addWorkSheet(data).then(res=>{
-    console.log('添加返回的结果',res)
-    if(res.code === 200)
-    {
+  addWorkSheet(data).then(res => {
+    console.log('添加返回的结果', res)
+    if (res.code === 200) {
       ElMessage({
         message: res.data,
         type: 'success',
       })
+      //重新查询
+      conditions.type = data.type
       handleConfirm()
     }
   })
 
   // dialog隐藏
   dialogVisible.value = false;
+
+
+
+
 }
 
 // dialog关闭
@@ -306,9 +326,9 @@ const editData = (row: InspectionChecklist) => {
   // 对数据重新计算
   // row.edit = true;
 
-EditdialogVisible.value = true 
+  EditdialogVisible.value = true
 
-store.commit('setEditTableData', row)
+  store.commit('setEditTableData', row)
 
 
 
@@ -386,9 +406,26 @@ const handleConfirm = () => {
   conditions.stationNumber = route.params.id
   conditions.startDate = convertDateFormat(conditions.filterTime[0], true)
   conditions.endDate = convertDateFormat(conditions.filterTime[1], true)
-
+  if(conditions.type === '0000')
+  {
+     
+    delete conditions.type
+  }
   console.log('工作单查询条件', conditions)
-  getWorkSheetData(conditions)
+
+  if (store.state.companyNumber !== route.params.id) {
+    getWorkSheetData(conditions)
+
+  } else {
+    ElMessage(
+      {
+        type: 'error',
+        message: '请先选择电站 -__-!'
+      }
+
+    )
+  }
+
 
 }
 //获取表单数据

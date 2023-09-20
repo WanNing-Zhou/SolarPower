@@ -9,11 +9,12 @@ export function convertDateFormat(dateString :string|Date, hasDate:boolean=false
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = date.getDate();
+    const day = String(date.getDate() + 1).padStart(2, '0');
     if(hasDate) return `${year}-${month}-${day}`
     return `${year}-${month}`;
 
 }
+
 
 
 /**

@@ -11,7 +11,7 @@ export function uploadFile(data: any){
 }
 
 //上传文件
-export function uploadPhotoAndVideo(params:fileParams)
+export async function uploadPhotoAndVideo(params:fileParams)
 {
     return Request('api/file/upload',{
         method:'post',
