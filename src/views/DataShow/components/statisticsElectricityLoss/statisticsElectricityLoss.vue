@@ -199,7 +199,7 @@ const getSummaries = (param: SummaryMethodProps) => {
   const { columns, data } = param
   const sums: string[] = []
   columns.forEach((column, index) => {
-    if (index !== 7 && index !== 1 && index !== 5) {
+    if (index !== 7 && index !== 1 && index !== 5 && index !== 6 && index !== 4) {
       if (index === 0) {
         sums[index] = '合计'
         return

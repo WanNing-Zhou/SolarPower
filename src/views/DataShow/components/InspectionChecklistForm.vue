@@ -37,7 +37,7 @@
             <!-- :TODO  参照导入华为数据的上传去开发 -->
             <el-upload v-model:file-list="fileList" class="upload-demo" multiple
               action="http://124.220.61.93:8080/api/file/upload1" :on-preview="handlePreview" :on-remove="handleRemove"
-              :before-remove="beforeRemove" :limit="8" :on-exceed="handleExceed" :on-success="successUpLoad">
+              :before-remove="beforeRemove" :limit="9" :on-exceed="handleExceed" :on-success="successUpLoad">
               <el-button type="primary">选择文件</el-button>
               <template #tip>
                 <div class="el-upload__tip">
@@ -135,6 +135,8 @@ watch(visible, (a, b) => {
 // 关闭前操作
 const handleBeforeClose = () => {
   console.log('输入框关闭')
+  checklistFrom = ref({})
+  fileList = ref<UploadUserFile[]>([])
   emit('close')
   console.log('visible', visible.value)
 
@@ -154,14 +156,14 @@ const handlePreview: UploadProps['onPreview'] = (uploadFile) => {
 
 const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
   ElMessage.warning(
-    `The limit is 3, you selected ${files.length} files this time, add up to ${files.length + uploadFiles.length
-    } totally`
+    `文件上传限制是9个, 这次您选择上传 ${files.length} 个文件, 加起来一共 ${files.length + uploadFiles.length
+    } 个`
   )
 }
 
 const beforeRemove: UploadProps['beforeRemove'] = (uploadFile, uploadFiles) => {
   return ElMessageBox.confirm(
-    `Cancel the transfer of ${uploadFile.name} ?`
+    `取消 ${uploadFile.name}的上传 ?`
   ).then(
     () => true,
     () => false
@@ -237,6 +239,8 @@ const workListSubmit = async () => {
   }
   console.log('checklistFrom.value', checklistFrom.value)
   emit('submit', checklistFrom.value)
+  checklistFrom = ref({})
+  fileList = ref<UploadUserFile[]>([])
 
 
 

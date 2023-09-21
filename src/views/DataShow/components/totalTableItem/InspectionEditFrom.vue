@@ -170,6 +170,7 @@ const workListSubmit = () => {
                 message: res.data,
                 type: 'success',
             })
+            emit('closeEdit')
         }
     })
 

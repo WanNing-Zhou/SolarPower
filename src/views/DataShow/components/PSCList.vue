@@ -225,8 +225,9 @@ const addData = () => {
 
   const preData = tableData.value[tableData.value.length - 1]
 
+  console.log('preData',preData)
   tableData.value.push({
-    portName: preData.portName,
+    portName: route.params.label,
     date: preData.date,
     onlinePrice: preData.onlinePrice, // 上网电价
     selfUsePrice: preData.selfUsePrice, // 自用电价
@@ -287,7 +288,7 @@ const getSummaries = (param: SummaryMethodProps) => {
   const { columns, data } = param
   const sums: string[] = []
   columns.forEach((column, index) => {
-    if (index !== 7 && index !== 1 && index !== 2) {
+    if (index !== 7 && index !== 1 && index !== 2 && index !== 5 && index !== 6) {
       if (index === 0) {
         sums[index] = '合计'
         return

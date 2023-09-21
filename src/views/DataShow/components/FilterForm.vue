@@ -126,6 +126,7 @@ const disabledDate = (time: Date) => {
 const handleConfirm = () => {
   console.log('conditions',conditions)
   emit('confirm', conditions)
+
   //查询被点击后触发
   store.commit('setInverterSearchFlag', !store.state.InverterSearchFlag)
 

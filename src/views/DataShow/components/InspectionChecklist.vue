@@ -108,7 +108,7 @@
 <script setup lang="ts">
 
 import { Checked } from "@element-plus/icons-vue";
-import { computed, Ref, ref, reactive, onMounted } from "vue";
+import { computed, Ref, ref, reactive, onMounted,watch } from "vue";
 import FilterForm from "@/views/DataShow/components/FilterForm.vue";
 import InspectionChecklistForm from "@/views/DataShow/components/InspectionChecklistForm.vue";
 import { convertDateFormat, getCurrentDate } from "@/utils/dateUtils.ts";
@@ -398,7 +398,7 @@ const checkListPrint = (row: InspectionChecklist) => {
 }
 
 //表单提交
-const handleConfirm = () => {
+const handleConfirm =async () => {
 
 
   tableData.value = []
@@ -414,7 +414,7 @@ const handleConfirm = () => {
   console.log('工作单查询条件', conditions)
 
   if (store.state.companyNumber !== route.params.id) {
-    getWorkSheetData(conditions)
+      getWorkSheetData(conditions)
 
   } else {
     ElMessage(
@@ -463,6 +463,21 @@ const handleCurrentChange = (val: number) => {
   handleConfirm()
 
 }
+
+//监听左侧电站，如果电站的路由发生变化时就调用分页查询
+//计算电站
+const stationRouter = computed(()=>{
+  return route.params.label as string
+})
+//监听
+watch(stationRouter,()=>{
+
+  handleConfirm()
+
+
+},{
+  deep:true
+})
 
 
 </script>
