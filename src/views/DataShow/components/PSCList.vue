@@ -3,13 +3,12 @@
     <el-container>
       <el-header class="filter-from" height="38px">
         <el-form :model="conditions" status-icon>
-          <el-form-item class="form-item-short" label="电站:" prop="">
-            <el-input v-model="conditions.workerName" size="small" placeholder="全部" clearable />
+          <el-form-item class="form-item-short" label="选择电站:">
+            <el-select v-model="conditions.stationNumber" class="m-2" placeholder="请选择">
+              <el-option v-for="item in options " :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
           </el-form-item>
-          <el-form-item class="form-item-short" label="计量点:" prop="">
-            <el-input size="small" placeholder="全部" clearable />
-          </el-form-item>
-          <el-form-item label-width="100px" label="记录时间" prop="filterTime">
+          <el-form-item label-width="200px" label="记录时间" prop="filterTime">
             <el-date-picker v-model="conditions.filterTime" type="monthrange" unlink-panels range-separator="To"
               start-placeholder="Start month" end-placeholder="End month" :shortcuts="shortcuts" />
 
@@ -20,15 +19,15 @@
         </el-form>
 
         <div class="data-operation">
-          <el-button>导出Excel</el-button>
+          <el-button @click="exportExcel">导出Excel</el-button>
         </div>
 
       </el-header>
 
       <el-main>
-        <el-table :data="tableData" show-summary size="small" border :summary-method="getSummaries">
-          <el-table-column prop="portName" width="120" label="站名" />
-          <el-table-column prop="date" label="年月" width="160">
+        <el-table :data="tableData.value" show-summary size="small" height="380px" border :summary-method="getSummaries">
+          <el-table-column prop="stationName" width="120" label="电站名称" :show-overflow-tooltip="true" />
+          <el-table-column prop="date" label="日期（年月）" width="100">
             <template #default="scope">
               <el-date-picker size="small" v-model="scope.row.date" type="month" placeholder="日期" v-if="scope.row.edit" />
               <!--          <el-input v-if="scope.row.edit" v-model="scope.row.date" placeholder="关口表电量"></el-input>-->
@@ -36,65 +35,82 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="" label="计量点名称">
+          <el-table-column prop="inverterName" label="逆变器名称" :show-overflow-tooltip="true">
             <template #default="scope">
-              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.measurementPointName"
-                placeholder="发电表总电量"></el-input>
-              <span v-else>{{ scope.row.measurementPointName }}</span>
+              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.inverterName"
+                placeholder="逆变器名称"></el-input>
+              <span v-else>{{ scope.row.inverterName }}</span>
             </template>
           </el-table-column>
 
           <!--      用户录入-->
-          <el-table-column prop="gatewayPower" label="发电表总电量">
+          <el-table-column prop="electricityConsumptionTotal" label="发电表总电量">
             <template #default="scope">
-              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.gatewayPower"
+              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.electricityConsumptionTotal"
                 placeholder="发电表总电量"></el-input>
-              <span v-else>{{ scope.row.gatewayPower }}</span>
+              <span v-else>{{ scope.row.electricityConsumptionTotal }}</span>
             </template>
           </el-table-column>
           <!--用户输入-->
-          <el-table-column prop="onlinePower" width="100" label="上网总电量">
+          <el-table-column prop="electricityOnGridTotal" width="80" label="上网总电量">
             <template #default="scope">
-              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.onlinePower" placeholder="上网总电量"></el-input>
-              <span v-else>{{ scope.row.onlinePower }}</span>
+              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.electricityOnGridTotal"
+                placeholder="上网总电量"></el-input>
+              <span v-else>{{ scope.row.electricityOnGridTotal }}</span>
             </template>
           </el-table-column>
 
           <!--用户输入-->
-          <el-table-column prop="onlinePrice" width="100" label="上网电价">
+          <el-table-column prop="onGridPowerPrice" width="80" label="上网电价">
             <template #default="scope">
-              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.onlinePrice" placeholder="上网电价"></el-input>
-              <span v-else>{{ scope.row.onlinePrice }}</span>
+              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.onGridPowerPrice"
+                placeholder="上网电价"></el-input>
+              <span v-else>{{ scope.row.onGridPowerPrice }}</span>
             </template>
           </el-table-column>
 
 
-          <!--用户输入-->
-          <el-table-column prop="selfUsePrice" width="100" label="自用电价">
+          <el-table-column prop="selfUsePowerPrice" width="80" label="自用电价">
             <template #default="scope">
-              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.selfUsePrice" placeholder="自用电价"></el-input>
-              <span v-else>{{ scope.row.selfUsePrice }}</span>
+              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.selfUsePowerPrice"
+                placeholder="自用电价"></el-input>
+              <span v-else>{{ scope.row.selfUsePowerPrice }}</span>
             </template>
           </el-table-column>
 
-          <el-table-column prop="currentImg" width="100" label="现场照片">
+          <el-table-column prop="scenePicture" width="150" label="现场照片" :show-overflow-tooltip="true">
             <template #default="scope">
-              <!--              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.onlinePrice" placeholder="上网电价"></el-input>-->
-              <!--              <span v-else>{{ scope.row.onlinePrice }}</span>-->
-              <el-button v-if="scope.row.edit" size="small" type="primary" link>上传图片</el-button>
-              <img :src="scope.row.currentImg">
+              <el-upload v-model:file-list="fileList" class="upload-demo" multiple v-if="scope.row.edit" size="small"
+                action="http://124.220.61.93:8080/api/file/upload1" type="primary" link>上传图片</el-upload>
+
+              <!-- <img :src="scope.row.scenePicture"> -->
             </template>
           </el-table-column>
 
 
-          <el-table-column prop="selfUsePower" width="60" label="自用电量">
+          <el-table-column prop="onGridElectricCharge" width="80" label="自用电量">
+            <template #default="scope">
+              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.onGridElectricCharge"
+                placeholder="自用电价"></el-input>
+              <span v-else>{{ scope.row.onGridElectricCharge }}</span>
+            </template>
 
           </el-table-column>
 
-          <el-table-column prop="onlineCharge" width="60" label="上网电费">
+          <el-table-column prop="selfUseElectricCharge" width="80" label="上网电费">
+            <template #default="scope">
+              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.selfUseElectricCharge"
+                placeholder="自用电价"></el-input>
+              <span v-else>{{ scope.row.selfUseElectricCharge }}</span>
+            </template>
           </el-table-column>
 
-          <el-table-column prop="selfUseCharge" width="60" label="自用电费">
+          <el-table-column prop="electricitySelfUseTotal" width="80" label="自用电费">
+            <template #default="scope">
+              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.electricitySelfUseTotal"
+                placeholder="自用电价"></el-input>
+              <span v-else>{{ scope.row.electricitySelfUseTotal }}</span>
+            </template>
 
           </el-table-column>
 
@@ -105,13 +121,18 @@
                   <Checked />
                 </el-icon>
               </el-button>
+              <el-button v-if="scope.row.edit" type="primary" size="small" @click="cancel(scope.row)">
+                <el-icon :size="20">
+                  <Close />
+                </el-icon>
+              </el-button>
               <div v-else>
                 <el-button type="primary" @click="editData(scope.row)">
                   <el-icon :size="20">
                     <Edit />
                   </el-icon>
                 </el-button>
-                <el-button type="primary" @click="deleteData(scope.row, scope.$index)">
+                <el-button type="primary" @click="deleteData(scope.row)">
                   <el-icon :size="20">
                     <Delete />
                   </el-icon>
@@ -122,9 +143,13 @@
         </el-table>
 
 
-        <el-button type="primary" @click="addData">添加数据</el-button>
         <el-divider></el-divider>
-        <el-button @click="submitData">提交</el-button>
+
+        <el-pagination v-model:current-page="conditions.page" v-model:page-size="conditions.pageSize"
+          :page-sizes="[5, 10, 15, 20, 40]" layout="total,sizes, prev, pager, next,jumper" :total="conditions.total"
+          @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+        <el-divider></el-divider>
+        <el-button type="primary" @click="addData">添加数据</el-button>
 
       </el-main>
     </el-container>
@@ -134,43 +159,64 @@
 
 <script setup lang="ts">
 
-import { onMounted, reactive, ReactiveFlags, Ref, ref } from "vue";
-import { Checked } from "@element-plus/icons-vue";
+import { onMounted, reactive, ReactiveFlags, Ref, ref, computed, watch } from "vue";
+import { Checked, Close } from "@element-plus/icons-vue";
 import { convertDateFormat } from "@/utils/dateUtils.ts";
 import { useRoute } from "vue-router";
-import type { TableColumnCtx } from 'element-plus';
+import type { TableColumnCtx, UploadUserFile } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { ChecklistConditions, pscData, deleteSelfConditions, addSelfConditions } from '@/type/request/selfTable'
+import { useStore } from 'vuex'
+import { getSelfTable, editSelfTable, deleteSelfTable, addSelfTable } from '@/api/apiself'
+import { Res } from '@/type/request/requestType'
+import { fileParams } from '@/type/request/worksheet'
+import { uploadPhotoAndVideo } from '@/api/upload'
 
+//使用store
+const store = useStore()
 const route = useRoute()
 
-interface pscData {
-  gatewayPower?: number | string //发电表总电量
-  onlinePower?: number | string // 上网电量
-  selfUsePower?: number | string //自用电量
-  onlinePrice?: number | string // 上网电价
-  selfUsePrice?: number | string // 自用电价
-  onlineCharge?: number | string // 上网费用
-  selfUseCharge?: number | string // 自用电费
-  date?: number | string //日期
-  edit?: boolean //是否是编辑状态
-  portName?: string | null | any//站名
-  measurementPointName?: string | null; // 计量点名称
-  currentImg?: string | null // 现场照片
+const options = [
+  {
+    value: '0000',
+    label: '请选择电站'
+  },
+  {
+    value: 'PV001',
+    label: '陕西中铁科技园区光伏电站'
+  },
+  {
+    value: 'PV002',
+    label: '神木富油科技能源有限公司'
+  },
+  {
+    value: 'PV003',
+    label: '西安京东亚一园站'
+  }
+]
 
-}
+// 文件列表
+let fileList = ref<UploadUserFile[]>([])
 
-interface ChecklistConditions {
-  workType?: string; // 工作类型
-  workerName?: string; // 工作人
-  filterTime?: string; //过滤时间
-}
+
+
 
 
 //查询条件
-const conditions: Ref<ChecklistConditions> = ref({
-  workType: '',
-  workerName: '',
-  filterTime: '',
+const conditions = reactive<ChecklistConditions>({
+  companyNumber: '',
+  filterTime: [],
+  startDate: '',
+  endDate: '',
+  page: 1,
+  pageSize: 10,
+  total: 0
 })
+//添加参数
+let SelfAddConditions = reactive<addSelfConditions>({})
+//编辑参数
+let SelfEditConditions = reactive<pscData>({})
+
 
 const shortcuts = [
   {
@@ -193,91 +239,315 @@ const shortcuts = [
   },
 ]
 
+//查询
 const handleConfirm = () => {
-  console.log(conditions.value)
+
+  //去除0000的请求电站编号
+  if (conditions.stationNumber === '0000') {
+    delete conditions.stationNumber
+  }
+
+  getSelfTableData()
+
 }
 
-const testData: Array<pscData> = [
-  {
-    portName: route.params.label,
-    gatewayPower: 134,
-    onlinePower: 13,
-    selfUsePower: 4455,
-    onlineCharge: 20,
-    selfUseCharge: 1030,
-    edit: false
-  },
-  {
-    portName: route.params.label,
-    gatewayPower: 1344,
-    onlinePower: 154,
-    selfUsePower: 44455,
-    onlineCharge: 250,
-    selfUseCharge: 51030,
-    edit: false
-  },
-]
 
-const tableData: Ref<Array<pscData>> = ref([{}])
 
+const tableData: Array<pscData> = reactive([{}])
+
+onMounted(() => {
+  const end = new Date()
+  const start = new Date()
+  start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+  conditions.filterTime = [start, end]
+
+  // tableData.value = testData;
+})
+
+// stationName: route.params.label,
+//     date: preData.date,
+//     onlinePrice: preData.onlinePrice, // 上网电价
+//     selfUsePrice: preData.selfUsePrice, // 自用电价
+//     edit: true,
+//     measurementPointName: preData.measurementPointName // 计量点名称
 //添加
 const addData = () => {
 
   const preData = tableData.value[tableData.value.length - 1]
+  SelfAddConditions.stationName = route.params.label
 
-  console.log('preData',preData)
-  tableData.value.push({
-    portName: route.params.label,
-    date: preData.date,
-    onlinePrice: preData.onlinePrice, // 上网电价
-    selfUsePrice: preData.selfUsePrice, // 自用电价
-    edit: true,
-    measurementPointName: preData.measurementPointName // 计量点名称
-  });
+  SelfAddConditions.edit = true
+  SelfAddConditions.addEdit = true
+  console.log('preData', preData)
+
+  tableData.value.push(SelfAddConditions)
   console.log('添加数据触发', tableData.value)
+
+  fileList = ref<UploadUserFile[]>([])
 
 }
 
+//获取自用上网报表的数据
+const getSelfTableData = () => {
+  if (store.state.companyNumber === '') {
+    ElMessage({
+      type: 'error',
+      message: '请先选择公司~-_-!~'
+    })
+    console.log('111111111111')
+
+  } else {
+    conditions.companyNumber = store.state.companyNumber
+    conditions.startDate = convertDateFormat(conditions.filterTime[0], false)
+    conditions.endDate = convertDateFormat(conditions.filterTime[1], false)
+    console.log('上网报表分页查询条件', conditions)
+
+    getSelfTable(conditions).then((res: Res) => {
+      console.log('上网报表的返回结果', res)
+      if (res.code === 200) {
+        tableData.value = res.data.data
+        //字符串处理
+        for (let i = 0; i < tableData.value.length; i++) {
+          tableData.value[i].date = tableData.value[i].date?.slice(0, 10)
+        }
+        conditions.total = res.data.totalRecords
+      }
+      console.log('上网报表', tableData)
+
+    })
+  }
+}
+
+
 // 对数据进行计算
-const computedData = (row: pscData) => {
-  row.portName = route.params.label;
-  console.log('route', route)
-  row.date = convertDateFormat(<string>row.date)
-  console.log('row', row.gatewayPower, row.onlinePower)
-  console.log('row', row.onlinePower, row.onlineCharge)
-  row.selfUsePower = row.gatewayPower - row.onlinePower; //自用电量 = 发电表总电量 - 上网电量
-  row.onlineCharge = (row.onlinePower * row.onlinePrice).toFixed(2); // 上网费用 = 上网电量 * 上网电价
-  row.selfUseCharge = (row.selfUsePrice * row.onlinePower).toFixed(2); // 自用电费 = 自用电量 * 上网电价
+// const computedData = (row: pscData) => {
+//   row.portName = route.params.label;
+//   console.log('route', route)
+//   row.date = convertDateFormat(<string>row.date)
+//   console.log('row', row.gatewayPower, row.onlinePower)
+//   console.log('row', row.onlinePower, row.onlineCharge)
+//   row.selfUsePower = row.gatewayPower - row.onlinePower; //自用电量 = 发电表总电量 - 上网电量
+//   row.onlineCharge = (row.onlinePower * row.onlinePrice).toFixed(2); // 上网费用 = 上网电量 * 上网电价
+//   row.selfUseCharge = (row.selfUsePrice * row.onlinePower).toFixed(2); // 自用电费 = 自用电量 * 上网电价
+// }
+
+// 当前页大小发生变化时触发
+const handleSizeChange = (val: number) => {
+  //修改页面大小
+  conditions.pageSize = val
+  getSelfTableData()
+
+}
+// 当前页变化时触发
+const handleCurrentChange = (page: number) => {
+
+  //修改当前页数
+  conditions.page = page
+  getSelfTableData()
+
 }
 
 //确认添加
-const confirmAdd = (row: pscData) => {
+const confirmAdd = async (row: pscData) => {
   //对数据进行计算
-  computedData(row)
+  // computedData(row)
+  if (row.addEdit) {
+    SelfAddConditions.companyNumber = store.state.companyNumber
+    SelfAddConditions.stationNumber = route.params.id
+    SelfAddConditions.date = convertDateFormat(row.date, false)
+    SelfAddConditions.inverterName = row.inverterName
+    SelfAddConditions.electricityConsumptionTotal = row.electricityConsumptionTotal
+    SelfAddConditions.electricityOnGridTotal = row.electricityOnGridTotal
+    SelfAddConditions.onGridPowerPrice = row.onGridPowerPrice
+    SelfAddConditions.selfUsePowerPrice = row.selfUsePowerPrice
+    SelfAddConditions.electricitySelfUseTotal = row.electricitySelfUseTotal
+    SelfAddConditions.onGridElectricCharge = row.onGridElectricCharge
+    SelfAddConditions.selfUseElectricCharge = row.selfUseElectricCharge
 
-  row.edit = false;
+
+    //文件上传
+    SelfAddConditions.scenePicture = await uploadFile()
+    console.log('上网报表的添加条件', SelfAddConditions)
+
+    //添加数据
+    await addSelfTable(SelfAddConditions).then((res: Res) => {
+      if (res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '添加成功'
+        })
+        getSelfTableData()
+
+        SelfAddConditions = ref({})
+
+      } else {
+        ElMessage({
+          type: 'error',
+          message: res.message
+        })
+      }
+
+    })
+
+
+
+    row.edit = false;
+  } else {
+    SelfEditConditions.saogpId = row.saogpId
+    SelfEditConditions.companyNumber = store.state.companyNumber
+    SelfEditConditions.stationNumber = route.params.id
+    SelfEditConditions.date = convertDateFormat(row.date, false)
+    SelfEditConditions.inverterName = row.inverterName
+    SelfEditConditions.electricityConsumptionTotal = parseFloat(row.electricityConsumptionTotal)
+    SelfEditConditions.electricityOnGridTotal = parseFloat(row.electricityOnGridTotal)
+    SelfEditConditions.onGridPowerPrice = parseFloat(row.onGridPowerPrice)
+    SelfEditConditions.selfUsePowerPrice = parseFloat(row.selfUsePowerPrice)
+    SelfEditConditions.electricitySelfUseTotal = parseFloat(row.electricitySelfUseTotal)
+    SelfEditConditions.onGridElectricCharge = parseFloat(row.onGridElectricCharge)
+    SelfEditConditions.selfUseElectricCharge = parseFloat(row.selfUseElectricCharge)
+
+    //文件上传
+    SelfEditConditions.scenePicture = await uploadFile()
+    console.log('编辑的条件', SelfEditConditions)
+
+
+    await editSelfTable(SelfEditConditions).then((res: Res) => {
+      if (res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: res.data
+        })
+
+        getSelfTableData()
+
+        fileList = ref<UploadUserFile[]>([])
+      }
+    })
+
+    row.edit = false
+
+
+  }
+
+}
+
+//取消
+const cancel = (row: pscData) => {
+  row.edit = false
+
+  if (row.addEdit) {
+    tableData.value.pop()
+  }
+  ElMessage({
+    type: 'info',
+    message: '取消操作'
+  })
+
+
+
 }
 
 //修改
 const editData = (row: pscData) => {
   // 对数据计算
-  computedData(row)
+  // computedData(row)
+
+  fileList = ref<UploadUserFile[]>([])
   row.edit = true;
 }
 
 //删除
-const deleteData = (row: pscData, index: number) => {
-  tableData.value.splice(index, 1);
+const deleteData = (row: pscData) => {
+
+
+  ElMessageBox.confirm(
+    '确定要永久删除这条数据吗?',
+    '警告',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+    .then(() => {
+      let deleteSelfCondition = reactive<deleteSelfConditions>({})
+      deleteSelfCondition.saogpId = row.saogpId
+      deleteSelfTable(deleteSelfCondition).then((res: Res) => {
+        if (res.code === 200) {
+          ElMessage({
+            message: '删除成功',
+            type: 'success',
+          })
+          getSelfTableData()
+
+        }
+      })
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '已取消该操作',
+      })
+    })
+
 }
 
-//提交数据
-const submitData = () => {
-  alert(JSON.stringify(tableData.value))
-}
-
-onMounted(() => {
-  tableData.value = testData;
+//监听左侧电站，如果电站的路由发生变化时就调用分页查询
+//计算电站
+const stationRouter = computed(() => {
+  return route.params.label as string
 })
+//监听
+watch(stationRouter, () => {
+  conditions.stationNumber = route.params.id
+
+
+
+  getSelfTableData()
+
+
+}, {
+  deep: true
+})
+
+//导出Excel
+const exportExcel = () => {
+  const link = document.createElement('a');
+  link.href = `${import.meta.env.VITE_APP_BASE_API}/api/selfAndOnGrid/export`;
+  link.setAttribute('download', '自由上网报表.xlsx');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link)
+}
+
+//上传文件
+const uploadFile = async () => {
+  //文件名
+  let fileName = ''
+  for (let i = 0; i < fileList.value.length; i++) {
+    let file: fileParams = reactive({})
+    file.file = fileList.value[i].raw
+    file.type = 'self_and_on_grid'
+    console.log(file)
+    await uploadPhotoAndVideo(file).then((res: Res) => {
+      console.log('文件', res)
+      if (res.code === 200) {
+        ElMessage({
+          message: '文件上传成功',
+          type: 'success',
+        })
+        fileName = fileName + res.data + '#'
+
+      }
+
+    })
+  }
+  return fileName
+
+
+}
+
+
 
 interface SummaryMethodProps<T = pscData> {
   columns: TableColumnCtx<T>[]
@@ -324,7 +594,7 @@ const getSummaries = (param: SummaryMethodProps) => {
     justify-content: space-between;
 
     .el-form {
-      width: 120px !important;
+      width: 500px !important;
       display: flex;
 
       .form-item-short {
@@ -332,6 +602,10 @@ const getSummaries = (param: SummaryMethodProps) => {
         float: left;
         margin-right: 50px;
         width: 200px;
+
+        .el-select {
+          width: 200px;
+        }
 
         .el-input {
           width: 200px;
@@ -342,6 +616,7 @@ const getSummaries = (param: SummaryMethodProps) => {
       .el-form-item {
         display: flex;
         margin: 0 5px 0 5px;
+
       }
     }
   }

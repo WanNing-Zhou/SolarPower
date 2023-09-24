@@ -3,23 +3,11 @@
     <el-form :model="conditions" status-icon label-width="80px">
       <el-form-item class="form-item-short" label="选择电站:" prop="equipment">
         <!-- <el-input size="small" v-model="conditions.equipment" placeholder="全部" clearable /> -->
-        <el-select v-model="conditions.equipment" class="m-2" placeholder="选择电站" size="small" >
+        <el-select v-model="conditions.equipment" class="m-2" placeholder="选择电站" size="small" width="200px">
         <el-option v-for="item in options" :key="item.value"  :label="item.label" :value="item.value" />
       </el-select>
       </el-form-item>
 
-
-      <!-- <el-form-item class="form-item-middle" label="时间维度:" prop="timeDimension">
-        <el-select size="small" v-model="conditions.timeDimension" class="m-2" placeholder="Select">
-          <el-option
-              v-for="item in timeDimensionOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-          />
-        </el-select>
-
-      </el-form-item> -->
 
       <el-form-item class="form-item-long" label="统计时间" width="200px" prop="statisticalTime">
         <el-date-picker size="small" class="data-picker" v-model="conditions.statisticalTime" type="daterange"
