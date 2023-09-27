@@ -36,6 +36,7 @@ export interface pscData {
     // edit?: boolean;//修改/添加判断条件
     // cancelEdit?: boolean;//取消判断条件
     // addEdit?:boolean;//添加判断条件
+    onlyEdit?:boolean;//唯一编辑
   
   }
 
