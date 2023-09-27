@@ -72,8 +72,8 @@
 
           <el-table-column prop="selfUsePowerPrice" width="80" label="自用电价">
             <template #default="scope">
-              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.selfUsePowerPrice"
-                placeholder="自用电价"></el-input>
+              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.selfUsePowerPrice" placeholder="自用电价"
+                @mouseleave="computedData(scope.row)"></el-input>
               <span v-else>{{ scope.row.selfUsePowerPrice }}</span>
             </template>
           </el-table-column>
@@ -88,28 +88,28 @@
           </el-table-column>
 
 
-          <el-table-column prop="onGridElectricCharge" width="80" label="自用电量">
+          <el-table-column prop="electricitySelfUseTotal" width="80" label="自用电量">
+            <template #default="scope">
+              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.electricitySelfUseTotal"
+                placeholder="自用电价"></el-input>
+              <span v-else>{{ scope.row.electricitySelfUseTotal }}</span>
+            </template>
+
+          </el-table-column>
+
+          <el-table-column prop="onGridElectricCharge" width="80" label="上网电费">
             <template #default="scope">
               <el-input size="small" v-if="scope.row.edit" v-model="scope.row.onGridElectricCharge"
                 placeholder="自用电价"></el-input>
               <span v-else>{{ scope.row.onGridElectricCharge }}</span>
             </template>
-
           </el-table-column>
 
-          <el-table-column prop="selfUseElectricCharge" width="80" label="上网电费">
+          <el-table-column prop="selfUseElectricCharge" width="80" label="自用电费">
             <template #default="scope">
               <el-input size="small" v-if="scope.row.edit" v-model="scope.row.selfUseElectricCharge"
                 placeholder="自用电价"></el-input>
               <span v-else>{{ scope.row.selfUseElectricCharge }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column prop="electricitySelfUseTotal" width="80" label="自用电费">
-            <template #default="scope">
-              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.electricitySelfUseTotal"
-                placeholder="自用电价"></el-input>
-              <span v-else>{{ scope.row.electricitySelfUseTotal }}</span>
             </template>
 
           </el-table-column>
@@ -127,7 +127,7 @@
                 </el-icon>
               </el-button>
               <div v-else>
-                <el-button type="primary" @click="editData(scope.row)">
+                <el-button type="primary" @click="editData(scope.row, scope.$index)">
                   <el-icon :size="20">
                     <Edit />
                   </el-icon>
@@ -153,7 +153,6 @@
 
       </el-main>
     </el-container>
-    <EditDialog  v-model:visible="dialogVisible" />
 
   </div>
 </template>
@@ -172,7 +171,6 @@ import { getSelfTable, editSelfTable, deleteSelfTable, addSelfTable } from '@/ap
 import { Res } from '@/type/request/requestType'
 import { fileParams } from '@/type/request/worksheet'
 import { uploadPhotoAndVideo } from '@/api/upload'
-import EditDialog from "@/views/DataShow/components/pcList/editDialog.vue";
 
 //使用store
 const store = useStore()
@@ -199,6 +197,10 @@ const options = [
 
 // 文件列表
 let fileList = ref<UploadUserFile[]>([])
+
+//添加数据的点击次数
+let addCount = 0
+
 
 
 //查询条件
@@ -260,40 +262,36 @@ onMounted(() => {
   start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
   conditions.filterTime = [start, end]
 
-  // tableData.value = testData;
 })
-
-// stationName: route.params.label,
-//     date: preData.date,
-//     onlinePrice: preData.onlinePrice, // 上网电价
-//     selfUsePrice: preData.selfUsePrice, // 自用电价
-//     edit: true,
-//     measurementPointName: preData.measurementPointName // 计量点名称
-
-// 弹窗可见性
-const dialogVisible = ref(false);
-// 编辑的数据
-const editStatus = reactive({
-  isEdit: false, // 是否是编辑状态
-  editData: {} as any // 编辑的数据
-})
-
-
 
 //添加
 const addData = () => {
-  // 打开弹窗
-  dialogVisible.value = true;
+  //自动加一
+  addCount++
 
-  const preData = tableData.value[tableData.value.length - 1]
-  SelfAddConditions.stationName = route.params.label
+  //保存当前长度（数组长度加上新添数据的长度）
+  const arrayLength = tableData.value.length + 1
+  console.log(arrayLength)
 
-  SelfAddConditions.edit = true
-  SelfAddConditions.addEdit = true
-  console.log('preData', preData)
+  //添加数据，数组长度加一
+  if (arrayLength == (tableData.value.length + addCount)) {
+    ElMessage({
+      type: 'info',
+      message: '在添加数据时，自用电费、上网电费、自用电费不用添写，系统会自动计算'
+    })
 
-  tableData.value.push(SelfAddConditions)
-  console.log('添加数据触发', tableData.value)
+    SelfAddConditions.stationName = route.params.label
+
+    SelfAddConditions.edit = true
+    SelfAddConditions.addEdit = true
+    tableData.value.push(SelfAddConditions)
+  } else {
+    ElMessage({
+      type: 'info',
+      message: '请先完成当前操作！'
+    })
+  }
+
 
   fileList = ref<UploadUserFile[]>([])
 
@@ -306,7 +304,6 @@ const getSelfTableData = () => {
       type: 'error',
       message: '请先选择公司~-_-!~'
     })
-    console.log('111111111111')
 
   } else {
     conditions.companyNumber = store.state.companyNumber
@@ -320,7 +317,10 @@ const getSelfTableData = () => {
         tableData.value = res.data.data
         //字符串处理
         for (let i = 0; i < tableData.value.length; i++) {
-          tableData.value[i].date = tableData.value[i].date?.slice(0, 10)
+          //处理日期格式问题
+          tableData.value[i].date = tableData.value[i].date?.slice(0, 7)
+          //处理多个编辑问题----赋值
+          tableData.value[i].onlyEdit = false
         }
         conditions.total = res.data.totalRecords
       }
@@ -332,16 +332,11 @@ const getSelfTableData = () => {
 
 
 // 对数据进行计算
-// const computedData = (row: pscData) => {
-//   row.portName = route.params.label;
-//   console.log('route', route)
-//   row.date = convertDateFormat(<string>row.date)
-//   console.log('row', row.gatewayPower, row.onlinePower)
-//   console.log('row', row.onlinePower, row.onlineCharge)
-//   row.selfUsePower = row.gatewayPower - row.onlinePower; //自用电量 = 发电表总电量 - 上网电量
-//   row.onlineCharge = (row.onlinePower * row.onlinePrice).toFixed(2); // 上网费用 = 上网电量 * 上网电价
-//   row.selfUseCharge = (row.selfUsePrice * row.onlinePower).toFixed(2); // 自用电费 = 自用电量 * 上网电价
-// }
+const computedData = (row: pscData) => {
+  row.electricitySelfUseTotal = parseFloat(row.electricityConsumptionTotal - row.electricityOnGridTotal); //自用电量 = 发电表总电量 - 上网总电量
+  row.onGridElectricCharge = parseFloat(row.electricityOnGridTotal * row.onGridPowerPrice).toFixed(2); // 上网费用 = 上网总电量 * 上网电价
+  row.selfUseElectricCharge = parseFloat(row.electricitySelfUseTotal * row.selfUsePowerPrice).toFixed(2); // 自用电费 = 自用电量 * 自用电价
+}
 
 // 当前页大小发生变化时触发
 const handleSizeChange = (val: number) => {
@@ -352,9 +347,11 @@ const handleSizeChange = (val: number) => {
 }
 // 当前页变化时触发
 const handleCurrentChange = (page: number) => {
+
   //修改当前页数
   conditions.page = page
   getSelfTableData()
+
 }
 
 //确认添加
@@ -386,14 +383,20 @@ const confirmAdd = async (row: pscData) => {
           type: 'success',
           message: '添加成功'
         })
+
+        row.addEdit = false
+
         getSelfTableData()
 
-        SelfAddConditions = ref({})
+        addCount = 0
+
+        // SelfAddConditions = reactive({})
+        fileList = ref<UploadUserFile[]>([])
 
       } else {
         ElMessage({
           type: 'error',
-          message: res.message
+          message: '发生了错误。。。'
         })
       }
 
@@ -416,9 +419,15 @@ const confirmAdd = async (row: pscData) => {
     SelfEditConditions.onGridElectricCharge = parseFloat(row.onGridElectricCharge)
     SelfEditConditions.selfUseElectricCharge = parseFloat(row.selfUseElectricCharge)
 
+
+
     //文件上传
     SelfEditConditions.scenePicture = await uploadFile()
     console.log('编辑的条件', SelfEditConditions)
+
+    console.log('编辑的行', row)
+
+
 
 
     await editSelfTable(SelfEditConditions).then((res: Res) => {
@@ -430,7 +439,12 @@ const confirmAdd = async (row: pscData) => {
 
         getSelfTableData()
 
+        addCount = 0
+
+
         fileList = ref<UploadUserFile[]>([])
+
+
       }
     })
 
@@ -443,27 +457,76 @@ const confirmAdd = async (row: pscData) => {
 
 //取消
 const cancel = (row: pscData) => {
-  row.edit = false
 
-  if (row.addEdit) {
+  row.edit = false
+  //重置添加数据的点击次数
+  addCount = 0
+
+
+  if (SelfAddConditions.addEdit) {
+    SelfAddConditions = reactive({})
     tableData.value.pop()
+
   }
   ElMessage({
     type: 'info',
     message: '取消操作'
   })
+  getSelfTableData()
+
 
 
 
 }
 
 //修改
-const editData = (row: pscData) => {
-  // 对数据计算
-  // computedData(row)
+const editData = (row: pscData, index: number) => {
 
-  fileList = ref<UploadUserFile[]>([])
-  row.edit = true;
+  //只有当前的onlyEdit为true，其余都为false（排他思想）
+  for (let i = 0; i < tableData.value.length; i++) {
+    if (i === index) {
+      ElMessage({
+        type: 'info',
+        message: '在修改数据时，只允许对一条数据进行操作，ps:自用电费、上网电费、自用电费不用添写，系统会自动计算'
+      })
+
+      // 对数据计算
+      // computedData(row)
+
+
+
+      console.log('row.fileList', fileList)
+
+
+
+      tableData.value[i].edit = true
+      if (SelfAddConditions.addEdit) {
+        SelfAddConditions = reactive({})
+        tableData.value.pop()
+        ElMessage({
+          type: 'warning',
+          message: '取消添加操作'
+        })
+
+      }
+
+      if (row.addEdit) {
+        SelfAddConditions = reactive({})
+        tableData.value.pop()
+
+      }
+
+    } else {
+      tableData.value[i].edit = false
+
+    }
+  }
+
+
+
+
+
+
 }
 
 //删除
@@ -489,6 +552,7 @@ const deleteData = (row: pscData) => {
             type: 'success',
           })
           getSelfTableData()
+          addCount = 0
 
         }
       })
@@ -523,7 +587,10 @@ watch(stationRouter, () => {
 //导出Excel
 const exportExcel = () => {
   const link = document.createElement('a');
-  link.href = `${import.meta.env.VITE_APP_BASE_API}/api/selfAndOnGrid/export`;
+
+  const url = '?companyNumber=' + conditions.companyNumber + '&stationNumber=' + conditions.stationNumber +
+    '&startDate=' + conditions.startDate + '&endDate=' + conditions.endDate + '&page=' + conditions.page + '&pageSize=' + conditions.pageSize
+  link.href = `${import.meta.env.VITE_APP_BASE_API}/api/selfAndOnGrid/export` + url
   link.setAttribute('download', '自由上网报表.xlsx');
   document.body.appendChild(link);
   link.click();
@@ -532,6 +599,8 @@ const exportExcel = () => {
 
 //上传文件
 const uploadFile = async () => {
+
+  console.log(fileList)
   //文件名
   let fileName = ''
   for (let i = 0; i < fileList.value.length; i++) {
@@ -553,7 +622,11 @@ const uploadFile = async () => {
     })
   }
   return fileName
+
+
 }
+
+
 
 interface SummaryMethodProps<T = pscData> {
   columns: TableColumnCtx<T>[]
@@ -588,8 +661,6 @@ const getSummaries = (param: SummaryMethodProps) => {
 
   return sums
 }
-
-
 
 </script>
 

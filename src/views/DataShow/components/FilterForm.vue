@@ -41,9 +41,11 @@ import { InverterParam } from "@/type/inverter.ts";
 import mitts from '@/utils/bus'
 import { useStore } from 'vuex'
 import { Res } from '@/type/request/requestType'
+import { useRoute } from "vue-router";
 
 const emit = defineEmits(['confirm'])
 const store = useStore()
+const route = useRoute()
 const conditions = reactive({
   equipment: '全部', // 设备
   statisticalTime: [],// 统计时间
@@ -123,7 +125,7 @@ const handleConfirm = () => {
 // 导出数据
 const exportFile = () => {
   const link = document.createElement('a');
-  link.href = `${import.meta.env.VITE_APP_BASE_API}/api/inverter/export`;
+  link.href = `${import.meta.env.VITE_APP_BASE_API}/api/inverter/export?stationName=` + route.params.label
   link.setAttribute('download', '逆变器报表.xlsx');
   document.body.appendChild(link);
   link.click();
