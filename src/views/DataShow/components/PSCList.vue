@@ -153,6 +153,7 @@
 
       </el-main>
     </el-container>
+    <EditDialog  v-model:visible="dialogVisible" />
 
   </div>
 </template>
@@ -171,6 +172,7 @@ import { getSelfTable, editSelfTable, deleteSelfTable, addSelfTable } from '@/ap
 import { Res } from '@/type/request/requestType'
 import { fileParams } from '@/type/request/worksheet'
 import { uploadPhotoAndVideo } from '@/api/upload'
+import EditDialog from "@/views/DataShow/components/pcList/editDialog.vue";
 
 //使用store
 const store = useStore()
@@ -197,9 +199,6 @@ const options = [
 
 // 文件列表
 let fileList = ref<UploadUserFile[]>([])
-
-
-
 
 
 //查询条件
@@ -270,8 +269,21 @@ onMounted(() => {
 //     selfUsePrice: preData.selfUsePrice, // 自用电价
 //     edit: true,
 //     measurementPointName: preData.measurementPointName // 计量点名称
+
+// 弹窗可见性
+const dialogVisible = ref(false);
+// 编辑的数据
+const editStatus = reactive({
+  isEdit: false, // 是否是编辑状态
+  editData: {} as any // 编辑的数据
+})
+
+
+
 //添加
 const addData = () => {
+  // 打开弹窗
+  dialogVisible.value = true;
 
   const preData = tableData.value[tableData.value.length - 1]
   SelfAddConditions.stationName = route.params.label
@@ -340,11 +352,9 @@ const handleSizeChange = (val: number) => {
 }
 // 当前页变化时触发
 const handleCurrentChange = (page: number) => {
-
   //修改当前页数
   conditions.page = page
   getSelfTableData()
-
 }
 
 //确认添加
@@ -543,11 +553,7 @@ const uploadFile = async () => {
     })
   }
   return fileName
-
-
 }
-
-
 
 interface SummaryMethodProps<T = pscData> {
   columns: TableColumnCtx<T>[]
@@ -582,6 +588,8 @@ const getSummaries = (param: SummaryMethodProps) => {
 
   return sums
 }
+
+
 
 </script>
 
