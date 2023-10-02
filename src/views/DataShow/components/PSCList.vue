@@ -151,6 +151,8 @@
         <el-divider></el-divider>
         <el-button type="primary" @click="addData">添加数据</el-button>
 
+        <EditDialog v-if="dialogVisible" :isEdit="editStatus.isEdit" @confirm="dialogConfirm" @cancel="dialogCancel" :editData="editStatus.editData" v-model:visible="dialogVisible"/>
+
       </el-main>
     </el-container>
 
@@ -171,6 +173,7 @@ import { getSelfTable, editSelfTable, deleteSelfTable, addSelfTable } from '@/ap
 import { Res } from '@/type/request/requestType'
 import { fileParams } from '@/type/request/worksheet'
 import { uploadPhotoAndVideo } from '@/api/upload'
+import EditDialog from "@/views/DataShow/components/pcList/editDialog.vue";
 
 //使用store
 const store = useStore()
@@ -200,8 +203,6 @@ let fileList = ref<UploadUserFile[]>([])
 
 //添加数据的点击次数
 let addCount = 0
-
-
 
 //查询条件
 const conditions = reactive<ChecklistConditions>({
@@ -264,10 +265,32 @@ onMounted(() => {
 
 })
 
+const dialogVisible = ref(false);
+// 编辑的数据
+const editStatus = reactive({
+  isEdit: false, // 是否是编辑状态
+  editData: {} as any // 编辑的数据
+})
+
+const dialogCancel = () => {
+  dialogVisible.value = false;
+}
+// 当显示为false时
+watch(dialogVisible, ()=>{
+  if(dialogVisible.value === false){
+    editStatus.isEdit = false;
+    // editStatus.editData = {}
+  }
+
+})
+
+
 //添加
 const addData = () => {
   //自动加一
   addCount++
+
+  dialogVisible.value = true;
 
   //保存当前长度（数组长度加上新添数据的长度）
   const arrayLength = tableData.value.length + 1
@@ -291,7 +314,6 @@ const addData = () => {
       message: '请先完成当前操作！'
     })
   }
-
 
   fileList = ref<UploadUserFile[]>([])
 
@@ -345,6 +367,7 @@ const handleSizeChange = (val: number) => {
   getSelfTableData()
 
 }
+
 // 当前页变化时触发
 const handleCurrentChange = (page: number) => {
 
@@ -354,11 +377,97 @@ const handleCurrentChange = (page: number) => {
 
 }
 
+// 提交数据
+const dialogConfirm = async (row: pscData) => {
+  // 如果是编辑状态
+  if(editStatus.isEdit) {
+    // 提交编辑
+    SelfEditConditions.saogpId = row.saogpId
+    SelfEditConditions.companyNumber = store.state.companyNumber
+    SelfEditConditions.stationNumber = route.params.id
+    SelfEditConditions.date = convertDateFormat(row.date, false)
+    SelfEditConditions.inverterName = row.inverterName
+    SelfEditConditions.electricityConsumptionTotal = parseFloat(row.electricityConsumptionTotal)
+    SelfEditConditions.electricityOnGridTotal = parseFloat(row.electricityOnGridTotal)
+    SelfEditConditions.onGridPowerPrice = parseFloat(row.onGridPowerPrice)
+    SelfEditConditions.selfUsePowerPrice = parseFloat(row.selfUsePowerPrice)
+    SelfEditConditions.electricitySelfUseTotal = parseFloat(row.electricitySelfUseTotal)
+    SelfEditConditions.onGridElectricCharge = parseFloat(row.onGridElectricCharge)
+    SelfEditConditions.selfUseElectricCharge = parseFloat(row.selfUseElectricCharge)
+    SelfEditConditions.scenePicture = row.scenePicture
+
+
+    await editSelfTable(SelfEditConditions).then((res: Res) => {
+      if (res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: res.data
+        })
+
+        getSelfTableData()
+        addCount = 0
+        dialogCancel()
+
+        fileList = ref<UploadUserFile[]>([])
+
+
+      }
+    })
+
+    row.edit = false
+
+
+  } else{ // 添加状态
+    SelfAddConditions.companyNumber = store.state.companyNumber
+    SelfAddConditions.stationNumber = route.params.id
+    SelfAddConditions.date = convertDateFormat(row.date, false)
+    SelfAddConditions.inverterName = row.inverterName
+    SelfAddConditions.electricityConsumptionTotal = row.electricityConsumptionTotal
+    SelfAddConditions.electricityOnGridTotal = row.electricityOnGridTotal
+    SelfAddConditions.onGridPowerPrice = row.onGridPowerPrice
+    SelfAddConditions.selfUsePowerPrice = row.selfUsePowerPrice
+    SelfAddConditions.electricitySelfUseTotal = row.electricitySelfUseTotal
+    SelfAddConditions.onGridElectricCharge = row.onGridElectricCharge
+    SelfAddConditions.selfUseElectricCharge = row.selfUseElectricCharge
+    SelfAddConditions.scenePicture = row.scenePicture
+
+
+    addSelfTable(SelfAddConditions).then((res: Res) => {
+      if (res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '添加成功'
+        })
+
+        row.addEdit = false
+
+        dialogCancel()
+
+        getSelfTableData()
+
+        addCount = 0
+
+        // SelfAddConditions = reactive({})
+        fileList = ref<UploadUserFile[]>([])
+
+      } else {
+        ElMessage({
+          type: 'error',
+          message: '发生了错误。。。'
+        })
+      }
+    })
+
+  }
+}
+
+
 //确认添加
 const confirmAdd = async (row: pscData) => {
   //对数据进行计算
   // computedData(row)
   if (row.addEdit) {
+
     SelfAddConditions.companyNumber = store.state.companyNumber
     SelfAddConditions.stationNumber = route.params.id
     SelfAddConditions.date = convertDateFormat(row.date, false)
@@ -438,13 +547,10 @@ const confirmAdd = async (row: pscData) => {
         })
 
         getSelfTableData()
+        dialogCancel()
 
         addCount = 0
-
-
         fileList = ref<UploadUserFile[]>([])
-
-
       }
     })
 
@@ -474,13 +580,18 @@ const cancel = (row: pscData) => {
   })
   getSelfTableData()
 
+}
 
-
-
+// 编辑操作
+const dialogEdit = ( row:pscData, index: number ) => {
+  dialogVisible.value = true;
+  editStatus.isEdit = true;
+  editStatus.editData = row
 }
 
 //修改
 const editData = (row: pscData, index: number) => {
+  dialogEdit(row,index)
 
   //只有当前的onlyEdit为true，其余都为false（排他思想）
   for (let i = 0; i < tableData.value.length; i++) {
@@ -507,7 +618,6 @@ const editData = (row: pscData, index: number) => {
           type: 'warning',
           message: '取消添加操作'
         })
-
       }
 
       if (row.addEdit) {
@@ -616,14 +726,10 @@ const uploadFile = async () => {
           type: 'success',
         })
         fileName = fileName + res.data + '#'
-
       }
-
     })
   }
   return fileName
-
-
 }
 
 
