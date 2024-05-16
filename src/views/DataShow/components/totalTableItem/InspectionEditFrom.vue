@@ -56,9 +56,8 @@
 
 <script setup lang="ts">
 
-import { computed, Ref, ref, watch, reactive, onMounted } from 'vue'
+import { computed, Ref, ref, watch} from 'vue'
 import type { UploadUserFile } from 'element-plus'
-import { InspectionChecklist } from '@/type/worksheet'
 import { useStore } from 'vuex'
 import { useRoute } from "vue-router";
 import { editWorkSheet } from '@/api/apiworksheet'
@@ -162,14 +161,15 @@ let fileList = ref<UploadUserFile[]>([
 const workListSubmit = () => {
     checklistFrom.value.companyNumber = store.state.companyNumber
     checklistFrom.value.stationNumber = route.params.id
-    console.log('修改参数', checklistFrom.value)
+    checklistFrom.value.man = checklistFrom.value.workMan
+    checklistFrom.value.type = checklistFrom.value.typeCode
     editWorkSheet(checklistFrom.value).then((res: Res) => {
-        console.log('修改的结果', res)
         if (res.code === 200) {
             ElMessage({
                 message: res.data,
                 type: 'success',
             })
+            checklistFrom.value.type = checklistFrom.value.type
             emit('closeEdit')
         }
     })

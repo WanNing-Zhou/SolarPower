@@ -94,7 +94,7 @@
     </div>
     <!-- 添加工作单 -->
     <InspectionChecklistForm :addNumber="addNum" @submit="handleConfirmAdd" @close="dialogClose"
-      :dialogVisible="dialogVisible" ></InspectionChecklistForm>
+      :dialogVisible="dialogVisible"></InspectionChecklistForm>
     <!-- 编辑工作单 -->
     <InspectionEditFrom :EditdialogVisible="EditdialogVisible" @closeEdit="EditdialogClose"></InspectionEditFrom>
 
@@ -108,7 +108,7 @@
 <script setup lang="ts">
 
 import { Checked } from "@element-plus/icons-vue";
-import { computed, Ref, ref, reactive, onMounted,watch } from "vue";
+import { computed, Ref, ref, reactive, onMounted, watch } from "vue";
 import FilterForm from "@/views/DataShow/components/FilterForm.vue";
 import InspectionChecklistForm from "@/views/DataShow/components/InspectionChecklistForm.vue";
 import { convertDateFormat, getCurrentDate } from "@/utils/dateUtils.ts";
@@ -119,7 +119,7 @@ import { useStore } from 'vuex'
 import { useRoute } from "vue-router";
 import { getWorkSheet, deleteWorkSheet, printWorkSheet, addWorkSheet } from '@/api/apiworksheet'
 import { Res } from '@/type/request/requestType'
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import InspectionEditFrom from "./totalTableItem/InspectionEditFrom.vue";
 import { InspectionChecklist } from '@/type/worksheet'
 
@@ -275,8 +275,9 @@ const dialogClose = () => {
 }
 //修改 dialog关闭
 const EditdialogClose = () => {
-  EditdialogVisible.value = false
 
+  EditdialogVisible.value = false
+  handleConfirm()
 }
 
 //确认添加
@@ -342,21 +343,42 @@ const deleteData = (row: InspectionChecklist, index: number) => {
   delConditions.stationNumber = route.params.id
   delConditions.id = row.id
 
-  deleteWorkSheet(delConditions).then(res => {
+  ElMessageBox.confirm(
+    '确定要永久删除这条数据吗?',
+    '警告',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+    .then(() => {
+      deleteWorkSheet(delConditions).then(res => {
 
-    if (res.code === 200) {
-      ElMessage({
-        message: res.data,
-        type: 'success',
+        if (res.code === 200) {
+          ElMessage({
+            message: res.data,
+            type: 'success',
+          })
+
+          tableData.value.splice(index, 1);
+          handleConfirm()
+
+        }
+
+
       })
 
-      tableData.value.splice(index, 1);
-      handleConfirm()
 
-    }
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '已取消该操作',
+      })
+    })
 
 
-  })
 
 }
 
@@ -398,7 +420,7 @@ const checkListPrint = (row: InspectionChecklist) => {
 }
 
 //表单提交
-const handleConfirm =async () => {
+const handleConfirm = async () => {
 
 
   tableData.value = []
@@ -406,15 +428,14 @@ const handleConfirm =async () => {
   conditions.stationNumber = route.params.id
   conditions.startDate = convertDateFormat(conditions.filterTime[0], true)
   conditions.endDate = convertDateFormat(conditions.filterTime[1], true)
-  if(conditions.type === '0000')
-  {
-     
+  if (conditions.type === '0000') {
+
     delete conditions.type
   }
   console.log('工作单查询条件', conditions)
 
   if (store.state.companyNumber !== route.params.id) {
-      getWorkSheetData(conditions)
+    getWorkSheetData(conditions)
 
   } else {
     ElMessage(
@@ -466,18 +487,23 @@ const handleCurrentChange = (val: number) => {
 
 //监听左侧电站，如果电站的路由发生变化时就调用分页查询
 //计算电站
-const stationRouter = computed(()=>{
+const stationRouter = computed(() => {
   return route.params.label as string
 })
 //监听
-watch(stationRouter,()=>{
-
+watch(stationRouter, () => {
+  if (route.params?.label === '西安菲尔特2.5MW光伏项目') {
+        store.commit('setcompanyNumber', 'C002')
+      } else if (route.params?.label === '望奎三马架发电站') {
+        store.commit('setcompanyNumber', 'C003')
+      } else {
+        store.commit('setcompanyNumber', 'C001')
+      }
   handleConfirm()
-
-
-},{
-  deep:true
+}, {
+  deep: true
 })
+
 
 
 </script>

@@ -29,26 +29,6 @@
 
         </template>
       </el-table-column>
-      <!-- <el-table-column prop="averageAbsoluteDeviation" label="标准单板日电量" sortable width="180"></el-table-column> -->
-      <!--      <el-table-column label="操作" width="180">
-              <template #default="scope">
-                &lt;!&ndash;                  <el-button&ndash;&gt;
-                &lt;!&ndash;                      type="primary"&ndash;&gt;
-                &lt;!&ndash;                      size="small"&ndash;&gt;
-                &lt;!&ndash;                      @click="showInfo(scope)"&ndash;&gt;
-                &lt;!&ndash;                  >&ndash;&gt;
-                &lt;!&ndash;                    详情&ndash;&gt;
-                &lt;!&ndash;                  </el-button> &ndash;&gt;
-
-                <el-button
-                    type="primary"
-                    size="small"
-                    @click="edit(scope)"
-                >
-                  编辑
-                </el-button>
-              </template>
-            </el-table-column>-->
     </el-table>
 
     <el-pagination v-model:current-page="paginationState.currentPage" v-model:page-size="paginationState.pageSize"
@@ -60,15 +40,12 @@
 
 <script setup lang="ts">
 
-import { computed, onMounted, PropType, reactive, ref, Ref, watch } from "vue";
-// import {inverterTestData} from "@/testData/inverterTestData.ts"
+import { computed, onMounted, reactive, watch } from "vue";
 import { useRoute } from "vue-router";
 import { InverterParam, Inverter, InverterPageParams } from "@/type/inverter.ts";
-import mitts from '@/utils/bus'
 import { useStore } from 'vuex'
 import { PageSearch, getInverterTableData } from '@/api/apiInverter'
 import { InverterParams } from '@/type/request/inverter'
-import {Res} from '@/type/request/requestType'
 
 // const props = defineProps({
 //   tableData: {
@@ -187,7 +164,7 @@ watch(getStateFlag, () => {
 
 
     //重新分析逆变器数据
-    getInverterTableData(InverterCondition).then((res:Res)=>{
+    getInverterTableData(InverterCondition).then((res:any)=>{
       if(res.code===200)
       {
         console.log('重新分析',res)
@@ -199,12 +176,13 @@ watch(getStateFlag, () => {
 
 
     //     将重新计算标志设为false，重置一下
-    // store.commit('setFlag', false)
+    store.commit('setFlag', false)
   }
 }, {
   immediate: true,
   deep: true
 })
+
 //监听vuex中查询被点击的标志
 //1.返回查询标志
 const getInverterSearchFlag = computed(() => {
@@ -217,48 +195,30 @@ watch(getInverterSearchFlag, () => {
   //   getInvertTableData(pageCondition)
   // }
   pageCondition.stationName = store.state.stationName
+  paginationState.total = store.state.total
   getInvertTableData(pageCondition)
+
 })
 
 //监听左侧电站，如果电站的路由发生变化时就调用分页查询
 //计算电站
-const stationRouter = computed(()=>{
+const stationRouter = computed(() => {
   return route.params.label as string
 })
 //监听
-watch(stationRouter,(newdata,old)=>{
+watch(stationRouter, () => {
   // console.log('新值',newdata,old)
+  store.commit('setInvertParam', [])
   pageCondition.stationName = route.params.label
-  console.log('分页逆变器查询参数',pageCondition)
+  console.log('分页逆变器查询参数', pageCondition)
   getInvertTableData(pageCondition)
 
 
-},{
-  deep:true
+}, {
+  deep: true
 })
 
 
-
-
-
-// 设置页面显示数据
-/*const setTableData = () => {
-  const {currentPage, pageSize} = paginationState
-  tableData.value = inverterTestData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
-  console.log(tableData.value)
-}*/
-// 获取数据
-/*const getInverterData = () => {
-  // tableData.value = inverterTestData;
-
-  inverterTestData.forEach(item => {
-    item.averageAbsoluteDeviation = (((1.0 * (item.powerGeneration / evePowerGen.value) - 1) * 100).toFixed(2))
-    item.portName = route.params.id as string;
-  })
-  console.log(inverterTestData)
-  paginationState.total = inverterTestData.length
-  setTableData();
-}*/
 
 // 当前页大小发生变化时触发
 const handleSizeChange = (val: number) => {
@@ -276,36 +236,34 @@ const handleCurrentChange = (page: number) => {
   getInvertTableData(pageCondition)
 
 }
-
-// 详情显示
-// const showInfo = (scope) => {
-//   // console.log('被点击了')
-//   // console.log('被点击了', scope.row)
-//   emit('showInfo', scope.row)
-// }
-
-// 编辑
-// const editRow = ref('')
-// const edit = (scope) => {
-//   emit('editInfo', scope.row)
-// }
-
 //获取逆变器报表的数据
 const getInvertTableData = (pageCondition: InverterPageParams) => {
-
-  console.log('分页查询条件',pageCondition)
-  PageSearch(pageCondition).then(res => {
-    console.log('res', res)
-    tableData.value = res.data.data
+  InverterCondition.stationName = pageCondition.stationName
+  InverterCondition.startTime = store.state.InverterstartTime
+  InverterCondition.endTime = store.state.InverterendTime
 
 
+  //重新分析逆变器数据
+  getInverterTableData(InverterCondition).then((res: any) => {
+    if (res.code === 200) {
+      console.log('重新分析', res)
+      //重新分页
+      console.log('分页查询条件', pageCondition)
+      PageSearch(pageCondition).then(res => {
+        console.log('res', res)
+        tableData.value = res.data.data
+      })
+
+    }
   })
+
+
 }
 
 onMounted(() => {
 
 
-  
+
 
 })
 

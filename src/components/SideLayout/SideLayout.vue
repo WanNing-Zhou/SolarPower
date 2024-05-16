@@ -63,6 +63,28 @@ const data: Tree[] = [
           id: 'PV003',
         },
       ]
+  },
+  {
+    label: '西安隆菲阳新能源有限公司',
+    id: 'C002',
+    children:
+      [
+        {
+          label: '西安菲尔特2.5MW光伏项目',
+          id: 'PV004',
+        }
+      ]
+  },
+  {
+    label: '三马架新能源有限公司',
+    id: 'C003',
+    children:
+      [
+        {
+          label: '望奎三马架发电站',
+          id: 'PV005',
+        }
+      ]
   }
 ]
 
@@ -71,11 +93,10 @@ const data: Tree[] = [
 
 const handleOpen = (key: string, keyPath: string[]) => {
 
-
-  store.commit('setcompanyNumber',key)
   console.log(key, keyPath)
 }
 const handleClose = (key: string, keyPath: string[]) => {
+  store.commit('setcompanyNumber',key)
   console.log(key, keyPath)
 }
 

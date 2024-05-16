@@ -19,11 +19,7 @@ export const summaryDataA:Array<DailyReportPhotovoltaicPowerPlantA> = [
             dailyPowerGeneration:3,
             usageTime:5,
         },
-        feierte:{
-            dailyOperationStatus:'正常',
-            dailyPowerGeneration:3,
-            usageTime:5,
-        },
+
     },
     {
         date: new Date("2023-08-02"),
@@ -42,11 +38,7 @@ export const summaryDataA:Array<DailyReportPhotovoltaicPowerPlantA> = [
             dailyPowerGeneration:3,
             usageTime:5,
         },
-        feierte:{
-            dailyOperationStatus:'正常',
-            dailyPowerGeneration:3,
-            usageTime:5,
-        },
+
     },
     {
         date: new Date("2023-08-03"),
@@ -65,11 +57,7 @@ export const summaryDataA:Array<DailyReportPhotovoltaicPowerPlantA> = [
             dailyPowerGeneration:3,
             usageTime:5,
         },
-        feierte:{
-            dailyOperationStatus:'正常',
-            dailyPowerGeneration:3,
-            usageTime:5,
-        },
+
     },
     {
         date: new Date("2023-08-04"),
@@ -88,11 +76,7 @@ export const summaryDataA:Array<DailyReportPhotovoltaicPowerPlantA> = [
             dailyPowerGeneration:3,
             usageTime:5,
         },
-        feierte:{
-            dailyOperationStatus:'正常',
-            dailyPowerGeneration:3,
-            usageTime:5,
-        },
+
     },
     {
         date: new Date("2023-08-05"),
@@ -111,11 +95,7 @@ export const summaryDataA:Array<DailyReportPhotovoltaicPowerPlantA> = [
             dailyPowerGeneration:3,
             usageTime:5,
         },
-        feierte:{
-            dailyOperationStatus:'正常',
-            dailyPowerGeneration:3,
-            usageTime:5,
-        },
+
     },
     {
         date: new Date("2023-08-06"),
@@ -134,11 +114,7 @@ export const summaryDataA:Array<DailyReportPhotovoltaicPowerPlantA> = [
             dailyPowerGeneration:3,
             usageTime:5,
         },
-        feierte:{
-            dailyOperationStatus:'正常',
-            dailyPowerGeneration:3,
-            usageTime:5,
-        },
+
     },
     {
         date: new Date("2023-08-07"),
@@ -157,11 +133,7 @@ export const summaryDataA:Array<DailyReportPhotovoltaicPowerPlantA> = [
             dailyPowerGeneration:3,
             usageTime:5,
         },
-        feierte:{
-            dailyOperationStatus:'正常',
-            dailyPowerGeneration:3,
-            usageTime:5,
-        },
+
     },
 
 ]

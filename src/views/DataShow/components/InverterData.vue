@@ -5,7 +5,7 @@
         <filter-form  @confirm="handFilter" />
       </el-header>
       <el-main>
-        <inverter-data-table :tableData="tableData" @showInfo="showInfo"></inverter-data-table>
+        <inverter-data-table :tableData="tableData"  :searchFlag="searchFlag" @showInfo="showInfo"></inverter-data-table>
       </el-main>
     </el-container>
     <DetailDialog :detailData="detailData" :dialogVisible="detailDialogVisible" @close="handleClose"></DetailDialog>
@@ -46,6 +46,9 @@ watch(stationName, () => {
 
 const tableData = ref([])
 
+//查询标记
+const searchFlag = ref(false)
+
 // 获取表单数据
 const getTableData = (data?: InverterParams) => {
   if (!data) {
@@ -69,6 +72,7 @@ const getTableData = (data?: InverterParams) => {
     //将时间放到vuex中
     store.commit('seteInverterstartTime',data?.startTime)
     store.commit('setInverterendTime',data?.endTime)
+    store.commit('setInvertParam', [])
 
 
   
@@ -92,6 +96,7 @@ const handFilter = (conditions: Conditions) => {
     startTime: convertDateFormat(startTime, true),
     endTime: convertDateFormat(endTime, true)
   })
+  searchFlag.value = true
 
   //存入电站的名称
   store.commit('setStationName',conditions.equipment)

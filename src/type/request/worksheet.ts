@@ -46,6 +46,10 @@ export interface fileParams{
   file:any;//文件
   type:string;//类型
 }
+// export interface deleteFileParams{
+//   type:string;//文件上传的路径
+//   id:string;//文件名称
+// }
 
  //工作单编辑参数的类型
  export interface editConditions {

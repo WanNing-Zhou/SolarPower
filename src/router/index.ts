@@ -1,3 +1,11 @@
+/*
+ * @Author: buildgods 15564595518@163.com
+ * @Date: 2023-09-09 16:13:59
+ * @LastEditors: buildgods 15564595518@163.com
+ * @LastEditTime: 2024-05-16 15:09:46
+ * @FilePath: \SolarPower\src\router\index.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 /**
  * @FileNAme src\router\index.ts
  * @author 周万宁
@@ -17,8 +25,17 @@ const router = createRouter({
     history: createWebHistory(),
     routes: [
         {path: '/', component: Home, redirect: '/home'}, // 当访问根路径 / 时，重定向到 /home
-        {path: '/home', component: Home},
-        {path: '/datashow/:id/:label/', component: DataShow} // 这里的路由配置需要调整一下
+
+        {path:'/login',component:()=>import('@/views/DataShow/components/LoginPage.vue')},
+        {
+            path:'/layout',
+            component:()=>import('@/components/Layout/Layout.vue'),
+            redirect:'/home',
+            children:[
+                {path: '/datashow/:id/:label/', component: DataShow}, // 这里的路由配置需要调整一下
+                {path: '/home', component: Home},
+            ]
+        }
     ]
 });
 

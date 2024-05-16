@@ -4,7 +4,7 @@
       <el-header class="filter-from" height="38px">
         <el-form :model="conditions" status-icon>
           <el-form-item class="form-item-short" label="选择电站:">
-            <el-select v-model="conditions.stationNumber" class="m-2" placeholder="请选择">
+            <el-select v-model="conditions.stationNumber"  class="m-2" placeholder="请选择">
               <el-option v-for="item in options " :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
@@ -79,12 +79,11 @@
           </el-table-column>
 
           <el-table-column prop="scenePicture" width="150" label="现场照片" :show-overflow-tooltip="true">
-            <template #default="scope">
+            <!-- <template #default="scope">
               <el-upload v-model:file-list="fileList" class="upload-demo" multiple v-if="scope.row.edit" size="small"
                 action="http://124.220.61.93:8080/api/file/upload1" type="primary" link>上传图片</el-upload>
 
-              <!-- <img :src="scope.row.scenePicture"> -->
-            </template>
+            </template> -->
           </el-table-column>
 
 
@@ -179,22 +178,43 @@ import EditDialog from "@/views/DataShow/components/pcList/editDialog.vue";
 const store = useStore()
 const route = useRoute()
 
-const options = [
+const options: any = ref([])
+const options1 = [
   {
     value: '0000',
-    label: '请选择电站'
+    label: '请选择',
   },
   {
     value: 'PV001',
-    label: '陕西中铁科技园区光伏电站'
+    label: '陕西中铁科技园区光伏电站',
   },
   {
     value: 'PV002',
-    label: '神木富油科技能源有限公司'
+    label: '神木富油科技能源有限公司',
   },
   {
     value: 'PV003',
-    label: '西安京东亚一园站'
+    label: '西安京东亚一园站',
+  }
+]
+const options2 = [
+  {
+    value: '0000',
+    label: '请选择',
+  },
+  {
+    value: 'PV004',
+    label: '西安菲尔特2.5MW光伏项目',
+  }
+]
+const options3 = [
+  {
+    value: '0000',
+    label: '请选择',
+  },
+  {
+    value: 'PV005',
+    label: '望奎三马架发电站',
   }
 ]
 
@@ -262,6 +282,7 @@ onMounted(() => {
   const start = new Date()
   start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
   conditions.filterTime = [start, end]
+  options.value = options1
 
 })
 
@@ -287,35 +308,36 @@ watch(dialogVisible, ()=>{
 
 //添加
 const addData = () => {
-  //自动加一
-  addCount++
-
   dialogVisible.value = true;
+  // //自动加一
+  // addCount++
 
-  //保存当前长度（数组长度加上新添数据的长度）
-  const arrayLength = tableData.value.length + 1
-  console.log(arrayLength)
 
-  //添加数据，数组长度加一
-  if (arrayLength == (tableData.value.length + addCount)) {
-    ElMessage({
-      type: 'info',
-      message: '在添加数据时，自用电费、上网电费、自用电费不用添写，系统会自动计算'
-    })
 
-    SelfAddConditions.stationName = route.params.label
+  // //保存当前长度（数组长度加上新添数据的长度）
+  // const arrayLength = tableData.value.length + 1
+  // console.log(arrayLength)
 
-    SelfAddConditions.edit = true
-    SelfAddConditions.addEdit = true
-    tableData.value.push(SelfAddConditions)
-  } else {
-    ElMessage({
-      type: 'info',
-      message: '请先完成当前操作！'
-    })
-  }
+  // //添加数据，数组长度加一
+  // if (arrayLength == (tableData.value.length + addCount)) {
+  //   ElMessage({
+  //     type: 'info',
+  //     message: '在添加数据时，自用电费、上网电费、自用电费不用添写，系统会自动计算'
+  //   })
 
-  fileList = ref<UploadUserFile[]>([])
+  //   SelfAddConditions.stationName = route.params.label
+
+  //   // SelfAddConditions.edit = true
+  //   // SelfAddConditions.addEdit = true
+  //   tableData.value.push(SelfAddConditions)
+  // } else {
+  //   ElMessage({
+  //     type: 'info',
+  //     message: '请先完成当前操作！'
+  //   })
+  // }
+
+  // fileList = ref<UploadUserFile[]>([])
 
 }
 
@@ -610,7 +632,7 @@ const editData = (row: pscData, index: number) => {
 
 
 
-      tableData.value[i].edit = true
+      // tableData.value[i].edit = true
       if (SelfAddConditions.addEdit) {
         SelfAddConditions = reactive({})
         tableData.value.pop()
@@ -683,12 +705,56 @@ const stationRouter = computed(() => {
 })
 //监听
 watch(stationRouter, () => {
-  conditions.stationNumber = route.params.id
+  conditions.stationNumber = route.params.id as string
+  switch (route.params?.label) {
+    case '陕西信惠翔新能源有限公司':
+      options.value = options1
+      break
+    case '西安隆菲阳新能源有限公司':
+      options.value = options2
+      break
+    case '三马架新能源有限公司':
+      options.value = options3
+      break
+    default:
+      if (route.params?.label === '西安菲尔特2.5MW光伏项目') {
+        options.value = options2
+        store.commit('setcompanyNumber', 'C002')
+
+      } else if (route.params?.label === '望奎三马架发电站') {
+        options.value = options3
+        store.commit('setcompanyNumber', 'C003')
+      } else {
+        options.value = options1
+        store.commit('setcompanyNumber', 'C001')
+      }
+
+      break
+
+
+  }
 
 
 
   getSelfTableData()
 
+
+}, {
+  deep: true
+})
+
+//计算选择电站，避免选择框中显示公司的value
+const stationNumber = computed(() => {
+  return conditions.stationNumber
+}
+)
+//监听stationNumber
+watch(stationNumber, (newValue) => {
+  if (conditions.stationNumber === 'C001' || conditions.stationNumber === 'C002' || conditions.stationNumber === 'C003') {
+    conditions.stationNumber = '0000'
+  } else {
+    conditions.stationNumber = newValue
+  }
 
 }, {
   deep: true
@@ -786,10 +852,10 @@ const getSummaries = (param: SummaryMethodProps) => {
         display: flex;
         float: left;
         margin-right: 50px;
-        width: 200px;
+        width: 500px;
 
         .el-select {
-          width: 200px;
+          width: 280px;
         }
 
         .el-input {

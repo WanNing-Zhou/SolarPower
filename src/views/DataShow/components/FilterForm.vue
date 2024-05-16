@@ -1,11 +1,11 @@
 <template>
   <div class=filter-form>
     <el-form :model="conditions" status-icon label-width="80px">
-      <el-form-item class="form-item-short" label="选择电站:" prop="equipment">
+      <el-form-item class="form-item-short" label="选择电站:">
         <!-- <el-input size="small" v-model="conditions.equipment" placeholder="全部" clearable /> -->
         <el-select v-model="conditions.equipment" class="m-2" placeholder="选择电站" size="small" width="200px">
-        <el-option v-for="item in options" :key="item.value"  :label="item.label" :value="item.value" />
-      </el-select>
+          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
       </el-form-item>
 
 
@@ -24,7 +24,7 @@
     <div class="data-operation">
       <input id="inverterUpload" ref="fileUpload" @change="upload" style="display: none" type="file">
       <el-button size="small" @click="reCount">重新计算</el-button>
-      <el-button size="small" @click="uploadHandle">导入华为数据</el-button>
+      <el-button size="small" @click="uploadHandle" disabled>导入华为数据</el-button>
       <el-button size="small" @click="exportFile">导出分析结果</el-button>
     </div>
 
@@ -33,12 +33,10 @@
 
 <script setup lang="ts">
 
-import { reactive, defineEmits, ref, onMounted, Ref, PropType, Component, nextTick } from "vue";
-import { getInverterTableData, InverterExport, invertImport, ReCount } from "@/api/apiInverter.ts";
+import { reactive, defineEmits, ref, onMounted, Ref, computed, watch } from "vue";
+import { invertImport, ReCount } from "@/api/apiInverter.ts";
 import { uploadFile } from "@/api/upload.ts";
 import { ElMessage } from "element-plus";
-import { InverterParam } from "@/type/inverter.ts";
-import mitts from '@/utils/bus'
 import { useStore } from 'vuex'
 import { Res } from '@/type/request/requestType'
 import { useRoute } from "vue-router";
@@ -52,7 +50,9 @@ const conditions = reactive({
 })
 
 
-const options = [
+
+const options: any = ref([])
+const options1 = [
   {
     value: '陕西中铁科技园区光伏电站',
     label: '陕西中铁科技园区光伏电站'
@@ -66,12 +66,70 @@ const options = [
     label: '西安京东亚一园站'
   },
 ]
+const options2 = [
+  {
+    value: '西安菲尔特2.5MW光伏项目',
+    label: '西安菲尔特2.5MW光伏项目',
+  }
+]
+const options3 = [
+  {
+    value: '望奎三马架发电站',
+    label: '望奎三马架发电站',
+  }
+]
+const tags = ref([
+
+])
+
+//监听左侧电站，如果电站的路由发生变化时就调用分页查询
+//计算电站
+const stationRouter = computed(() => {
+  return route.params.label as string
+})
+//监听
+watch(stationRouter, () => {
+  conditions.equipment = route.params.label
+  switch (route.params?.label) {
+    case '陕西信惠翔新能源有限公司':
+      options.value = options1
+      break
+    case '西安隆菲阳新能源有限公司':
+      options.value = options2
+      break
+    case '三马架新能源有限公司':
+      options.value = options3
+      break
+    default:
+      if (route.params?.label === '西安菲尔特2.5MW光伏项目') {
+        options.value = options2
+        store.commit('setcompanyNumber', 'C002')
+
+      } else if (route.params?.label === '望奎三马架发电站') {
+        options.value = options3
+        store.commit('setcompanyNumber', 'C003')
+      } else {
+        options.value = options1
+        store.commit('setcompanyNumber', 'C001')
+      }
+
+      break
+
+
+  }
+
+  handleConfirm()
+}, {
+  deep: true
+})
 
 
 onMounted(() => {
-  const end = new Date()
+  const end = new Date() 
   const start = new Date()
-  start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+  end.setTime(end.getTime() -  3600 * 1000 * 24)
+  start.setTime(end.getTime() - 3600 * 1000 * 24 * 14)
+
   conditions.statisticalTime = [start, end]
 })
 
@@ -114,7 +172,7 @@ const disabledDate = (time: Date) => {
 
 //表单提交
 const handleConfirm = () => {
-  console.log('conditions',conditions)
+  console.log('conditions', conditions)
   emit('confirm', conditions)
 
   //查询被点击后触发

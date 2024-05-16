@@ -180,7 +180,7 @@
 
 import {Ref, ref} from "vue";
 import {Checked} from "@element-plus/icons-vue";
-import {AnnualSummaryPhotovoltaicPowerStations, SalaryPortData} from "@/type";
+import {AnnualSummaryPhotovoltaicPowerStations} from "@/type";
 // 表格数据
 const tableData: Ref<Array<AnnualSummaryPhotovoltaicPowerStations>> = ref([])
 
