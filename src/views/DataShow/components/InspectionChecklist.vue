@@ -2,7 +2,7 @@
  * @Author: buildgods 15564595518@163.com
  * @Date: 2023-09-09 16:13:59
  * @LastEditors: buildgods 15564595518@163.com
- * @LastEditTime: 2024-05-17 19:45:46
+ * @LastEditTime: 2024-05-17 20:07:23
  * @FilePath: \SolarPower\src\views\DataShow\components\InspectionChecklist.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -71,7 +71,7 @@
               </el-icon>
             </el-button>
             <div v-else>
-              <el-button type="primary" @click="editData(scope.row)">
+              <el-button type="primary" @click="editData(scope.row, scope.$index)">
                 <el-icon :size="12">
                   <Edit />
                 </el-icon>
@@ -312,13 +312,13 @@ const confirmAdd = (row: InspectionChecklist) => {
 }
 
 //修改数据
-const editData = (row: InspectionChecklist) => {
+const editData = (row: InspectionChecklist,index:number) => {
   // 对数据重新计算
   // row.edit = true;
 
   EditdialogVisible.value = true
 
-  store.commit('setEditTableData', row)
+  store.commit('setEditTableData', {...row,'index':index})
 }
 
 //删除

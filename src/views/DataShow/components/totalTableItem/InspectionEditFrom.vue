@@ -150,9 +150,16 @@ const workTypeOptions = [
 const visible = computed(() => {
     return prop.EditdialogVisible;
 })
-
+// 保存上一个索引
+let lastIndex = -1
 watch(visible, () => {
-    fileList.value = []
+    if(lastIndex !== checklistFrom.value.index)
+    {
+        lastIndex = checklistFrom.value.index as number
+        fileList.value = []
+    }
+
+    
 })
 
 
@@ -161,10 +168,6 @@ const handleBeforeClose = () => {
     emit('closeEdit')
 
 }
-
-
-
-
 // 修改数据
 const workListSubmit = async () => {
     console.log(fileList.value)

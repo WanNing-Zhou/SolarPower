@@ -65,4 +65,5 @@ export interface fileParams{
   comment?: string; // 备注
   edit?: boolean; //编辑编辑状态
   photoAndVideo?:string;//图片和视频
+  index?:number;
 }
