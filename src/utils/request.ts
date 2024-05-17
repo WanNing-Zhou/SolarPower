@@ -7,7 +7,7 @@ const request = axios.create({
     // 服务接口请求
     baseURL: import.meta.env.VITE_APP_BASE_API,
     // 超时设置
-    timeout: 15000,
+    timeout: 120000,
     headers:{'Content-Type':'application/json;charset=utf-8'}
 })
 

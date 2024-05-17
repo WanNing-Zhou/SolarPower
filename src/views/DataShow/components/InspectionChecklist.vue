@@ -1,3 +1,11 @@
+<!--
+ * @Author: buildgods 15564595518@163.com
+ * @Date: 2023-09-09 16:13:59
+ * @LastEditors: buildgods 15564595518@163.com
+ * @LastEditTime: 2024-05-17 19:45:46
+ * @FilePath: \SolarPower\src\views\DataShow\components\InspectionChecklist.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 /*  *
 * @FileNAme src\views\DataShow\components\InspectionChecklist.vue
 * @author 周万宁
@@ -96,7 +104,7 @@
     <InspectionChecklistForm :addNumber="addNum" @submit="handleConfirmAdd" @close="dialogClose"
       :dialogVisible="dialogVisible"></InspectionChecklistForm>
     <!-- 编辑工作单 -->
-    <InspectionEditFrom :EditdialogVisible="EditdialogVisible" @closeEdit="EditdialogClose"></InspectionEditFrom>
+    <InspectionEditFrom :EditdialogVisible="EditdialogVisible"  @closeEdit="EditdialogClose"></InspectionEditFrom>
 
 
     <!-- <el-dialog v-model="chekListImgVisilbe">
@@ -108,17 +116,14 @@
 <script setup lang="ts">
 
 import { Checked } from "@element-plus/icons-vue";
-import { computed, Ref, ref, reactive, onMounted, watch } from "vue";
-import FilterForm from "@/views/DataShow/components/FilterForm.vue";
+import { computed, Ref, ref, reactive, onMounted, watch } from "vue"
 import InspectionChecklistForm from "@/views/DataShow/components/InspectionChecklistForm.vue";
 import { convertDateFormat, getCurrentDate } from "@/utils/dateUtils.ts";
-import { formatNumber } from "@/utils/numberUtils.ts";
-import { InverterParam, Inverter, InverterPageParams } from "@/type/inverter.ts";
+import { formatNumber } from "@/utils/numberUtils.ts"
 import { workSheetCondition, deleteWorkSheetCondition, addConditions } from "@/type/request/worksheet"
 import { useStore } from 'vuex'
 import { useRoute } from "vue-router";
 import { getWorkSheet, deleteWorkSheet, printWorkSheet, addWorkSheet } from '@/api/apiworksheet'
-import { Res } from '@/type/request/requestType'
 import { ElMessage, ElMessageBox } from "element-plus";
 import InspectionEditFrom from "./totalTableItem/InspectionEditFrom.vue";
 import { InspectionChecklist } from '@/type/worksheet'
@@ -130,15 +135,6 @@ const route = useRoute()
 
 //时间绑定的变量
 // let filterTime = reactive([])
-
-
-
-
-
-
-
-
-
 //查询条件
 const conditions: workSheetCondition = reactive({
   companyNumber: '',//公司编号
@@ -171,7 +167,7 @@ onMounted(() => {
   const end = new Date()
   const start = new Date()
   start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-  conditions.filterTime = [start, end]
+  conditions.filterTime = [start.toLocaleString(), end.toLocaleString()]
 })
 
 
@@ -274,21 +270,18 @@ const dialogClose = () => {
   dialogVisible.value = false;
 }
 //修改 dialog关闭
-const EditdialogClose = () => {
+const EditdialogClose = (data:any) => {
 
   EditdialogVisible.value = false
+  conditions.type = data.type!
   handleConfirm()
 }
 
 //确认添加
 const handleConfirmAdd = (data: addConditions) => {
-
-
-
   // tableData.value.push(data)
-  console.log('data', data)
 
-  addWorkSheet(data).then(res => {
+  addWorkSheet(data).then((res:any) => {
     console.log('添加返回的结果', res)
     if (res.code === 200) {
       ElMessage({
@@ -296,23 +289,19 @@ const handleConfirmAdd = (data: addConditions) => {
         type: 'success',
       })
       //重新查询
-      conditions.type = data.type
+      conditions.type = data.type!
       handleConfirm()
     }
   })
 
   // dialog隐藏
   dialogVisible.value = false;
-
-
-
-
 }
 
 // dialog关闭
-const handleDialogClose = () => {
-  dialogVisible.value = false;
-}
+// const handleDialogClose = () => {
+//   dialogVisible.value = false;
+// }
 
 //确认添加
 const confirmAdd = (row: InspectionChecklist) => {
@@ -330,17 +319,13 @@ const editData = (row: InspectionChecklist) => {
   EditdialogVisible.value = true
 
   store.commit('setEditTableData', row)
-
-
-
-
 }
 
 //删除
 const deleteData = (row: InspectionChecklist, index: number) => {
 
   delConditions.companyNumber = store.state.companyNumber
-  delConditions.stationNumber = route.params.id
+  delConditions.stationNumber = route.params.id as string
   delConditions.id = row.id
 
   ElMessageBox.confirm(
@@ -353,7 +338,7 @@ const deleteData = (row: InspectionChecklist, index: number) => {
     }
   )
     .then(() => {
-      deleteWorkSheet(delConditions).then(res => {
+      deleteWorkSheet(delConditions).then((res:any) => {
 
         if (res.code === 200) {
           ElMessage({
@@ -383,9 +368,9 @@ const deleteData = (row: InspectionChecklist, index: number) => {
 }
 
 //提交数据
-const submitData = () => {
-  alert(JSON.stringify(tableData.value))
-}
+// const submitData = () => {
+//   alert(JSON.stringify(tableData.value))
+// }
 
 // 打印功能
 // const chekListImgVisilbe = ref(false);
@@ -394,7 +379,7 @@ const checkListPrint = (row: InspectionChecklist) => {
   // chekListImgVisilbe.value = true;
   console.log(row.id)
 
-  printWorkSheet(row.id).then((res: Res) => {
+  printWorkSheet(row.id).then((res: any) => {
     if (res.code === 200) {
       ElMessage({
         message: '打印已完成',
@@ -425,9 +410,9 @@ const handleConfirm = async () => {
 
   tableData.value = []
   conditions.companyNumber = store.state.companyNumber
-  conditions.stationNumber = route.params.id
-  conditions.startDate = convertDateFormat(conditions.filterTime[0], true)
-  conditions.endDate = convertDateFormat(conditions.filterTime[1], true)
+  conditions.stationNumber = route.params.id as string
+  conditions.startDate = convertDateFormat(conditions.filterTime![0], true)
+  conditions.endDate = convertDateFormat(conditions.filterTime![1], true)
   if (conditions.type === '0000') {
 
     delete conditions.type
@@ -453,7 +438,7 @@ const handleConfirm = async () => {
 const getWorkSheetData = (val: workSheetCondition) => {
 
 
-  getWorkSheet(val).then((res: Res) => {
+  getWorkSheet(val).then((res: any) => {
     console.log(res)
     if (res.code === 200) {
       console.log('工作单查询返回的结果', res)

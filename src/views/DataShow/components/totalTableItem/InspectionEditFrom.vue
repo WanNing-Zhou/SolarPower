@@ -4,8 +4,9 @@
     <el-dialog v-model="visible" title="工作单修改" :before-close="handleBeforeClose" class="inspection-checklist-form">
         <el-form v-model="checklistFrom" label-width="100" title="工作单">
             <el-form-item label="工作类型">
-                <el-select v-model="checklistFrom.type" class="m-2" placeholder="请选择">
-                    <el-option v-for="item in workTypeOptions " :key="item.value" :label="item.label" :value="item.value" />
+                <el-select v-model="checklistFrom.typeCode" class="m-2" placeholder="请选择">
+                    <el-option v-for="item in workTypeOptions " :key="item.value" :label="item.label"
+                        :value="item.value" />
                 </el-select>
             </el-form-item>
             <el-form-item label-width="100" label="编号">
@@ -28,15 +29,19 @@
             </el-form-item>
 
             <el-form-item label-width="100" label="备注">
-                <el-input v-model="checklistFrom.comment" type="textarea" :autosize="{ minRows: 2, maxRows: 4 }"></el-input>
+                <el-input v-model="checklistFrom.comment" type="textarea"
+                    :autosize="{ minRows: 2, maxRows: 4 }"></el-input>
             </el-form-item>
 
 
             <el-form-item label-width="100">
                 <section class="btn-group">
                     <section>
-                        <el-upload v-model:file-list="fileList" class="upload-demo">
-
+                        <el-upload v-model:file-list="fileList" :auto-upload="false" action="#" list-type="picture-card"
+                            :on-remove="handleRemove">
+                            <el-icon>
+                                <Plus />
+                            </el-icon>
                         </el-upload>
                     </section>
                     <section>
@@ -56,16 +61,17 @@
 
 <script setup lang="ts">
 
-import { computed, Ref, ref, watch} from 'vue'
-import type { UploadUserFile } from 'element-plus'
+import { computed, ref, watch, reactive } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from "vue-router";
 import { editWorkSheet } from '@/api/apiworksheet'
 import { editConditions } from '@/type/request/worksheet'
-import { ElMessage } from "element-plus";
-import { Res } from '@/type/request/requestType'
-
-
+import { ElMessage } from "element-plus"
+import { Plus } from '@element-plus/icons-vue'
+import type { UploadProps, UploadUserFile } from 'element-plus'
+import { fileParams } from '@/type/request/worksheet'
+import { uploadPhotoAndVideo } from '@/api/upload'
+import {deleteFile} from '@/api/upload'
 const store = useStore()
 const route = useRoute()
 
@@ -82,33 +88,36 @@ const prop = defineProps({
 
 const emit = defineEmits(['closeEdit'])
 
-let checklistFrom: Ref<editConditions> = ref({})
-// let editCoditions:Ref<editConditions> = ref({})
-
+let checklistFrom = ref<editConditions>({})
+let photoArr = ref<string[]>([])
+// 文件列表
+let fileList = ref<UploadUserFile[]>([])
 // 页面加载时更新checklistFrom中的数据
-
 //返回state中的编辑数据
 const getEditTableData = computed(() => {
     return store.state.EditTableData
 })
 
 //监听编辑的数据
-watch(getEditTableData, () => {
+watch(getEditTableData, async () => {
     checklistFrom.value = store.state.EditTableData
-
-    //修改参数
-    // editCoditions.value = checklistFrom.value
-    // editCoditions.companyNumber = store.state.companyNumber
-    // editCoditions.stationNumber = route.params.id
+    photoArr.value = checklistFrom.value.photoAndVideo?.split('#') as string[]
+    photoArr.value = photoArr.value.filter(v => v !== "")
 
 
-
-
+    for (const [idx, element] of photoArr.value.entries()) {
+        const obj = {
+            url: import.meta.env.VITE_APP_BASE_API + `/api/file/download/worksheet/${element}`,
+            name: element,
+            flag: true
+        }
+        fileList.value[idx] = obj
+    }
 }, {
     immediate: true,
     deep: true
 })
-
+// console.log(photoArr.value)
 
 
 
@@ -142,45 +151,78 @@ const visible = computed(() => {
     return prop.EditdialogVisible;
 })
 
+watch(visible, () => {
+    fileList.value = []
+})
+
+
 // 关闭前操作
 const handleBeforeClose = () => {
-    console.log('输入框关闭')
     emit('closeEdit')
-    console.log('visible', visible.value)
 
 }
 
-// 文件列表
-let fileList = ref<UploadUserFile[]>([
-
-])
 
 
 
 // 修改数据
-const workListSubmit = () => {
+const workListSubmit = async () => {
+    console.log(fileList.value)
     checklistFrom.value.companyNumber = store.state.companyNumber
-    checklistFrom.value.stationNumber = route.params.id
-    checklistFrom.value.man = checklistFrom.value.workMan
+    checklistFrom.value.stationNumber = route.params.id as string
     checklistFrom.value.type = checklistFrom.value.typeCode
-    editWorkSheet(checklistFrom.value).then((res: Res) => {
+    // delete checklistFrom.value.typeCode
+    // 处理文件列表 文件名以#分割
+    let fileArr: UploadUserFile[] = fileList.value.filter(o => typeof o?.flag == "undefined")
+    //文件大小
+    let fileSize = 0
+    let fileName = ''
+    // 先上传新增文件
+    for (const [idx, element] of fileArr.entries()) {
+        fileSize += element.size!
+    }
+    for (let i = 0; i < fileArr.length; i++) {
+        let file: fileParams = reactive({})
+        file.file = fileArr[i].raw
+        file.type = 'worksheet'
+        if (fileSize > 419430400) {
+            ElMessage({
+                message: '文件大小超过50MB，请重新上传',
+                type: 'error',
+            })
+        } else {
+            await uploadPhotoAndVideo(file).then((res: any) => {
+                if (res.code === 200) {
+                    ElMessage({
+                        message: '文件上传成功',
+                        type: 'success',
+                    })
+                    fileName = fileName + res.data + '#'
+                }
+            })
+        }
+    }
+
+    fileList.value = fileList.value.filter(o => typeof o?.flag != "undefined")
+    fileList.value.forEach(o=>fileName =fileName + o.url?.substring(o.url.indexOf('worksheet') + 10) + '#')
+    checklistFrom.value.photoAndVideo = fileName
+    await editWorkSheet(checklistFrom.value).then((res: any) => {
         if (res.code === 200) {
             ElMessage({
                 message: res.data,
                 type: 'success',
             })
-            checklistFrom.value.type = checklistFrom.value.type
-            emit('closeEdit')
+            emit('closeEdit',checklistFrom.value)
         }
     })
-
-
-
-
-
-
-
-
+}
+const handleRemove: UploadProps['onRemove'] = (uploadFile) => {
+    fileList.value.forEach(o=> {
+        if(o?.name === uploadFile.name && typeof o?.flag != "undefined"){
+            deleteFile('worksheet',uploadFile.name)
+        }
+    })
+    fileList.value = fileList.value.filter(v => v.name !== uploadFile.name)
 
 }
 
