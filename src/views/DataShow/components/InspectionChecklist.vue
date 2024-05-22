@@ -2,7 +2,7 @@
  * @Author: buildgods 15564595518@163.com
  * @Date: 2023-09-09 16:13:59
  * @LastEditors: buildgods 15564595518@163.com
- * @LastEditTime: 2024-05-17 20:07:23
+ * @LastEditTime: 2024-05-17 20:58:06
  * @FilePath: \SolarPower\src\views\DataShow\components\InspectionChecklist.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -127,7 +127,7 @@ import { getWorkSheet, deleteWorkSheet, printWorkSheet, addWorkSheet } from '@/a
 import { ElMessage, ElMessageBox } from "element-plus";
 import InspectionEditFrom from "./totalTableItem/InspectionEditFrom.vue";
 import { InspectionChecklist } from '@/type/worksheet'
-
+// import {deleteFile} from '@/api/upload'
 
 //使用store
 const store = useStore()
@@ -270,11 +270,13 @@ const dialogClose = () => {
   dialogVisible.value = false;
 }
 //修改 dialog关闭
-const EditdialogClose = (data:any) => {
+const EditdialogClose = (data?:any) => {
 
   EditdialogVisible.value = false
-  conditions.type = data.type!
-  handleConfirm()
+  if(data){
+    conditions.type = data.type as string
+    handleConfirm()
+  }
 }
 
 //确认添加
@@ -289,7 +291,7 @@ const handleConfirmAdd = (data: addConditions) => {
         type: 'success',
       })
       //重新查询
-      conditions.type = data.type!
+      conditions.type = data.type as string
       handleConfirm()
     }
   })
@@ -322,7 +324,7 @@ const editData = (row: InspectionChecklist,index:number) => {
 }
 
 //删除
-const deleteData = (row: InspectionChecklist, index: number) => {
+const deleteData = async(row: InspectionChecklist, index: number) => {
 
   delConditions.companyNumber = store.state.companyNumber
   delConditions.stationNumber = route.params.id as string
@@ -338,6 +340,14 @@ const deleteData = (row: InspectionChecklist, index: number) => {
     }
   )
     .then(() => {
+      // 删除文件再删除数据
+      
+      
+      // let delFileArr = row.photoAndVideo?.split('#')
+      // delFileArr =delFileArr?.filter(o=>o!='')
+      // delFileArr?.forEach(o=>{
+      //    deleteFile('worksheet',o)
+      // })
       deleteWorkSheet(delConditions).then((res:any) => {
 
         if (res.code === 200) {

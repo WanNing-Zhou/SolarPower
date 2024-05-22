@@ -38,7 +38,7 @@
                 <section class="btn-group">
                     <section>
                         <el-upload v-model:file-list="fileList" :auto-upload="false" action="#" list-type="picture-card"
-                            :on-remove="handleRemove">
+                            :on-remove="handleRemove" :on-preview="handlePictureCardPreview">
                             <el-icon>
                                 <Plus />
                             </el-icon>
@@ -57,6 +57,9 @@
         </el-form>
 
     </el-dialog>
+    <el-dialog v-model="dialogVisible">
+        <el-image :src="dialogImageUrl" fit="cover" />
+    </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -66,12 +69,13 @@ import { useStore } from 'vuex'
 import { useRoute } from "vue-router";
 import { editWorkSheet } from '@/api/apiworksheet'
 import { editConditions } from '@/type/request/worksheet'
-import { ElMessage } from "element-plus"
+import { ElMessage, ElLoading } from "element-plus"
 import { Plus } from '@element-plus/icons-vue'
 import type { UploadProps, UploadUserFile } from 'element-plus'
 import { fileParams } from '@/type/request/worksheet'
 import { uploadPhotoAndVideo } from '@/api/upload'
-import {deleteFile} from '@/api/upload'
+import { deleteFile } from '@/api/upload'
+import {dataURLtoFile, compressImg} from '@/utils/imageUtils'
 const store = useStore()
 const route = useRoute()
 
@@ -102,7 +106,7 @@ const getEditTableData = computed(() => {
 watch(getEditTableData, async () => {
     checklistFrom.value = store.state.EditTableData
     photoArr.value = checklistFrom.value.photoAndVideo?.split('#') as string[]
-    photoArr.value = photoArr.value.filter(v => v !== "")
+    photoArr.value = photoArr.value?.filter(v => v !== "")
 
 
     for (const [idx, element] of photoArr.value.entries()) {
@@ -153,24 +157,27 @@ const visible = computed(() => {
 // 保存上一个索引
 let lastIndex = -1
 watch(visible, () => {
-    if(lastIndex !== checklistFrom.value.index)
-    {
+    if (lastIndex !== checklistFrom.value.index) {
         lastIndex = checklistFrom.value.index as number
         fileList.value = []
     }
 
-    
+
 })
 
 
 // 关闭前操作
 const handleBeforeClose = () => {
+    fileList.value = []
     emit('closeEdit')
-
 }
 // 修改数据
 const workListSubmit = async () => {
-    console.log(fileList.value)
+    const loading = ElLoading.service({
+    lock: true,
+    text: '图片正在上传，请耐心等待',
+    background: 'rgba(0, 0, 0, 0.7)',
+  })
     checklistFrom.value.companyNumber = store.state.companyNumber
     checklistFrom.value.stationNumber = route.params.id as string
     checklistFrom.value.type = checklistFrom.value.typeCode
@@ -186,7 +193,7 @@ const workListSubmit = async () => {
     }
     for (let i = 0; i < fileArr.length; i++) {
         let file: fileParams = reactive({})
-        file.file = fileArr[i].raw
+        // file.file = fileArr[i].raw
         file.type = 'worksheet'
         if (fileSize > 419430400) {
             ElMessage({
@@ -194,20 +201,21 @@ const workListSubmit = async () => {
                 type: 'error',
             })
         } else {
-            await uploadPhotoAndVideo(file).then((res: any) => {
-                if (res.code === 200) {
-                    ElMessage({
-                        message: '文件上传成功',
-                        type: 'success',
-                    })
-                    fileName = fileName + res.data + '#'
-                }
-            })
+            const compressedResult: any = await compressImg(fileArr[i].raw)
+            file.file = dataURLtoFile(compressedResult, fileArr[i].raw!.name)
+            const res: any = await uploadPhotoAndVideo(file)
+            if (res.code === 200) {
+                ElMessage({
+                    message: '文件上传成功',
+                    type: 'success',
+                })
+                fileName = fileName + res.data + '#'
+            }
         }
     }
 
     fileList.value = fileList.value.filter(o => typeof o?.flag != "undefined")
-    fileList.value.forEach(o=>fileName =fileName + o.url?.substring(o.url.indexOf('worksheet') + 10) + '#')
+    fileList.value.forEach(o => fileName = fileName + o.url?.substring(o.url.indexOf('worksheet') + 10) + '#')
     checklistFrom.value.photoAndVideo = fileName
     await editWorkSheet(checklistFrom.value).then((res: any) => {
         if (res.code === 200) {
@@ -215,18 +223,22 @@ const workListSubmit = async () => {
                 message: res.data,
                 type: 'success',
             })
-            emit('closeEdit',checklistFrom.value)
+            emit('closeEdit', checklistFrom.value)
+            loading.close()
         }
     })
 }
+const dialogImageUrl = ref('')
+const dialogVisible = ref(false)
+const handlePictureCardPreview: UploadProps['onPreview'] = (uploadFile) => {
+    dialogImageUrl.value = uploadFile.url!
+    dialogVisible.value = true
+}
 const handleRemove: UploadProps['onRemove'] = (uploadFile) => {
-    fileList.value.forEach(o=> {
-        if(o?.name === uploadFile.name && typeof o?.flag != "undefined"){
-            deleteFile('worksheet',uploadFile.name)
-        }
-    })
-    fileList.value = fileList.value.filter(v => v.name !== uploadFile.name)
-
+    console.log(uploadFile)
+    if ('flag' in uploadFile) {
+        deleteFile('worksheet', uploadFile.name)
+    }
 }
 
 </script>
