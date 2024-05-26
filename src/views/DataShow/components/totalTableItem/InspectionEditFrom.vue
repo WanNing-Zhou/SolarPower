@@ -38,7 +38,8 @@
                 <section class="btn-group">
                     <section>
                         <el-upload v-model:file-list="fileList" :auto-upload="false" action="#" list-type="picture-card"
-                            :on-remove="handleRemove" :on-preview="handlePictureCardPreview">
+                            :on-remove="handleRemove" :on-preview="handlePictureCardPreview"
+                            accept=".png,.jpg,.gif,.jpeg,.svg">
                             <el-icon>
                                 <Plus />
                             </el-icon>
@@ -75,7 +76,7 @@ import type { UploadProps, UploadUserFile } from 'element-plus'
 import { fileParams } from '@/type/request/worksheet'
 import { uploadPhotoAndVideo } from '@/api/upload'
 import { deleteFile } from '@/api/upload'
-import {dataURLtoFile, compressImg} from '@/utils/imageUtils'
+import { dataURLtoFile, compressImg } from '@/utils/imageUtils'
 const store = useStore()
 const route = useRoute()
 
@@ -174,10 +175,10 @@ const handleBeforeClose = () => {
 // 修改数据
 const workListSubmit = async () => {
     const loading = ElLoading.service({
-    lock: true,
-    text: '图片正在上传，请耐心等待',
-    background: 'rgba(0, 0, 0, 0.7)',
-  })
+        lock: true,
+        text: '图片正在上传，请耐心等待',
+        background: 'rgba(0, 0, 0, 0.7)',
+    })
     checklistFrom.value.companyNumber = store.state.companyNumber
     checklistFrom.value.stationNumber = route.params.id as string
     checklistFrom.value.type = checklistFrom.value.typeCode

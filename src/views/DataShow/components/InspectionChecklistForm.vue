@@ -37,11 +37,12 @@
             <!-- :TODO  参照导入华为数据的上传去开发 -->
             <el-upload v-model:file-list="fileList" class="upload-demo" multiple :auto-upload="false" action="#"
               :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="9"
-              :on-exceed="handleExceed" :on-success="successUpLoad" list-type="picture">
+              :on-exceed="handleExceed" :on-success="successUpLoad" list-type="picture"
+              accept=".png,.jpg,.gif,.jpeg,.svg">
               <el-button type="primary">选择文件</el-button>
               <template #tip>
                 <div class="el-upload__tip">
-                  视频和图片大小要小于50MB
+                  图片大小小于50MB
                 </div>
               </template>
             </el-upload>
