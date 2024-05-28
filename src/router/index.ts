@@ -24,7 +24,7 @@ import DataShow from "@/views/DataShow/DataShow.vue";
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-        {path: '/', component: Home, redirect: '/home'}, // 当访问根路径 / 时，重定向到 /home
+        {path: '/', component: Home, redirect: '/login'}, // 当访问根路径 / 时，重定向到 /home
 
         {path:'/login',component:()=>import('@/views/DataShow/components/LoginPage.vue')},
         {
@@ -34,6 +34,24 @@ const router = createRouter({
             children:[
                 {path: '/datashow/:id/:label/', component: DataShow}, // 这里的路由配置需要调整一下
                 {path: '/home', component: Home},
+            ]
+        },
+        {
+            path: '/admin',
+            component: () => import('@/components/AdminLayout/AdminLayout.vue'),
+            children: [
+                {path: 'create-user', name:'createUser', component: () =>import('@/views/AdminShow/UserCreate/index.vue')},
+                {
+                    path: 'user-ctrl', name: 'userCtrl', component: () => import('@/views/AdminShow/UserCtrl/UserCtrl.vue')
+                },
+                {
+                    path:'point-ctrl', name: 'pointCtrl', component: () => import('@/views/AdminShow/PointCtrl/PointCtrl.vue')
+                },
+                {
+                    path: 'company-ctrl',
+                    name: 'companyCtrl',
+                    component: () => import('@/views/AdminShow/CompanyCtrl/CompanyCtrl.vue')
+                },
             ]
         }
     ]
