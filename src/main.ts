@@ -14,6 +14,7 @@ import App from './App.vue'
 import router from "@/router/index.ts";
 import './style.css'
 import store from '@/store/index.ts'
+import {usePinia} from "@/store/pinia";
 
 
 const app =createApp(App)
@@ -25,5 +26,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.use(ElementPlus, {locale:zhCN})
 app.use(router)
 app.use(store)//注意顺序，先使用后挂载
+usePinia(app)
 app.mount('#app')
 

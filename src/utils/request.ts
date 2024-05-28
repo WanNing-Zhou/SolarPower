@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { errorCodeType } from '@/utils/error-code-type.ts';
 import { ElMessage, ElLoading } from 'element-plus';
+import {getToken} from "@/utils/tokenTool.ts";
+import router from "@/router";
 
 // 创建axios实例
 const request = axios.create({
@@ -39,6 +41,7 @@ request.interceptors.request.use(config => {
     showLoading()
     // 是否需要设置 token放在请求头
     // config.headers['Authorization'] = 'Bearer ' + getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
+    config.headers['Authorization'] = getToken() || '';
     // get请求映射params参数
     if (config.method === 'get' && config.params) {
         let url = config.url + '?';
@@ -77,7 +80,13 @@ request.interceptors.response.use((res:any) => {
         const msg = errorCodeType(code) || res.data['msg'] || errorCodeType('default')
         if(code === 200){
             return Promise.resolve(res.data)
-        }else{
+        }else if(code === 401){
+            router.push('/login')
+            // return Promise.resolve(res.data)
+            return Promise.reject('权限错误')
+        }else if(code === 500){
+            return Promise.reject(res.data.message)
+        } else{
             ElMessage.error(msg)
             return Promise.reject(res.data)
         }

@@ -8,7 +8,7 @@
       </template>
     </el-tree>-->
 
-    <el-menu default-active="C1" @open="handleOpen" @close="handleClose">
+    <el-menu background-color="#f9f9f9" default-active="C1" @open="handleOpen" @close="handleClose">
       <template v-for="item in data">
         <el-sub-menu :index="item.id">
           <template #title>
@@ -115,7 +115,9 @@ const handleClose = (key: string, keyPath: string[]) => {
     user-select: none;
   }
 
-
+   .el-menu {
+    border-right: none;
+  }
   .menu-item {
     line-height: 40px;
     margin: 4px 0;

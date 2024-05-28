@@ -15,7 +15,19 @@ export async function getUser(params:any){
 }
 
 
-const usr = await getUser({offset:1,size: 10})
+// const usr = await getUser({offset:1,size: 10})
 
-console.log(usr.data.name)
+// export function
 
+
+export function login  (params: any) {
+    return request( '/api/user/login', {
+        method: 'post',
+        data: params
+    })
+}
+
+// 获取用户信息
+export function getUserInfo (){
+    return request.get( '/api/user/info')
+}
