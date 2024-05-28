@@ -25,5 +25,5 @@ export async function uploadPhotoAndVideo(params:fileParams)
 //删除文件
 export function deleteFile(type:string,id:string)
 {
-    return Request.delete(`/api/file/?id=${id}&type=${type}`)
+    return Request.delete(`/api/file/${type}/${id}`)
 }

@@ -35,13 +35,14 @@
         <section class="btn-group">
           <section>
             <!-- :TODO  参照导入华为数据的上传去开发 -->
-            <el-upload v-model:file-list="fileList" class="upload-demo" multiple
-              action="http://124.220.61.93:8080/api/file/upload1" :on-preview="handlePreview" :on-remove="handleRemove"
-              :before-remove="beforeRemove" :limit="9" :on-exceed="handleExceed" :on-success="successUpLoad">
+            <el-upload v-model:file-list="fileList" class="upload-demo" multiple :auto-upload="false" action="#"
+              :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="9"
+              :on-exceed="handleExceed" :on-success="successUpLoad" list-type="picture"
+              accept=".png,.jpg,.gif,.jpeg,.svg">
               <el-button type="primary">选择文件</el-button>
               <template #tip>
                 <div class="el-upload__tip">
-                  视频和图片大小要小于50MB
+                  图片大小小于50MB
                 </div>
               </template>
             </el-upload>
@@ -63,8 +64,8 @@
 
 <script setup lang="ts">
 
-import { computed, Ref, ref, watch, reactive } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { computed, ref, watch, reactive } from 'vue'
+import { ElMessage, ElMessageBox, ElLoading } from 'element-plus'
 import { addConditions } from '@/type/request/worksheet'
 import type { UploadProps, UploadUserFile } from 'element-plus'
 import { convertDateFormat } from "@/utils/dateUtils.ts";
@@ -72,7 +73,7 @@ import { useStore } from 'vuex'
 import { useRoute } from "vue-router";
 import { fileParams } from '@/type/request/worksheet'
 import { uploadPhotoAndVideo } from '@/api/upload'
-import { Res } from '@/type/request/requestType'
+import { dataURLtoFile, compressImg } from '@/utils/imageUtils'
 //使用store
 const store = useStore()
 const route = useRoute()
@@ -89,8 +90,9 @@ const prop = defineProps({
 })
 
 const emit = defineEmits(['close', 'submit'])
-
-let checklistFrom: Ref<addConditions> = ref({})
+//文件名
+const fileName = ref('')
+let checklistFrom = ref<addConditions>({})
 // 文件列表
 let fileList = ref<UploadUserFile[]>([])
 // 工作类型选项
@@ -146,8 +148,8 @@ const handleBeforeClose = () => {
 
 
 
-const handleRemove: UploadProps['onRemove'] = (file, uploadFiles) => {
-  console.log(file, uploadFiles)
+const handleRemove: UploadProps['onRemove'] = (file) => {
+  console.log(file)
 }
 
 const handlePreview: UploadProps['onPreview'] = (uploadFile) => {
@@ -161,7 +163,7 @@ const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
   )
 }
 
-const beforeRemove: UploadProps['beforeRemove'] = (uploadFile, uploadFiles) => {
+const beforeRemove: UploadProps['beforeRemove'] = (uploadFile) => {
   return ElMessageBox.confirm(
     `取消 ${uploadFile.name}的上传 ?`
   ).then(
@@ -175,43 +177,28 @@ const successUpLoad = () => {
   // console.log('fileList',fileList)
 
 }
-
 // 提交数据--文件上传
 const workListSubmit = async () => {
+  const loading = ElLoading.service({
+    lock: true,
+    text: '图片正在上传，请耐心等待',
+    background: 'rgba(0, 0, 0, 0.7)',
+  })
   // checklistFrom.value.id = prop.addNumber
   if (checklistFrom.value.date != null) {
     checklistFrom.value.date = convertDateFormat(checklistFrom.value.date, true)
-    console.log(checklistFrom.value.date)
   }
   checklistFrom.value.companyNumber = store.state.companyNumber
-  checklistFrom.value.stationNumber = route.params.id
+  checklistFrom.value.stationNumber = route.params.id as string
 
   //文件大小
   let fileSize = 0
-  //文件名
-  let fileName = ''
   //求文件大小
   for (let i = 0; i < fileList.value.length; i++) {
-    fileSize += fileList.value[i].size
-    // fileName += fileList.value[i].name 
-    // if(i !== fileList.value.length-1)
-    // {
-    //   fileName += '#'
-    // }
-
-
+    fileSize += fileList.value[i].size!
   }
-
-  console.log('fileSize', fileSize)
-  console.log('fileName', fileName)
   //循环上传文件
   for (let i = 0; i < fileList.value.length; i++) {
-
-    console.log(fileList.value[i])
-    let file: fileParams = reactive({})
-    file.file = fileList.value[i].raw
-    file.type = 'worksheet'
-
 
     if (fileSize > 419430400) {
       ElMessage({
@@ -220,29 +207,29 @@ const workListSubmit = async () => {
       })
 
     } else {
-      await uploadPhotoAndVideo(file).then((res: Res) => {
-        console.log('文件', res)
-        if (res.code === 200) {
-          ElMessage({
-            message: '文件上传成功',
-            type: 'success',
-          })
-          fileName = fileName + res.data + '#'
-          console.log(fileName)
-          checklistFrom.value.photoAndVideo = fileName
-        }
 
-      })
+      const compressedResult: any = await compressImg(fileList.value[i].raw)
+      const fileImg = dataURLtoFile(compressedResult, fileList.value[i].raw!.name)
 
+      let uploadFile: fileParams = reactive({})
+      uploadFile.type = 'worksheet'
+      uploadFile.file = fileImg
+      const res: any = await uploadPhotoAndVideo(uploadFile)
+      if (res.code === 200) {
+        ElMessage({
+          message: '文件上传成功',
+          type: 'success',
+        })
+        fileName.value = fileName.value + res.data + '#'
+      }
     }
 
   }
-  console.log('checklistFrom.value', checklistFrom.value)
+  checklistFrom.value.photoAndVideo = fileName.value
   emit('submit', checklistFrom.value)
   checklistFrom = ref({})
   fileList = ref<UploadUserFile[]>([])
-
-
+  loading.close()
 
 }
 
