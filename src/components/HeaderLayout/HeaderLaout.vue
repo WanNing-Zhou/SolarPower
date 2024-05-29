@@ -27,17 +27,39 @@
       <div>操作</div>
       <div v-if="optionShow"  class="option-box">
         <el-menu>
-          <el-menu-item>修改密码</el-menu-item>
-          <el-menu-item>登出</el-menu-item>
+          <el-menu-item><div @click="updateHandle">修改密码</div></el-menu-item>
+          <el-menu-item><div @click="logoutHandle">登出</div></el-menu-item>
+
         </el-menu>
       </div>
     </div>
+    <update-password v-model:visible="updateVis"></update-password>
+
   </div>
 </template>
 
 <script setup lang="ts">
 import {ref} from "vue";
+import {ElMessage} from "element-plus";
+import {useRouter} from "vue-router";
+import UpdatePassword from "@/views/OptionShow/UpdatePassword.vue";
+const router = useRouter()
 const optionShow = ref(false)
+
+const updateVis = ref(false)
+
+const updateHandle = () => {
+  // router.push('/update-password')
+  updateVis.value = true
+}
+
+
+const logoutHandle  = async () => {
+  const res:any = await logoutHandle()
+  if(res.code == 200){
+    ElMessage.success('登出成功')
+  }
+}
 
 </script>
 
@@ -48,7 +70,7 @@ const optionShow = ref(false)
   //font-size: 20px;
   line-height: 40px;
   text-align: center;
-  background-color: #409eff;
+  background-color: #018CB6;
   color: #ffffff;
   height: 40px;
   position: relative;

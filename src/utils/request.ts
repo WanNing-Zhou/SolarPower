@@ -81,6 +81,7 @@ request.interceptors.response.use((res:any) => {
         if(code === 200){
             return Promise.resolve(res.data)
         }else if(code === 401){
+            ElMessage.error('权限验证失败')
             router.push('/login')
             // return Promise.resolve(res.data)
             return Promise.reject('权限错误')

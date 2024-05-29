@@ -1,23 +1,23 @@
 <template>
-  <el-dialog v-model="vis" :show-close="false" width="500">
+  <el-dialog v-model="vis" :show-close="false" width="600">
     <template #header>
       <div class="my-header">
         {{company ? '公司编辑' : '公司添加'}}
       </div>
     </template>
     <div>
-      <el-form>
-        <el-form-item label="公司">
-          <el-input/>
+      <el-form label-width="120">
+        <el-form-item label="公司名">
+          <el-input v-model="form.name"/>
         </el-form-item>
         <el-form-item label="地址">
-          <el-input/>
+          <el-input v-model="form.address"/>
         </el-form-item>
         <el-form-item label="负责人">
-          <el-input/>
+          <el-input v-model="form.manager"/>
         </el-form-item>
         <el-form-item label="负责人电话">
-          <el-input/>
+          <el-input v-model="form.contact"/>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="confirmHandle">提交</el-button>
@@ -29,19 +29,41 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ref} from "vue";
+import {computed, ref, watch} from "vue";
+import {addCompany, updateCompany} from "@/api/suer.ts";
+import {ElMessage} from "element-plus";
 
 type Prop = {
   visible: boolean,
-  company?: string,
+  company?: any,
 }
 
 const props = defineProps<Prop>()
 
-const emits = defineEmits(['update:visible'])
+const emits = defineEmits(['update:visible', 'success'])
 
-const form = ref({
-  companyName: ''
+const baseForm = {
+  name: '',
+  address: '',
+  manager: '',
+  contact: '',
+}
+const form = ref({...baseForm})
+
+const company = computed(() => {
+  return props.company
+})
+
+watch(company, () => {
+  if(company.value){
+    form.value = {...company.value}
+    // form.value.name = company.value.name
+    // form.value.address = company.value.address
+    // form.value.manager = company.value.manager
+    // form.value.contact = company.value.contact
+  }else {
+    form.value = {...baseForm}
+  }
 })
 
 const vis = computed({
@@ -55,11 +77,26 @@ const vis = computed({
 
 
 const cancelHandle = () => {
-  emits('update:visible')
+  emits('update:visible', false)
 }
 
-const confirmHandle = () => {
-
+const confirmHandle = async () => {
+  // 当company为false时为添加
+  if(!props.company){
+    const res: any = await addCompany(form.value);
+    if(res.code == 200){
+      ElMessage.success('添加成功')
+      emits('success')
+      emits('update:visible')
+    }
+  }else{
+    const res: any = await updateCompany({...form.value, id: company.value.id})
+    if(res.code == 200){
+      ElMessage.success('修改成功')
+      emits('success')
+      emits('update:visible')
+    }
+  }
 }
 
 </script>

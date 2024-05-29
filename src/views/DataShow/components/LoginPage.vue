@@ -145,7 +145,7 @@ watch(isRegister, () => {
 </script>
 <style lang="scss" scoped>
 .login-page {
-  height: 100vh;
+  height: calc(100vh - 20px);
   background-color: #fff;
   .bg {
     background:

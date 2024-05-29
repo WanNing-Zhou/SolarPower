@@ -21,6 +21,16 @@ export function addUser (param: any){
     return request.post('/api/user/add',param)
 }
 
+// 编辑用户
+export function updateUser(param: any){
+    return request.post('/api/user/update', param)
+}
+
+// 用户授权
+export function authToUser(param: any) {
+    return request.post('/api/user/grantStationPermission', param)
+}
+
 
 // 添加公司
 export function addCompany (param: any) {
@@ -29,12 +39,12 @@ export function addCompany (param: any) {
 
 // 删除公司
 export function deleteCompany(id: string){
-    return request.post('/api/company/detele',{id})
+    return request.post('/api/company/delete',{id})
 }
 
 // 更新公司信息
 export function updateCompany(param: any){
-    return request.post('/api/comany/update', param)
+    return request.post('/api/company/update', param)
 }
 
 
@@ -44,10 +54,15 @@ export function updateCompany(param: any){
     page: number
     pageSize: number
 }){
-    return request('/api/comany/list',{
+    return request('/api/company/list',{
         method:'get',
         params: param
     })
+}
+
+// 获取公司及电站接口
+export function getCompanySearch(){
+    return request('/api/company/search')
 }
 // 获取公司
 export function getCompanies() {
@@ -72,5 +87,8 @@ export function updateStation(param: any){
 // 查询电站列表
 
 export function getStationList(param: any){
-    return request.get('/api/station/')
+    return request('/api/station/search', {
+        method: 'get',
+        params: param
+    })
 }

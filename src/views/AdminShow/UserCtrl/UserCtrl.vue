@@ -2,33 +2,33 @@
   <div class="user-ctrl-page">
     <div class="page-header">用户管理</div>
     <el-divider/>
-    <div class="search-row">
-        <el-form>
-          <el-row>
-            <el-col :span="8">
-              <el-form-item label="账号">
-                <el-input></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="用户名">
-                <el-input/>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="联系电话">
-                <el-input/>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row justify="end">
-            <el-col :span="4">
-              <el-button type="primary">搜索</el-button>
-              <el-button >重置</el-button>
-            </el-col>
-          </el-row>
-        </el-form>
-    </div>
+<!--    <div class="search-row">-->
+<!--        <el-form>-->
+<!--          <el-row>-->
+<!--            <el-col :span="8">-->
+<!--              <el-form-item label="账号">-->
+<!--                <el-input></el-input>-->
+<!--              </el-form-item>-->
+<!--            </el-col>-->
+<!--            <el-col :span="8">-->
+<!--              <el-form-item label="用户名">-->
+<!--                <el-input/>-->
+<!--              </el-form-item>-->
+<!--            </el-col>-->
+<!--            <el-col :span="8">-->
+<!--              <el-form-item label="联系电话">-->
+<!--                <el-input/>-->
+<!--              </el-form-item>-->
+<!--            </el-col>-->
+<!--          </el-row>-->
+<!--          <el-row justify="end">-->
+<!--            <el-col :span="4">-->
+<!--              <el-button type="primary">搜索</el-button>-->
+<!--              <el-button >重置</el-button>-->
+<!--            </el-col>-->
+<!--          </el-row>-->
+<!--        </el-form>-->
+<!--    </div>-->
     <div class="option-row">
       <el-button type="primary" @click="newUserHandle">新建用户</el-button>
     </div>
@@ -40,12 +40,8 @@
           label="账号">
       </el-table-column>
       <el-table-column
-          prop="name"
-          label="姓名">
-      </el-table-column>
-      <el-table-column
-          prop="phone"
-          label="联系方式">
+          prop="contact"
+          label="联系电话">
       </el-table-column>
       <el-table-column
           prop="address"
@@ -54,9 +50,9 @@
       <el-table-column label="操作" width="280">
 
         <template #default="scope">
-          <el-button
-              size="small"
-              @click="handleEdit(scope.row)">编辑</el-button>
+<!--          <el-button-->
+<!--              size="small"-->
+<!--              @click="handleEdit(scope.row)">编辑</el-button>-->
           <el-button
               size="small"
               @click="handleAuthEdit(scope.row)">授权管理</el-button>
@@ -67,35 +63,35 @@
         </template>
       </el-table-column>
     </el-table>
+    <edit-user-dialog v-model:visible="editDialog.visible" :user="editDialog.data"/>
+    <AuthDialog v-model:visible="authDialogData.visible" :user="authDialogData.data" @success="getTableData"/>
   </div>
 </template>
 
 <script setup lang="ts">
 import {reactive, ref} from "vue";
  import {useRouter} from "vue-router";
- import {getUserList} from "@/api/suer.ts";
+import {deleteUser, getUserList} from "@/api/suer.ts";
+import {ElMessage} from "element-plus";
+import EditUserDialog from "@/views/AdminShow/UserCtrl/EditUserDialog.vue";
+import AuthDialog from "@/views/AdminShow/UserCtrl/AuthDialog.vue";
  const conditionFrom = ref({
    username: '',
    name: '',
    phone: '',
  })
- const testData = [{
-   date: '2016-05-02',
-   name: '王小虎',
-   address: '上海市普陀区金沙江路 1518 弄',
-   username: 'admin',
-   phone: '879329',
- },]
- const tableData = ref(testData)
+ const tableData = ref([])
 
 
  const router = useRouter()
 
  const getTableData = async ()=> {
-   // const res = await getUserList();
-   // const tableData = res.data.filter(item => {
-   //
-   // })
+   const res = await getUserList();
+   // console.log(res)
+   const resValue = res.data.filter(item => {
+    return !item.permission.isAdmin
+   })
+   tableData.value = resValue
    // console.log(res)
  }
 
@@ -106,22 +102,38 @@ import {reactive, ref} from "vue";
    router.push({path: '/admin/create-user'})
  }
 
+ const editDialog = reactive({
+   visible: false,
+   data: {} as any,
+ })
+
  // 编辑
  const handleEdit = (row: any) => {
-
+   // router.push({path: '/admin/create-user', query:{id: row.id}})
+   editDialog.visible = true
+   editDialog.data={...row}
  }
 
  // 删除
- const handleDelete = (row: any) => {
+ const handleDelete = async (row: any) => {
+   try {
+     console.log(row.id)
+     await deleteUser(row.id)
+     await getTableData()
+     ElMessage.success('删除成功')
+   }catch (e){
 
+   }
  }
 
  const authDialogData = reactive({
-   visible: false
+   visible: false,
+   data: null
  })
 
  const handleAuthEdit = (row: any) => {
     authDialogData.visible = true
+   authDialogData.data =row
  }
 
 

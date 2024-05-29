@@ -25,13 +25,13 @@ import LayoutMain from "@/components/AdminLayout/components/LayoutMain/LayoutMai
 </script>
 
 <style lang="scss" scoped>
-.common-layout{
+.admin-layout{
   &:deep(.el-header){
     padding: 0;
+    height: 40px;
   }
   &:deep(.el-main){
     padding: 0px;
   }
 }
-
 </style>

@@ -24,9 +24,10 @@ import DataShow from "@/views/DataShow/DataShow.vue";
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-        {path: '/', component: Home, redirect: '/login'}, // 当访问根路径 / 时，重定向到 /home
+        {path: '/' ,redirect: '/login'}, // 当访问根路径 / 时，重定向到 /home
 
         {path:'/login',component:()=>import('@/views/DataShow/components/LoginPage.vue')},
+        {path:'/update-password',component:()=>import('@/views/OptionShow/UpdatePassword.vue')},
         {
             path:'/layout',
             component:()=>import('@/components/Layout/Layout.vue'),

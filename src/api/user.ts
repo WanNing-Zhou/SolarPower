@@ -31,3 +31,12 @@ export function login  (params: any) {
 export function getUserInfo (){
     return request.get( '/api/user/info')
 }
+
+
+export function updatePassword(param: any) {
+    return request.post('/api/user/changePassword', param)
+}
+
+export function logout(){
+    return request.post('/api/user/logout')
+}

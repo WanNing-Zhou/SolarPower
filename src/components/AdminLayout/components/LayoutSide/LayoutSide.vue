@@ -1,18 +1,17 @@
 <template>
   <div class="side-layout">
-    <!--    <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick">
-      <template #default="{ node, data }">
-        <div class="menu-item" @click="currentNodeId = node.id" :class="`${node.id == currentNodeId ? 'link-active' : ''}`">
-          <router-link :to="'/datashow/'+data.label">{{ node.label }}</router-link>
-        </div>
-      </template>
-    </el-tree>-->
-
-    <el-menu default-active="C1" @open="handleOpen" @close="handleClose">
+    <el-menu     background-color="#0B2D4D"
+                 text-color="#6D8AA6"
+                 active-text-color="#ffd04b"
+                 :default-active="data[0].label"
+                 @open="handleOpen"
+                 @close="handleClose">
 
       <template v-for="cItem in data">
         <el-menu-item :index="cItem.label">
-          <router-link class="menu-item" :to="'/admin/' + cItem.to + '/'">{{cItem.label}}</router-link>
+
+          <el-icon><component  v-if="cItem.icon" :is="cItem.icon"></component></el-icon>
+          <router-link style="width: 100%" class="menu-item" :to="'/admin/' + cItem.to + '/'">{{cItem.label}}</router-link>
         </el-menu-item>
       </template>
 
@@ -35,18 +34,22 @@ const data = [
   {
     label: '创建用户',
     to: 'create-user',
+    icon: 'Plus'
   },
   {
     label: '用户管理',
     to: 'user-ctrl',
+    icon: 'UserFilled'
   },
   {
-    label: '站点管理',
-    to: 'point-ctrl'
+    label: '电站管理',
+    to: 'point-ctrl',
+    icon: 'Place'
   },
   {
     label: '公司管理',
-    to: 'company-ctrl'
+    to: 'company-ctrl',
+    icon: 'OfficeBuilding'
   }
 
 ]
@@ -55,12 +58,8 @@ const data = [
 
 
 const handleOpen = (key: string, keyPath: string[]) => {
-
-  console.log(key, keyPath)
 }
 const handleClose = (key: string, keyPath: string[]) => {
-  store.commit('setcompanyNumber',key)
-  console.log(key, keyPath)
 }
 
 </script>
@@ -68,8 +67,9 @@ const handleClose = (key: string, keyPath: string[]) => {
 <style lang="scss" scoped>
 .side-layout {
   min-height: 500px;
-  height: calc(100vh - 80px);
-  background-color: #f9f9f9;
+  height: calc(100vh - 60px);
+  //background-color: #f9f9f9;
+  background-color: #0B2D4D;
   overflow-y: auto;
 
 
@@ -78,6 +78,10 @@ const handleClose = (key: string, keyPath: string[]) => {
     user-select: none;
   }
 
+  :deep(.el-menu){
+    background-color: #0B2D4D;
+
+  }
 
   .menu-item {
     line-height: 40px;
