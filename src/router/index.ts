@@ -40,6 +40,7 @@ const router = createRouter({
         {
             path: '/admin',
             component: () => import('@/components/AdminLayout/AdminLayout.vue'),
+            redirect: '/admin/user-ctrl',
             children: [
                 {path: 'create-user', name:'createUser', component: () =>import('@/views/AdminShow/UserCreate/index.vue')},
                 {

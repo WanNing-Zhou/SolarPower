@@ -37,6 +37,6 @@ export function updatePassword(param: any) {
     return request.post('/api/user/changePassword', param)
 }
 
-export function logout(){
+export function userLogout(){
     return request.post('/api/user/logout')
 }

@@ -22,7 +22,7 @@
 
 <template>
   <div class="header">
-    <div class="left">分布式光伏电站发电异常管理系统</div>
+    <div class="left">分布式光伏电站发电量检测管理系统</div>
     <div class="right" @click="optionShow = !optionShow">
       <div>操作</div>
       <div v-if="optionShow"  class="option-box">
@@ -43,6 +43,7 @@ import {ref} from "vue";
 import {ElMessage} from "element-plus";
 import {useRouter} from "vue-router";
 import UpdatePassword from "@/views/OptionShow/UpdatePassword.vue";
+import {logout} from "@/utils/logout.ts";
 const router = useRouter()
 const optionShow = ref(false)
 
@@ -55,10 +56,7 @@ const updateHandle = () => {
 
 
 const logoutHandle  = async () => {
-  const res:any = await logoutHandle()
-  if(res.code == 200){
-    ElMessage.success('登出成功')
-  }
+  logout()
 }
 
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="side-layout">
     <el-menu     background-color="#0B2D4D"
-                 text-color="#6D8AA6"
+                 text-color="#ffffff"
                  active-text-color="#ffd04b"
                  :default-active="data[0].label"
                  @open="handleOpen"
@@ -32,26 +32,26 @@ const data = [
   //   to: 'auth-ctrl'
   // },
   {
-    label: '创建用户',
-    to: 'create-user',
-    icon: 'Plus'
-  },
-  {
     label: '用户管理',
     to: 'user-ctrl',
     icon: 'UserFilled'
+  },
+  // {
+  //   label: '创建用户',
+  //   to: 'create-user',
+  //   icon: 'Plus'
+  // },
+
+  {
+    label: '公司管理',
+    to: 'company-ctrl',
+    icon: 'OfficeBuilding'
   },
   {
     label: '电站管理',
     to: 'point-ctrl',
     icon: 'Place'
   },
-  {
-    label: '公司管理',
-    to: 'company-ctrl',
-    icon: 'OfficeBuilding'
-  }
-
 ]
 
 
@@ -87,7 +87,6 @@ const handleClose = (key: string, keyPath: string[]) => {
     line-height: 40px;
     margin: 4px 0;
     width: 100%;
-
   }
 
 

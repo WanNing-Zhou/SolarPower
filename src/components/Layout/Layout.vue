@@ -29,6 +29,7 @@ import MainLayout from "@/components/MainLayout/MainLayout.vue";
 .common-layout{
   &:deep(.el-header){
     padding: 0;
+    height: 40px;
   }
   &:deep(.el-main){
     padding: 0px;

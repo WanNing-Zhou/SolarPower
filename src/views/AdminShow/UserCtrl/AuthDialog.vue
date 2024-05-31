@@ -25,7 +25,7 @@
 <!--            + New Tag-->
 <!--          </el-button>-->
 <!--        </el-form-item>-->
-        <el-form-item label="权限">
+        <el-form-item label="站点权限">
           <el-cascader v-model="selectData" :rows="2" :props="optionProps" :options="options" :show-all-levels="false" />
         </el-form-item>
         <el-form-item>
@@ -127,7 +127,7 @@ const vis = computed({
 
 
 const cancelHandle = () => {
-  emits('update:visible')
+  emits('update:visible', false)
 }
 
 const confirmHandle = async () => {

@@ -15,7 +15,10 @@ const windowHeight = ref(window.innerHeight-80)
 <style scoped>
 .main-layout{
   width: 100%;
-  height: v-bind(windowHeight+'px');
+  //height: v-bind(windowHeight+'px');
+  height: calc(100vh - 60px);
+  box-sizing: border-box;
+  padding: 10px;
   overflow-y:auto ;
 }
 </style>

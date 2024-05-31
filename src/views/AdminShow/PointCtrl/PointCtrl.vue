@@ -44,7 +44,7 @@
         style="width: 100%">
       <el-table-column
           prop="name"
-          label="电站名">
+          label="电站名" width="200">
       </el-table-column>
       <el-table-column prop="capacity" label="容量"></el-table-column>
       <el-table-column prop="type" label="设备类型"></el-table-column>

@@ -19,6 +19,7 @@ import {ref} from "vue";
 import {useRouter} from "vue-router";
 import {ElMessage} from "element-plus";
 import UpdatePassword from "@/views/OptionShow/UpdatePassword.vue";
+import {logout} from "@/utils/logout.ts";
 const router = useRouter()
 const optionShow = ref(false)
 
@@ -30,10 +31,11 @@ const updateHandle = () => {
 }
 
 const logoutHandle  = async () => {
-  const res:any = await logoutHandle()
-  if(res.code == 200){
-    ElMessage.success('登出成功')
-  }
+  // const res:any = await logoutHandle()
+  // if(res.code == 200){
+  //   ElMessage.success('登出成功')
+  // }
+  await logout()
 }
 
 
