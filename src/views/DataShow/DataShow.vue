@@ -21,21 +21,23 @@
 
         <el-tabs v-model="activeName" class="demo-tabs">
           <el-tab-pane label="工作单管理" name="first">
-            <inspection-checklist/>
+            <inspection-checklist v-if="activeName == 'first'"/>
           </el-tab-pane>
           <el-tab-pane label="逆变器报表" name="second">
-            <inverter-data/>
+            <inverter-data v-if="activeName == 'second'"/>
           </el-tab-pane>
           <el-tab-pane label="自用和上网报表" name="third">
-            <PSCList/>
+            <PSCList v-if="activeName == 'third'"/>
           </el-tab-pane>
-          <el-tab-pane label="核查业务流程" name="fourth"><verify-business-processes/></el-tab-pane>
+          <el-tab-pane label="核查业务流程" name="fourth">
+            <verify-business-processes v-if="activeName == 'fourth'"/>
+          </el-tab-pane>
           <el-tab-pane label="电站系统图" name="five">
-              <PowerStationSystem :imgUrls="imgUrls"></PowerStationSystem>
+              <PowerStationSystem :imgUrls="imgUrls" v-if="activeName =='five'"></PowerStationSystem>
           </el-tab-pane>
 
           <el-tab-pane label="电站报表" name="portTable">
-            <PowerStationReport></PowerStationReport>
+            <PowerStationReport v-if="activeName == 'portTable'"></PowerStationReport>
           </el-tab-pane>
 
 

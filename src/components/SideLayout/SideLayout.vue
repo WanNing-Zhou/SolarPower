@@ -32,7 +32,14 @@
           <template v-for="cItem in item.children">
             <el-menu-item :index="'point_'+cItem.id">
               <el-icon><Place/></el-icon>
-              <router-link class="menu-item" :to="'/datashow/' + cItem.id + '/' + cItem.label">{{ cItem.label }}</router-link>
+              <router-link class="menu-item" :to="{
+                path: '/datashow/' + cItem.id + '/' + cItem.label,
+                query: {
+                  compId: item.id,
+                  pointId: cItem.id,
+                  pointName: cItem.label
+                }
+              }">{{ cItem.label }}</router-link>
             </el-menu-item>
           </template>
 
@@ -132,11 +139,19 @@ const getMenu = async () => {
   }
 
   nextTick(() => {
+    const firstComp = data.value[0]
     const firstMenu = data.value[0].children[0];
     // 展开第一个子菜单
     menuRef.value.open('comp_'+ data.value[0].id)
     // 跳转到第一个菜单所在的目录
-    router.replace('/datashow/' + firstMenu.id + '/' + firstMenu.label)
+    router.replace({
+      path: '/datashow/' + firstMenu.id + '/' + firstMenu.label,
+      query: {
+        compId: firstComp.id,
+        pointId: firstMenu.id,
+        pointName: firstMenu.label
+      }
+    })
   })
 }
 

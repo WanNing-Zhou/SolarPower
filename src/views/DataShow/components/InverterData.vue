@@ -33,14 +33,15 @@ interface Conditions {
 //使用useStore
 const store = useStore()
 const route = useRoute();
+const {compId, pointId, pointName} = route.query
+// console.log('电站名称:', compId)
 // 电站名称
 const stationName = computed(() => {
-  console.log('电站名称:', route.params.label)
+  console.log('电站名称:', route.query)
   return route.params.label as string
 })
 
 watch(stationName, () => {
-
   getTableData()
 }, { deep: true })
 
@@ -69,13 +70,11 @@ const getTableData = (data?: InverterParams) => {
     
     //将返回的总体数据放到vuex中
     store.commit('setTotal',res.data)
+
     //将时间放到vuex中
     store.commit('seteInverterstartTime',data?.startTime)
     store.commit('setInverterendTime',data?.endTime)
     store.commit('setInvertParam', [])
-
-
-  
 
   })
 }
