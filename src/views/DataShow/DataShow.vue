@@ -40,6 +40,10 @@
             <PowerStationReport v-if="activeName == 'portTable'"></PowerStationReport>
           </el-tab-pane>
 
+          <el-tab-pane label="逆变器容量管理" name="capacity-manage">
+            <CapacityManage v-if="activeName == 'capacity-manage'"/>
+          </el-tab-pane>
+
 
 <!--          <el-tab-pane label="光伏电站年汇总表" name="six">
 &lt;!&ndash;            <AnnualSummaryPhotovoltaicPowerStations></AnnualSummaryPhotovoltaicPowerStations>&ndash;&gt;
@@ -77,6 +81,7 @@ import AnnualSummaryPhotovoltaicPowerStations1
 import StatisticsElectricityLoss
   from "@/views/DataShow/components/statisticsElectricityLoss/statisticsElectricityLoss.vue";
 import PowerStationReport from "@/views/DataShow/components/powerStationReport/powerStationReport.vue";
+import CapacityManage from "@/views/DataShow/components/CapacityManage.vue";
 
 const activeName = ref('second')
 

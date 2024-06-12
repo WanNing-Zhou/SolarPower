@@ -6,14 +6,6 @@
  * @FilePath: \SolarPower\src\views\DataShow\components\InspectionChecklist.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
-/*  *
-* @FileNAme src\views\DataShow\components\InspectionChecklist.vue
-* @author 周万宁
-* @create 2023/7/31-0:21
-* @version
-* @description
-* @TODO: 编号需要自动生成
-*/
 <template>
   <div class="inspection-checklist">
     <el-container>
@@ -32,7 +24,6 @@
             <el-date-picker size="small" class="data-picker" v-model="conditions.filterTime" type="daterange"
               start-placeholder="开始时间" end-placeholder="结束时间" :disabled-date="disabledDate" :shortcuts="shortcuts"
               range-separator="至" />
-
           </el-form-item>
           <el-form-item label-width="50">
             <el-button class="search-button" type="primary" size="small" @click="handleConfirm">查询</el-button>
@@ -98,7 +89,7 @@
         :page-sizes="[5, 10, 15, 20, 40]" layout="total,sizes, prev, pager, next,jumper" :total="conditions.total"
         @size-change="handleSizeChange" @current-change="handleCurrentChange" />
 
-      <el-button type="primary" @click="addData">添加工作单</el-button>
+      <el-button style="margin-top: 10px" type="primary" @click="addData">添加工作单</el-button>
     </div>
     <!-- 添加工作单 -->
     <InspectionChecklistForm :addNumber="addNum" @submit="handleConfirmAdd" @close="dialogClose"
@@ -161,7 +152,14 @@ const delConditions: deleteWorkSheetCondition = reactive({
 //添加条件
 // let addConditions:
 
-
+// 公司ID
+const  companyNumber = computed(() => {
+  return route.query.compId;
+})
+// 电站id
+const pointId = computed(() => {
+  return route.query.pointId;
+})
 
 onMounted(() => {
   const end = new Date()
@@ -403,51 +401,38 @@ const checkListPrint = (row: InspectionChecklist) => {
       link.click();
       document.body.removeChild(link)
 
-
-
     }
-
-
   })
-
-
-
 }
 
 //表单提交
 const handleConfirm = async () => {
-
-
   tableData.value = []
-  conditions.companyNumber = store.state.companyNumber
-  conditions.stationNumber = route.params.id as string
+  // conditions.companyNumber = store.state.companyNumber
+  conditions.companyNumber = companyNumber.value;
+  // conditions.stationNumber = route.params.id as string
+  conditions.stationNumber = pointId.value;
   conditions.startDate = convertDateFormat(conditions.filterTime![0], true)
   conditions.endDate = convertDateFormat(conditions.filterTime![1], true)
   if (conditions.type === '0000') {
-
     delete conditions.type
   }
   console.log('工作单查询条件', conditions)
 
-  if (store.state.companyNumber !== route.params.id) {
+  getWorkSheetData(conditions)
+/*  if (store.state.companyNumber !== route.params.id) {
     getWorkSheetData(conditions)
-
   } else {
     ElMessage(
       {
         type: 'error',
         message: '请先选择电站 -__-!'
       }
-
     )
-  }
-
-
+  }*/
 }
 //获取表单数据
 const getWorkSheetData = (val: workSheetCondition) => {
-
-
   getWorkSheet(val).then((res: any) => {
     console.log(res)
     if (res.code === 200) {
@@ -457,8 +442,6 @@ const getWorkSheetData = (val: workSheetCondition) => {
     } else {
       tableData.value = []
     }
-
-
 
   })
 
@@ -509,16 +492,19 @@ watch(stationRouter, () => {
     width: 100%;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 
     .el-form {
       width: 100%;
       display: flex;
+      align-items: center;
 
 
       .el-form-item {
         width: 25%;
         display: flex;
         margin: 0 5px 0 5px;
+        align-items: center;
 
 
 
@@ -534,10 +520,7 @@ watch(stationRouter, () => {
 
   }
 
-  .el-button {
-    margin-top: 10px;
 
-  }
 
 }
 </style>

@@ -1,6 +1,6 @@
-<template xmlns="http://www.w3.org/1999/html">
+<template>
   <div class="inverter-data-table">
-    <el-table :data="tableData.value" height="450px" border>
+    <el-table :data="tableData" height="450px" border>
       <el-table-column prop="powerStationName" label="电站名称" sortable width="180" />
       <el-table-column prop="inverterName" label="设备名称" sortable width="180" />
       <el-table-column prop="inverterTotalCapacity" label="组串总容量(kWp)" sortable width="180" />
@@ -24,9 +24,6 @@
         </template> -->
         <template #default="scope">
           <el-input id="el-input-factors" v-model="scope.row.factors" @change="watchFactors(scope.row)" />
-
-
-
         </template>
       </el-table-column>
     </el-table>
@@ -40,23 +37,52 @@
 
 <script setup lang="ts">
 
-import { computed, onMounted, reactive, watch } from "vue";
+import {computed, onMounted, reactive, ref, watch} from "vue";
 import { useRoute } from "vue-router";
-import { InverterParam, Inverter, InverterPageParams } from "@/type/inverter.ts";
+import { InverterParam, Inverter } from "@/type/inverter.ts";
 import { useStore } from 'vuex'
 import { PageSearch, getInverterTableData } from '@/api/apiInverter'
 import { InverterParams } from '@/type/request/inverter'
 
-// const props = defineProps({
-//   tableData: {
-//     type: Object as PropType<Inverter[]>
-//   }
-// })
-const tableData: Inverter[] = reactive([])
+
+type Prop = {
+  analyseId: string
+}
+const props = defineProps<Prop>()
+
+const tableData: Inverter[] = ref([])
 
 const store = useStore()
 const route = useRoute();
 
+const analyseId = computed(() => props.analyseId)
+console.log('analyseId',analyseId.value)
+
+//分页数据
+const paginationState = reactive(
+    {
+      currentPage: 1,
+      total: 0,
+      pageSize: 10,
+    }
+)
+
+const getTableData = async () => {
+  const res = await PageSearch({
+    page: paginationState.currentPage,
+    pageSize: paginationState.pageSize,
+    uuid: analyseId.value
+  })
+  tableData.value = res.data.data
+  // console.log(res)
+}
+
+watch(analyseId, () => {
+  if(analyseId.value) getTableData()
+  console.log('id',props.analyseId)
+}, {
+  immediate: true
+})
 
 
 
@@ -111,14 +137,7 @@ const InverterCondition: InverterParams = reactive({
 })
 
 
-//分页数据
-const paginationState: InverterPageParams = reactive(
-  {
-    currentPage: 1,
-    total: 0,
-    pageSize: 10,
-  }
-)
+
 //分页查询条件
 const pageCondition: InverterPageParams = reactive({
   stationName: '',
