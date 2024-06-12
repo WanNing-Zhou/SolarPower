@@ -111,8 +111,6 @@ const watchFactors = (row: Inverter) => {
 
   store.commit('setInvertParam', InverterParamData)
 
-
-
 }
 //去重函数
 function unique(arr: InverterParam[], name: string) {
@@ -229,7 +227,7 @@ watch(stationRouter, () => {
   store.commit('setInvertParam', [])
   pageCondition.stationName = route.params.label
   console.log('分页逆变器查询参数', pageCondition)
-  getInvertTableData(pageCondition)
+  // getInvertTableData(pageCondition)
 
 
 }, {

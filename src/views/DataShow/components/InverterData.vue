@@ -46,7 +46,6 @@ const stationId = computed(() => {
 
 
 
-
 //查询标记
 const searchFlag = ref(false)
 
@@ -83,6 +82,12 @@ const handFilter = (conditions: Conditions) => {
     startTime: convertDateFormat(startTime, true),
     endTime: convertDateFormat(endTime, true)
   })
+
+  watch(stationId, () => {
+    console.log('变化了')
+    getAnalyseId()
+  })
+
   // searchFlag.value = true
 
   //存入电站的名称

@@ -27,9 +27,8 @@
       <div>操作</div>
       <div v-if="optionShow"  class="option-box">
         <el-menu>
-          <el-menu-item><div @click="updateHandle">修改密码</div></el-menu-item>
-          <el-menu-item><div @click="logoutHandle">登出</div></el-menu-item>
-
+          <el-menu-item><div style="width: 100%" @click="updateHandle">修改密码</div></el-menu-item>
+          <el-menu-item><div style="width: 100%" @click="logoutHandle">登出</div></el-menu-item>
         </el-menu>
       </div>
     </div>
