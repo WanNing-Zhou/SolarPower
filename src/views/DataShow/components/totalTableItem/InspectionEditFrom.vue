@@ -16,7 +16,8 @@
                 <el-input v-model="checklistFrom.workMan"></el-input>
             </el-form-item>
             <el-form-item label-width="100" label="发生时间">
-                <el-date-picker v-model="checklistFrom.date" type="date" placeholder="请选择时间" />
+<!--                <el-date-picker v-model="checklistFrom.date" type="date" placeholder="请选择时间" />-->
+                <el-date-picker v-model="checklistFrom.workDate" type="date" placeholder="请选择时间" />
             </el-form-item>
             <el-form-item label-width="100" label="内容描述">
                 <el-input v-model="checklistFrom.description" type="textarea"

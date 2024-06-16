@@ -40,7 +40,10 @@
         <!--用户输入-->
         <el-table-column prop="id" label="编号"></el-table-column>
 
-        <el-table-column prop="date" label="发生时间">
+<!--        <el-table-column prop="date" label="发生时间">-->
+
+<!--        </el-table-column> -->
+        <el-table-column prop="workDate" label="发生时间">
 
         </el-table-column>
 
@@ -51,7 +54,6 @@
         <el-table-column prop="sceneSituation" :show-overflow-tooltip="true" label="现场情况"></el-table-column>
         <el-table-column prop="comment" :show-overflow-tooltip="true" label="备注"></el-table-column>
         <el-table-column prop="photoAndVideo" :show-overflow-tooltip="true" label="文件名称"></el-table-column>
-
 
 
         <el-table-column label="操作" width="200">
@@ -109,7 +111,7 @@
 import { Checked } from "@element-plus/icons-vue";
 import { computed, Ref, ref, reactive, onMounted, watch } from "vue"
 import InspectionChecklistForm from "@/views/DataShow/components/InspectionChecklistForm.vue";
-import { convertDateFormat, getCurrentDate } from "@/utils/dateUtils.ts";
+import {convertDateFormat, convertFormatToDate, getCurrentDate} from "@/utils/dateUtils.ts";
 import { formatNumber } from "@/utils/numberUtils.ts"
 import { workSheetCondition, deleteWorkSheetCondition, addConditions } from "@/type/request/worksheet"
 import { useStore } from 'vuex'
@@ -138,9 +140,6 @@ const conditions: workSheetCondition = reactive({
   total: 0,//分页总数
   // type:'',//工作类型
   // workman:'',//工作人
-
-
-
 })
 
 //删除条件
@@ -224,14 +223,10 @@ const workTypeOptions = [
 
 ]
 
-
-
 // 默认数据
 const disabledDate = (time: Date) => {
   return time.getTime() > Date.now()
 }
-
-
 
 //table数据
 let tableData: Ref<Array<InspectionChecklist>> = ref([]);
@@ -258,7 +253,6 @@ const addData = () => {
         type: 'error',
         message: '请先选择电站 -__-!'
       }
-
     )
   }
 }
@@ -409,17 +403,18 @@ const checkListPrint = (row: InspectionChecklist) => {
 const handleConfirm = async () => {
   tableData.value = []
   // conditions.companyNumber = store.state.companyNumber
-  conditions.companyNumber = companyNumber.value;
+  // conditions.companyNumber = companyNumber.value;
   // conditions.stationNumber = route.params.id as string
-  conditions.stationNumber = pointId.value;
-  conditions.startDate = convertDateFormat(conditions.filterTime![0], true)
-  conditions.endDate = convertDateFormat(conditions.filterTime![1], true)
+  conditions.stationId = pointId.value;
+  conditions.startDate = convertFormatToDate(conditions.filterTime![0], true)
+  conditions.endDate = convertFormatToDate(conditions.filterTime![1], true)
+
   if (conditions.type === '0000') {
     delete conditions.type
   }
-  console.log('工作单查询条件', conditions)
-
-  getWorkSheetData(conditions)
+  // console.log('工作单查询条件', conditions)
+  const val = {...conditions}
+  getWorkSheetData(val)
 /*  if (store.state.companyNumber !== route.params.id) {
     getWorkSheetData(conditions)
   } else {
@@ -431,8 +426,15 @@ const handleConfirm = async () => {
     )
   }*/
 }
+
 //获取表单数据
 const getWorkSheetData = (val: workSheetCondition) => {
+  delete val.stationNumber;
+  delete val.companyNumber;
+  delete val.filterTime;
+  delete val.total
+  val.startDate = convertFormatToDate(val.startDate)
+  val.endDate = convertFormatToDate(val.endDate)
   getWorkSheet(val).then((res: any) => {
     console.log(res)
     if (res.code === 200) {
@@ -442,7 +444,6 @@ const getWorkSheetData = (val: workSheetCondition) => {
     } else {
       tableData.value = []
     }
-
   })
 
 }
@@ -453,7 +454,6 @@ const handleSizeChange = (val: number) => {
   //修改页面大小
   conditions.pageSize = val
   handleConfirm()
-
 
 }
 
@@ -468,21 +468,29 @@ const handleCurrentChange = (val: number) => {
 const stationRouter = computed(() => {
   return route.params.label as string
 })
-//监听
-watch(stationRouter, () => {
-  if (route.params?.label === '西安菲尔特2.5MW光伏项目') {
-        store.commit('setcompanyNumber', 'C002')
-      } else if (route.params?.label === '望奎三马架发电站') {
-        store.commit('setcompanyNumber', 'C003')
-      } else {
-        store.commit('setcompanyNumber', 'C001')
-      }
+
+// 电站id
+// const pointId = computed(() => {
+//   return route.query.pointId
+// })
+
+// 当电站id发生改变的时候发送一次请求(目前没啥必要)
+// watch(pointId, () => {
+//   // if (route.params?.label === '西安菲尔特2.5MW光伏项目') {
+//   //       store.commit('setcompanyNumber', 'C002')
+//   //     } else if (route.params?.label === '望奎三马架发电站') {
+//   //       store.commit('setcompanyNumber', 'C003')
+//   //     } else {
+//   //       store.commit('setcompanyNumber', 'C001')
+//   //     }
+//   handleConfirm()
+// }, {
+//   immediate: true
+// })
+
+onMounted(() => {
   handleConfirm()
-}, {
-  deep: true
 })
-
-
 
 </script>
 
@@ -493,34 +501,23 @@ watch(stationRouter, () => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     .el-form {
       width: 100%;
       display: flex;
       align-items: center;
-
-
       .el-form-item {
         width: 25%;
         display: flex;
         margin: 0 5px 0 5px;
         align-items: center;
-
-
-
         .data-picker {
           width: 40% !important;
         }
       }
     }
-
     .data-operation {
       display: flex;
     }
-
   }
-
-
-
 }
 </style>

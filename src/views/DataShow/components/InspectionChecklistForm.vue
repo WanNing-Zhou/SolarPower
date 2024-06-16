@@ -4,7 +4,7 @@
   <el-dialog v-model="visible" title="工作单录入" :before-close="handleBeforeClose" class="inspection-checklist-form">
     <el-form v-model="checklistFrom" label-width="100" title="工作单">
       <el-form-item label="工作类型">
-        <el-select v-model="checklistFrom.type" class="m-2" placeholder="请选择">
+        <el-select v-model="checklistFrom.typeCode" class="m-2" placeholder="请选择">
           <el-option v-for="item in workTypeOptions " :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
@@ -12,10 +12,10 @@
         <el-input v-model="prop.addNumber"></el-input>
       </el-form-item> -->
       <el-form-item label-width="100" label="工作人">
-        <el-input v-model="checklistFrom.man"></el-input>
+        <el-input v-model="checklistFrom.workMan"></el-input>
       </el-form-item>
       <el-form-item label-width="100" label="发生时间">
-        <el-date-picker v-model="checklistFrom.date" type="date" placeholder="请选择时间" />
+        <el-date-picker v-model="checklistFrom.workDate" type="date" placeholder="请选择时间" />
       </el-form-item>
       <el-form-item label-width="100" label="内容描述">
         <el-input v-model="checklistFrom.description" type="textarea" :autosize="{ minRows: 2, maxRows: 4 }"></el-input>
@@ -177,6 +177,10 @@ const successUpLoad = () => {
   // console.log('fileList',fileList)
 
 }
+
+const pointId = computed(() => {
+  return route.query.pointId;
+})
 // 提交数据--文件上传
 const workListSubmit = async () => {
   const loading = ElLoading.service({
@@ -188,8 +192,9 @@ const workListSubmit = async () => {
   if (checklistFrom.value.date != null) {
     checklistFrom.value.date = convertDateFormat(checklistFrom.value.date, true)
   }
-  checklistFrom.value.companyNumber = store.state.companyNumber
-  checklistFrom.value.stationNumber = route.params.id as string
+  // checklistFrom.value.companyNumber = store.state.companyNumber
+  // checklistFrom.value.stationNumber = route.params.id as string
+  checklistFrom.value.stationId= pointId.value as string
 
   //文件大小
   let fileSize = 0

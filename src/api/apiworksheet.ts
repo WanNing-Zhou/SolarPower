@@ -8,7 +8,7 @@ import Request from "@/utils/request.ts";
 import {workSheetCondition,deleteWorkSheetCondition,addConditions} from '@/type/request/worksheet'
 import {editConditions} from '@/type/request/worksheet'
 //查询工作单请求
-export function getWorkSheet(params:workSheetCondition){
+export function getWorkSheet(params:workSheetCondition | any){
     return Request.get('/api/worksheet/',{
         params
     }

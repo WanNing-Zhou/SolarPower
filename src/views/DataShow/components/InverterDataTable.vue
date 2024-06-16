@@ -278,10 +278,6 @@ const getInvertTableData = (pageCondition: InverterPageParams) => {
 }
 
 onMounted(() => {
-
-
-
-
 })
 
 </script>

@@ -1,12 +1,12 @@
 <template>
   <div class=filter-form>
     <el-form :model="conditions" status-icon label-width="80px">
-      <el-form-item class="form-item-short" label="选择电站:">
-        <!-- <el-input size="small" v-model="conditions.equipment" placeholder="全部" clearable /> -->
-        <el-select v-model="conditions.equipment" class="m-2" placeholder="选择电站" size="small" width="200px">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-      </el-form-item>
+<!--      <el-form-item class="form-item-short" label="选择电站:">-->
+<!--        &lt;!&ndash; <el-input size="small" v-model="conditions.equipment" placeholder="全部" clearable /> &ndash;&gt;-->
+<!--        <el-select v-model="conditions.equipment" class="m-2" placeholder="选择电站" size="small" width="200px">-->
+<!--          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
 
 
       <el-form-item class="form-item-long" label="统计时间" width="200px" prop="statisticalTime">

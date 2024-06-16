@@ -15,7 +15,20 @@ export function convertDateFormat(dateString :string|Date, hasDate:boolean=false
 
 }
 
+/**
+ * 格式化时间, 将时间格式化为 年-月-日
+ * @param dateString
+ * @param hasDate
+ */
+export function convertFormatToDate(dateString :string|Date, hasDate:boolean=false):string {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate() ).padStart(2, '0');
+    if(hasDate) return `${year}-${month}-${day}`
+    return `${year}-${month}-${day}`;
 
+}
 
 
 
