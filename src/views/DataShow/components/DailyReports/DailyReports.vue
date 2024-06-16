@@ -1,10 +1,3 @@
-/**
-* @FileNAme src\views\DataShow\components\DailyReportPhotovoltaicPowerPlant.vue
-* @author 周万宁
-* @create 2023/8/14-23:02
-* @version
-* @description 光伏电站日报表
-*/
 
 <template>
   <div class="daily-report-photovoltaic-power-plant">
@@ -26,26 +19,26 @@
           </el-table-column>
           <!--  京东    -->
           <el-table-column :label="stationStore.stationName">
-            <el-table-column prop="jingdong.dailyOperationStatus" label="当天运行情况" width="120">
+            <el-table-column prop="jingdong.dailyOperationStatus" label="当天运行情况" >
               <template #default="scope">
                 <el-input size="small" v-if="scope.row.edit" v-model="scope.row.jingdong.dailyOperationStatus"></el-input>
                 <span v-else>{{ scope.row.jingdong.dailyOperationStatus }}</span>
               </template>
-            </el-table-column>
-            <el-table-column prop="jingdong.dailyPowerGeneration" label="日发电量Mwh" width="120">
+            </el-table-column>z
+            <el-table-column prop="jingdong.dailyPowerGeneration" label="日发电量Mwh" >
               <template #default="scope">
                 <el-input size="small" v-if="scope.row.edit" v-model="scope.row.jingdong.dailyPowerGeneration"></el-input>
                 <span v-else>{{ scope.row.jingdong.dailyPowerGeneration }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="jingdong.usageTime" label="利用小时h" width="120">
+            <el-table-column prop="jingdong.usageTime" label="利用小时h">
               <template #default="scope">
                 <el-input size="small" v-if="scope.row.edit" v-model="scope.row.jingdong.usageTime"></el-input>
                 <span v-else>{{ scope.row.jingdong.usageTime }}</span>
               </template>
             </el-table-column>
           </el-table-column>
-          <el-table-column label="操作" fixed="right" width="150">
+          <el-table-column label="操作" fixed="right">
             <template #default="scope">
               <el-button v-if="scope.row.edit" type="primary" size="small" @click="confirmAdd(scope.row)">
                 <el-icon :size="20">
@@ -95,10 +88,20 @@ import {useStationStore} from "@/store/pinia/station";
 const stationStore = useStationStore()
 
 // 表格数据
-const tableData: Ref<Array<DailyReportPhotovoltaicPowerPlantA>> = ref([])
-
+// const tableData: Ref<Array<DailyReportPhotovoltaicPowerPlantA>> = ref([])
+const tableDate = ref([])
 //查询参数
 const queryConditions = reactive<ReportParams>({})
+const getTableData =  async  () => {
+  // const res = await getReport(queryConditions)
+}
+
+onMounted( () => {
+  queryConditions.reportDate = convertDateFormat(new Date())
+  getTableData()
+})
+
+
 //添加参数
 let insertConditions = reactive<DailyReportPhotovoltaicPowerPlantA>({
   date: '',
@@ -397,7 +400,7 @@ const cancel = (row: DailyReportPhotovoltaicPowerPlantA) => {
 const getReportTable = () => {
   addCount = 0
   tableData.value = []
-  queryConditions.reportDate = convertDateFormat(queryConditions.reportDate, false)
+  // queryConditions.reportDate = convertDateFormat(queryConditions.reportDate, false)
 
   for (let i = 0; i < stationNumber.length; i++) {
     queryConditions.stationNumber = stationNumber[i]
@@ -407,7 +410,7 @@ const getReportTable = () => {
       queryConditions.companyNumber = 'C001'
     }
     console.log('查询参数', queryConditions)
-    sendQueryReport(queryConditions)
+    // sendQueryReport(queryConditions)
   }
   console.log('报表A的数据', tableData.value)
 }

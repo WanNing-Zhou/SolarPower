@@ -22,9 +22,9 @@
             {{ scope.row.factors }}
           </div>
         </template> -->
-        <template #default="scope">
-          <el-input id="el-input-factors" v-model="scope.row.factors" @change="watchFactors(scope.row)" />
-        </template>
+<!--        <template #default="scope">-->
+<!--          <el-input id="el-input-factors" v-model="scope.row.factors" @change="watchFactors(scope.row)" />-->
+<!--        </template>-->
       </el-table-column>
     </el-table>
 
