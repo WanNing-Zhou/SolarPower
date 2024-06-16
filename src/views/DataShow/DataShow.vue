@@ -65,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
+import {computed, ref, watch} from "vue";
 import InverterData from "@/views/DataShow/components/InverterData.vue";
 import InspectionChecklist from "@/views/DataShow/components/InspectionChecklist.vue";
 import PSCList from "@/views/DataShow/components/PSCList.vue";
@@ -82,8 +82,22 @@ import StatisticsElectricityLoss
   from "@/views/DataShow/components/statisticsElectricityLoss/statisticsElectricityLoss.vue";
 import PowerStationReport from "@/views/DataShow/components/powerStationReport/powerStationReport.vue";
 import CapacityManage from "@/views/DataShow/components/CapacityManage.vue";
+import {useRoute} from "vue-router";
 
+
+const route = useRoute()
+const pointId= computed(() => {
+  return route.query.pointId
+})
+const companyId= computed(() => {
+  return route.query.companyId
+})
 const activeName = ref('second')
+// 当公司或者电站id发生改编的时候,将页面切换回逆变器报表,防止页面像显示错误
+watch([pointId, companyId],() => {
+  activeName.value = 'second'
+})
+
 
 const toLink = (url)=>{
   // const url = ''

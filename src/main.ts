@@ -26,6 +26,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.use(ElementPlus, {locale:zhCn})
 app.use(router)
 app.use(store)//注意顺序，先使用后挂载
+// 挂载pinia
 usePinia(app)
 app.mount('#app')
 

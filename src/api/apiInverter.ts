@@ -52,3 +52,22 @@ export function PageSearch(params:InverterPageParams){
         params
     })
 }
+
+export type InvCapParams = {
+    page: number,
+    pageSize: number,
+    stationId: string | number
+}
+
+// 获逆变器容量管理列表
+export function getInvCapList(params:InvCapParams){
+    return Request.get('/api/inverter/list',{
+        params
+    })
+}
+
+// 修改逆变器信息
+export function updateInvCap(params:InverterCap){
+    return Request.post('/api/inverter/edit',
+        params)
+}

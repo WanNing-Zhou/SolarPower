@@ -30,7 +30,12 @@
           </template>
 
           <template v-for="cItem in item.children">
-            <el-menu-item :index="'point_'+cItem.id">
+            <el-menu-item @click="setStoreData({
+              stationId: cItem.id,
+              companyId: item.id,
+              stationName: cItem.label,
+              companyName: item.label
+            })"  :index="'point_'+cItem.id">
               <el-icon><Place/></el-icon>
               <router-link class="menu-item" :to="{
                 path: '/datashow/' + cItem.id + '/' + cItem.label,
@@ -61,6 +66,7 @@ import {getCSArray} from "@/utils/findDataUtils.ts";
 import {getCompanySearch} from "@/api/suer.ts";
 import {ElMessage} from "element-plus";
 import {useRouter} from "vue-router";
+import {useStationStore} from "@/store/pinia/station";
 const store = useStore()
 interface Tree {
   label: string
@@ -68,6 +74,7 @@ interface Tree {
   children?: Tree[]
 }
 const menuRef = ref()
+const stationStore = useStationStore()
 
 // const data: Tree[] = ref()[
 //   {
@@ -122,6 +129,10 @@ const defaultActive = computed(() => {
   return null
 })
 
+const setStoreData = (val) => {
+  stationStore.setStatus(val)
+}
+
 
 const router = useRouter()
 // 获取菜单信息
@@ -138,12 +149,19 @@ const getMenu = async () => {
     return ;
   }
 
+  // 获取惨淡后选择第一个菜单
   nextTick(() => {
     const firstComp = data.value[0]
     const firstMenu = data.value[0].children[0];
     // 展开第一个子菜单
     menuRef.value.open('comp_'+ data.value[0].id)
     // 跳转到第一个菜单所在的目录
+    stationStore.setStatus({
+      companyId:firstComp.id,
+      companyName:firstComp.label,
+      stationId: firstMenu.id,
+      stationName: firstMenu.label
+    })
     router.replace({
       path: '/datashow/' + firstMenu.id + '/' + firstMenu.label,
       query: {
@@ -196,10 +214,6 @@ const handleClose = (key: string, keyPath: string[]) => {
     line-height: 40px;
     margin: 4px 0;
     width: 100%;
-
-
   }
-
-
 }
 </style>

@@ -12,11 +12,14 @@
         <!--            <AnnualSummaryPhotovoltaicPowerStations></AnnualSummaryPhotovoltaicPowerStations>-->
         <AnnualSummaryPhotovoltaicPowerStations1 v-if="activeName=='reportYear'"></AnnualSummaryPhotovoltaicPowerStations1>
       </el-tab-pane>
-      <el-tab-pane label="光伏电站日报表A" name="reportA">
-        <DailyReportPhotovoltaicPowerPlant v-if="activeName=='reportA'"></DailyReportPhotovoltaicPowerPlant>
-      </el-tab-pane>
-      <el-tab-pane label="光伏电站日报表B" name="reportB" >
-        <DailyReportPhotovoltaicPowerPlantB v-if="activeName=='reportB'"></DailyReportPhotovoltaicPowerPlantB>
+<!--      <el-tab-pane label="光伏电站日报表A" name="reportA">-->
+<!--        <DailyReportPhotovoltaicPowerPlant v-if="activeName=='reportA'"></DailyReportPhotovoltaicPowerPlant>-->
+<!--      </el-tab-pane>-->
+<!--      <el-tab-pane label="光伏电站日报表B" name="reportB" >-->
+<!--        <DailyReportPhotovoltaicPowerPlantB v-if="activeName=='reportB'"></DailyReportPhotovoltaicPowerPlantB>-->
+<!--      </el-tab-pane>-->
+      <el-tab-pane label="光伏电站日报表" name="reportForm">
+        <DailyReports v-if="activeName=='reportForm'"/>
       </el-tab-pane>
       <el-tab-pane label="电站损失电量统计" name="loss">
         <StatisticsElectricityLoss v-if="activeName=='loss'"></StatisticsElectricityLoss>
@@ -35,6 +38,7 @@ import AnnualSummaryPhotovoltaicPowerStations1
   from "@/views/DataShow/components/AnnualSummaryPhotovoltaicPowerStations1.vue";
 import DailyReportPhotovoltaicPowerPlant from "@/views/DataShow/components/DailyReportPhotovoltaicPowerPlant.vue";
 import {ref} from "vue";
+import DailyReports from "@/views/DataShow/components/DailyReports/DailyReports.vue";
 
 const activeName = ref('reportYear')
 </script>

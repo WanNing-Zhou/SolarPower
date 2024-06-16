@@ -399,7 +399,7 @@ const dialogConfirm = async (row: pscData) => {
   if(editStatus.isEdit) {
     // 提交编辑
     SelfEditConditions.id = saogpId
-    SelfEditConditions.stationId = stationId.value
+    // SelfEditConditions.stationId = stationId.value
     SelfEditConditions.reportDate = convertDateFormat(row.reportDate, false)
     SelfEditConditions.inverterName = row.inverterName
     SelfEditConditions.electricityConsumptionTotal = parseFloat(row.electricityConsumptionTotal)
@@ -448,7 +448,6 @@ const dialogConfirm = async (row: pscData) => {
     SelfAddConditions.onGridElectricCharge = row.onGridElectricCharge
     SelfAddConditions.selfUseElectricCharge = row.selfUseElectricCharge
     SelfAddConditions.scenePicture = row.scenePicture
-
 
     addSelfTable(SelfAddConditions).then((res: Res) => {
       if (res.code === 200) {
