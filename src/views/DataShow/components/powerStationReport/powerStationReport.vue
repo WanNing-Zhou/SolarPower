@@ -8,18 +8,18 @@
 <template>
   <div>
     <el-tabs v-model="activeName" class="demo-tabs">
-      <el-tab-pane label="光伏电站年汇总表" name="six">
+      <el-tab-pane label="光伏电站年汇总表" name="reportYear">
         <!--            <AnnualSummaryPhotovoltaicPowerStations></AnnualSummaryPhotovoltaicPowerStations>-->
-        <AnnualSummaryPhotovoltaicPowerStations1></AnnualSummaryPhotovoltaicPowerStations1>
+        <AnnualSummaryPhotovoltaicPowerStations1 v-if="activeName=='reportYear'"></AnnualSummaryPhotovoltaicPowerStations1>
       </el-tab-pane>
-      <el-tab-pane label="光伏电站日报表A">
-        <DailyReportPhotovoltaicPowerPlant></DailyReportPhotovoltaicPowerPlant>
+      <el-tab-pane label="光伏电站日报表A" name="reportA">
+        <DailyReportPhotovoltaicPowerPlant v-if="activeName=='reportA'"></DailyReportPhotovoltaicPowerPlant>
       </el-tab-pane>
-      <el-tab-pane label="光伏电站日报表B">
-        <DailyReportPhotovoltaicPowerPlantB></DailyReportPhotovoltaicPowerPlantB>
+      <el-tab-pane label="光伏电站日报表B" name="reportB" >
+        <DailyReportPhotovoltaicPowerPlantB v-if="activeName=='reportB'"></DailyReportPhotovoltaicPowerPlantB>
       </el-tab-pane>
-      <el-tab-pane label="电站损失电量统计">
-        <StatisticsElectricityLoss></StatisticsElectricityLoss>
+      <el-tab-pane label="电站损失电量统计" name="loss">
+        <StatisticsElectricityLoss v-if="activeName=='loss'"></StatisticsElectricityLoss>
       </el-tab-pane>
     </el-tabs>
 
@@ -36,7 +36,7 @@ import AnnualSummaryPhotovoltaicPowerStations1
 import DailyReportPhotovoltaicPowerPlant from "@/views/DataShow/components/DailyReportPhotovoltaicPowerPlant.vue";
 import {ref} from "vue";
 
-const activeName = ref('six')
+const activeName = ref('reportYear')
 </script>
 
 <style lang="scss" scoped>
