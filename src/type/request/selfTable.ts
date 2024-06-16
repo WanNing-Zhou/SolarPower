@@ -19,10 +19,12 @@ export  interface ChecklistConditions{
 
 //修改/返回参数
 export interface pscData {
+    id?: string; // 报表编号
     saogpId?: number;//报表编号
     companyNumber?: string;//公司编号
     stationNumber?: string;//电站编号
     stationName?: string;//电站名称
+    reportDate?: string; // 时间
     date?: string;//日期（年月）
     inverterName?: string;//逆变器名称
     electricityConsumptionTotal?: number;//发电表总发电量

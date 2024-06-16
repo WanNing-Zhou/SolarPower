@@ -3,15 +3,14 @@
     <el-container>
       <el-header class="filter-from" height="38px">
         <el-form :model="conditions" status-icon>
-          <el-form-item class="form-item-short" label="选择电站:">
-            <el-select v-model="conditions.stationNumber"  class="m-2" placeholder="请选择">
-              <el-option v-for="item in options " :key="item.value" :label="item.label" :value="item.value" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label-width="200px" label="记录时间" prop="filterTime">
+<!--          <el-form-item class="form-item-short" label="选择电站:">-->
+<!--            <el-select v-model="conditions.stationNumber"  class="m-2" placeholder="请选择">-->
+<!--              <el-option v-for="item in options " :key="item.value" :label="item.label" :value="item.value" />-->
+<!--            </el-select>-->
+<!--          </el-form-item>-->
+          <el-form-item  label="记录时间" prop="filterTime">
             <el-date-picker v-model="conditions.filterTime" type="monthrange" unlink-panels range-separator="To"
               start-placeholder="Start month" end-placeholder="End month" :shortcuts="shortcuts" />
-
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="handleConfirm">查询</el-button>
@@ -27,11 +26,11 @@
       <el-main>
         <el-table :data="tableData.value" show-summary size="small" height="380px" border :summary-method="getSummaries">
           <el-table-column prop="stationName" width="120" label="电站名称" :show-overflow-tooltip="true" />
-          <el-table-column prop="date" label="日期（年月）" width="100">
+          <el-table-column prop="reportDate" label="日期（年月）" width="100">
             <template #default="scope">
-              <el-date-picker size="small" v-model="scope.row.date" type="month" placeholder="日期" v-if="scope.row.edit" />
+              <el-date-picker size="small" v-model="scope.row.reportDate" type="month" placeholder="日期" v-if="scope.row.edit" />
               <!--          <el-input v-if="scope.row.edit" v-model="scope.row.date" placeholder="关口表电量"></el-input>-->
-              <span v-else>{{ scope.row.date }}</span>
+              <span v-else>{{ scope.row.reportDate }}</span>
             </template>
           </el-table-column>
 
@@ -162,7 +161,7 @@
 
 import { onMounted, reactive, ReactiveFlags, Ref, ref, computed, watch } from "vue";
 import { Checked, Close } from "@element-plus/icons-vue";
-import { convertDateFormat } from "@/utils/dateUtils.ts";
+import {convertDateFormat, convertFormatToDate} from "@/utils/dateUtils.ts";
 import { useRoute } from "vue-router";
 import type { TableColumnCtx, UploadUserFile } from 'element-plus';
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -179,44 +178,13 @@ const store = useStore()
 const route = useRoute()
 
 const options: any = ref([])
-const options1 = [
-  {
-    value: '0000',
-    label: '请选择',
-  },
-  {
-    value: 'PV001',
-    label: '陕西中铁科技园区光伏电站',
-  },
-  {
-    value: 'PV002',
-    label: '神木富油科技能源有限公司',
-  },
-  {
-    value: 'PV003',
-    label: '西安京东亚一园站',
-  }
-]
-const options2 = [
-  {
-    value: '0000',
-    label: '请选择',
-  },
-  {
-    value: 'PV004',
-    label: '西安菲尔特2.5MW光伏项目',
-  }
-]
-const options3 = [
-  {
-    value: '0000',
-    label: '请选择',
-  },
-  {
-    value: 'PV005',
-    label: '望奎三马架发电站',
-  }
-]
+
+
+const stationId = computed(() => {
+  return route.query.pointId
+})
+
+const tableData: Array<pscData> = reactive([{}])
 
 // 文件列表
 let fileList = ref<UploadUserFile[]>([])
@@ -265,9 +233,9 @@ const shortcuts = [
 const handleConfirm = () => {
 
   //去除0000的请求电站编号
-  if (conditions.stationNumber === '0000') {
-    delete conditions.stationNumber
-  }
+  // if (conditions.stationNumber === '0000') {
+  //   delete conditions.stationNumber
+  // }
 
   getSelfTableData()
 
@@ -275,15 +243,12 @@ const handleConfirm = () => {
 
 
 
-const tableData: Array<pscData> = reactive([{}])
-
 onMounted(() => {
   const end = new Date()
   const start = new Date()
   start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
   conditions.filterTime = [start, end]
-  options.value = options1
-
+  getSelfTableData()
 })
 
 const dialogVisible = ref(false);
@@ -342,13 +307,38 @@ const addData = () => {
 }
 
 //获取自用上网报表的数据
-const getSelfTableData = () => {
-  if (store.state.companyNumber === '') {
+const getSelfTableData = async () => {
+
+  const formValue = {
+    stationId: stationId.value,
+    startDate: convertDateFormat(conditions.filterTime[0]),
+    endDate: convertDateFormat(conditions.filterTime[1]),
+    page: conditions.page,
+    pageSize: conditions.pageSize,
+  }
+
+  try {
+    const res = await getSelfTable(formValue)
+
+    tableData.value = res.data.data
+    for (let i = 0; i < tableData.value.length; i++) {
+      //处理日期格式问题
+      tableData.value[i].date = tableData.value[i].date?.slice(0, 7)
+      //处理多个编辑问题----赋值
+      tableData.value[i].onlyEdit = false
+    }
+    conditions.total = res.data.totalRecords
+
+    console.log(res)
+  }catch (err){
+    console.error('request error: ', err)
+  }
+
+/*  if (store.state.companyNumber === '') {
     ElMessage({
       type: 'error',
       message: '请先选择公司~-_-!~'
     })
-
   } else {
     conditions.companyNumber = store.state.companyNumber
     conditions.startDate = convertDateFormat(conditions.filterTime[0], false)
@@ -371,7 +361,7 @@ const getSelfTableData = () => {
       console.log('上网报表', tableData)
 
     })
-  }
+  }*/
 }
 
 
@@ -401,13 +391,16 @@ const handleCurrentChange = (page: number) => {
 
 // 提交数据
 const dialogConfirm = async (row: pscData) => {
+
+  // console.log('confirm', row.id)
+
+  const saogpId = row.id
   // 如果是编辑状态
   if(editStatus.isEdit) {
     // 提交编辑
-    SelfEditConditions.saogpId = row.saogpId
-    SelfEditConditions.companyNumber = store.state.companyNumber
-    SelfEditConditions.stationNumber = route.params.id
-    SelfEditConditions.date = convertDateFormat(row.date, false)
+    SelfEditConditions.id = saogpId
+    SelfEditConditions.stationId = stationId.value
+    SelfEditConditions.reportDate = convertDateFormat(row.reportDate, false)
     SelfEditConditions.inverterName = row.inverterName
     SelfEditConditions.electricityConsumptionTotal = parseFloat(row.electricityConsumptionTotal)
     SelfEditConditions.electricityOnGridTotal = parseFloat(row.electricityOnGridTotal)
@@ -417,6 +410,8 @@ const dialogConfirm = async (row: pscData) => {
     SelfEditConditions.onGridElectricCharge = parseFloat(row.onGridElectricCharge)
     SelfEditConditions.selfUseElectricCharge = parseFloat(row.selfUseElectricCharge)
     SelfEditConditions.scenePicture = row.scenePicture
+
+    // console.log('编辑', SelfEditConditions)
 
 
     await editSelfTable(SelfEditConditions).then((res: Res) => {
@@ -432,7 +427,6 @@ const dialogConfirm = async (row: pscData) => {
 
         fileList = ref<UploadUserFile[]>([])
 
-
       }
     })
 
@@ -440,9 +434,11 @@ const dialogConfirm = async (row: pscData) => {
 
 
   } else{ // 添加状态
-    SelfAddConditions.companyNumber = store.state.companyNumber
-    SelfAddConditions.stationNumber = route.params.id
-    SelfAddConditions.date = convertDateFormat(row.date, false)
+    // SelfAddConditions.companyNumber = store.state.companyNumber
+    // SelfAddConditions.stationNumber = route.params.id
+    // SelfAddConditions.id = saogpId
+    SelfAddConditions.stationId = stationId.value
+    SelfAddConditions.reportDate = convertDateFormat(row.reportDate, false)
     SelfAddConditions.inverterName = row.inverterName
     SelfAddConditions.electricityConsumptionTotal = row.electricityConsumptionTotal
     SelfAddConditions.electricityOnGridTotal = row.electricityOnGridTotal
@@ -488,11 +484,14 @@ const dialogConfirm = async (row: pscData) => {
 const confirmAdd = async (row: pscData) => {
   //对数据进行计算
   // computedData(row)
+  const saogpId = row.id
   if (row.addEdit) {
-
-    SelfAddConditions.companyNumber = store.state.companyNumber
-    SelfAddConditions.stationNumber = route.params.id
-    SelfAddConditions.date = convertDateFormat(row.date, false)
+    // SelfAddConditions.companyNumber = store.state.companyNumber
+    // SelfAddConditions.stationNumber = route.params.id
+    // SelfAddConditions.date = convertDateFormat(row.date, false)
+    SelfAddConditions.id = saogpId
+    SelfAddConditions.stationId = stationId.value
+    SelfEditConditions.reportDate = convertDateFormat(row.reportDate, false)
     SelfAddConditions.inverterName = row.inverterName
     SelfAddConditions.electricityConsumptionTotal = row.electricityConsumptionTotal
     SelfAddConditions.electricityOnGridTotal = row.electricityOnGridTotal
@@ -501,8 +500,6 @@ const confirmAdd = async (row: pscData) => {
     SelfAddConditions.electricitySelfUseTotal = row.electricitySelfUseTotal
     SelfAddConditions.onGridElectricCharge = row.onGridElectricCharge
     SelfAddConditions.selfUseElectricCharge = row.selfUseElectricCharge
-
-
     //文件上传
     SelfAddConditions.scenePicture = await uploadFile()
     console.log('上网报表的添加条件', SelfAddConditions)
@@ -537,9 +534,12 @@ const confirmAdd = async (row: pscData) => {
 
     row.edit = false;
   } else {
-    SelfEditConditions.saogpId = row.saogpId
-    SelfEditConditions.companyNumber = store.state.companyNumber
-    SelfEditConditions.stationNumber = route.params.id
+    SelfAddConditions.id = saogpId
+    SelfAddConditions.stationId = stationId.value
+    SelfEditConditions.reportDate = convertDateFormat(row.reportDate, false)
+    // SelfEditConditions.saogpId = row.saogpId
+    // SelfEditConditions.companyNumber = store.state.companyNumber
+    // SelfEditConditions.stationNumber = route.params.id
     SelfEditConditions.date = convertDateFormat(row.date, false)
     SelfEditConditions.inverterName = row.inverterName
     SelfEditConditions.electricityConsumptionTotal = parseFloat(row.electricityConsumptionTotal)
@@ -675,8 +675,8 @@ const deleteData = (row: pscData) => {
     }
   )
     .then(() => {
-      let deleteSelfCondition = reactive<deleteSelfConditions>({})
-      deleteSelfCondition.saogpId = row.saogpId
+      let deleteSelfCondition = {}
+      deleteSelfCondition.saogpId = row.id
       deleteSelfTable(deleteSelfCondition).then((res: Res) => {
         if (res.code === 200) {
           ElMessage({
@@ -698,56 +698,13 @@ const deleteData = (row: pscData) => {
 
 }
 
-//监听左侧电站，如果电站的路由发生变化时就调用分页查询
-//计算电站
-const stationRouter = computed(() => {
-  return route.params.label as string
-})
-//监听
-watch(stationRouter, () => {
-  conditions.stationNumber = route.params.id as string
-  switch (route.params?.label) {
-    case '陕西信惠翔新能源有限公司':
-      options.value = options1
-      break
-    case '西安隆菲阳新能源有限公司':
-      options.value = options2
-      break
-    case '三马架新能源有限公司':
-      options.value = options3
-      break
-    default:
-      if (route.params?.label === '西安菲尔特2.5MW光伏项目') {
-        options.value = options2
-        store.commit('setcompanyNumber', 'C002')
-
-      } else if (route.params?.label === '望奎三马架发电站') {
-        options.value = options3
-        store.commit('setcompanyNumber', 'C003')
-      } else {
-        options.value = options1
-        store.commit('setcompanyNumber', 'C001')
-      }
-
-      break
-
-
-  }
-
-
-
-  getSelfTableData()
-
-
-}, {
-  deep: true
-})
 
 //计算选择电站，避免选择框中显示公司的value
 const stationNumber = computed(() => {
   return conditions.stationNumber
 }
 )
+
 //监听stationNumber
 watch(stationNumber, (newValue) => {
   if (conditions.stationNumber === 'C001' || conditions.stationNumber === 'C002' || conditions.stationNumber === 'C003') {

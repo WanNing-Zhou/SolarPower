@@ -8,13 +8,13 @@
 <template>
   <el-dialog v-model="dialogVisible" width="50%" align-center :title="isEdit ? '编辑自由上网的数据' : '添加自由上网的数据'">
     <el-form v-model="form" label-width="110px">
-      <el-form-item class="form-item-short" label="选择电站:">
-        <el-select v-model="form.stationName" class="m-2" placeholder="请选择">
-          <el-option v-for="item in options " :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-      </el-form-item>
+<!--      <el-form-item class="form-item-short" label="选择电站:">-->
+<!--        <el-select v-model="form.stationName" class="m-2" placeholder="请选择">-->
+<!--          <el-option v-for="item in options " :key="item.value" :label="item.label" :value="item.value" />-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
       <el-form-item label="日期（年月）">
-        <el-date-picker v-model="form.date" type="month" placeholder="请选择日期" />
+        <el-date-picker v-model="form.reportDate" type="month" placeholder="请选择日期" />
       </el-form-item>
       <el-form-item label="逆变器名称">
         <el-input v-model="form.inverterName" style="width: 590px;" />
@@ -127,8 +127,13 @@ const emit = defineEmits<{
   cancel: [],
 }>()
 
+const stationId = computed(() => {
+  return route.query.pointId
+})
+
 const form = ref<pscData>({
-  stationName: '',  // 电站名称
+  // stationName: '',  // 电站名称
+  stationId: stationId.value, // 电站id
   date: '', // 年月
   inverterName: '', // 逆变器名称
   electricityConsumptionTotal: 0, // 发电表总电量
@@ -141,49 +146,25 @@ const form = ref<pscData>({
 })
 
 const options: any = ref([])
-const options1 = [
-  {
-    value: 'PV001',
-    label: '陕西中铁科技园区光伏电站',
-  },
-  {
-    value: 'PV002',
-    label: '神木富油科技能源有限公司',
-  },
-  {
-    value: 'PV003',
-    label: '西安京东亚一园站',
-  }
-]
-const options2 = [
-  {
-    value: 'PV004',
-    label: '西安菲尔特2.5MW光伏项目',
-  }
-]
-const options3 = [
-  {
-    value: 'PV005',
-    label: '望奎三马架发电站',
-  }
-]
 const tags = ref([
 
 ])
 const newImgName = ref([])
 let tagCount = 0 //tags标签的数量
+
+
 onMounted(() => {
-  switch (route.params?.label) {
-    case '西安菲尔特2.5MW光伏项目':
-      options.value = options2
-      break
-    case '望奎三马架发电站':
-      options.value = options3
-      break
-    default:
-      options.value = options1
-      break
-  }
+  // switch (route.params?.label) {
+  //   case '西安菲尔特2.5MW光伏项目':
+  //     options.value = options2
+  //     break
+  //   case '望奎三马架发电站':
+  //     options.value = options3
+  //     break
+  //   default:
+  //     options.value = options1
+  //     break
+  // }
   // 判断是否是编辑状态, 为form赋初始值
   if (props.isEdit) {
     form.value = props.editData
@@ -193,7 +174,6 @@ onMounted(() => {
     } catch {
       console.log('scenePicture 不为json格式')
     }
-
 
     const str = props.editData?.scenePicture as string
 
@@ -212,15 +192,8 @@ onMounted(() => {
     }
     images.value.shift()
 
-
-
-
-
-
-
-
   } else {
-    form.value.stationName = route.params.label
+    // form.value.stationName = route.params.label
   }
 })
 
@@ -342,18 +315,14 @@ const onSubmit = async () => {
     file.file = fileList.value[i].raw
     console.log('file', file)
     await uploadFileR(file)
-
-
-
-
-
   }
 
   // //清空文件数组
   // fileList.value.splice(0,fileList.value.length)
 
   form.value.scenePicture = newImgName.value.join('#')
-  console.log('form.value.scenePicture', form.value.scenePicture)
+  // console.log('form.value.scenePicture', form.value.scenePicture)
+  // console.log('form', form.value)
 
   emit('confirm', form.value)
 }
