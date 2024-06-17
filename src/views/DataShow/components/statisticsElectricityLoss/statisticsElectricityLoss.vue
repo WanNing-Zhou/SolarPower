@@ -7,6 +7,8 @@
           end-placeholder="选择时间" />
         &nbsp;&nbsp;
         <el-button type="primary" @click="getLossTableData">查询</el-button>
+        &nbsp;
+        <el-button type="primary" @click="addData">添加数据</el-button>
       </el-header>
 
       <el-main>
@@ -88,7 +90,7 @@
           </el-table-column>
         </el-table>
         <el-divider />
-        <el-button type="primary" @click="addData">添加数据</el-button>
+
         <el-divider />
         <!-- 分页插件 -->
         <el-pagination v-model:current-page="queryCondition.page" v-model:page-size="queryCondition.pageSize"

@@ -3,17 +3,15 @@
     <el-container>
       <el-header class="filter-from" height="38px">
         <el-form :model="conditions" status-icon>
-<!--          <el-form-item class="form-item-short" label="选择电站:">-->
-<!--            <el-select v-model="conditions.stationNumber"  class="m-2" placeholder="请选择">-->
-<!--              <el-option v-for="item in options " :key="item.value" :label="item.label" :value="item.value" />-->
-<!--            </el-select>-->
-<!--          </el-form-item>-->
           <el-form-item  label="记录时间" prop="filterTime">
             <el-date-picker v-model="conditions.filterTime" type="monthrange" unlink-panels range-separator="To"
               start-placeholder="Start month" end-placeholder="End month" :shortcuts="shortcuts" />
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="handleConfirm">查询</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="addData">添加数据</el-button>
           </el-form-item>
         </el-form>
 
@@ -147,7 +145,7 @@
           :page-sizes="[5, 10, 15, 20, 40]" layout="total,sizes, prev, pager, next,jumper" :total="conditions.total"
           @size-change="handleSizeChange" @current-change="handleCurrentChange" />
         <el-divider></el-divider>
-        <el-button type="primary" @click="addData">添加数据</el-button>
+
 
         <EditDialog v-if="dialogVisible" :isEdit="editStatus.isEdit" @confirm="dialogConfirm" @cancel="dialogCancel" :editData="editStatus.editData" v-model:visible="dialogVisible"/>
 
@@ -167,11 +165,12 @@ import type { TableColumnCtx, UploadUserFile } from 'element-plus';
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ChecklistConditions, pscData, deleteSelfConditions, addSelfConditions } from '@/type/request/selfTable'
 import { useStore } from 'vuex'
-import { getSelfTable, editSelfTable, deleteSelfTable, addSelfTable } from '@/api/apiself'
+import {getSelfTable, editSelfTable, deleteSelfTable, addSelfTable, getSelfFile} from '@/api/apiself'
 import { Res } from '@/type/request/requestType'
 import { fileParams } from '@/type/request/worksheet'
 import { uploadPhotoAndVideo } from '@/api/upload'
 import EditDialog from "@/views/DataShow/components/pcList/editDialog.vue";
+import {handleDownLoadFile} from "@/utils/fileUtils.ts";
 
 //使用store
 const store = useStore()
@@ -232,10 +231,6 @@ const shortcuts = [
 //查询
 const handleConfirm = () => {
 
-  //去除0000的请求电站编号
-  // if (conditions.stationNumber === '0000') {
-  //   delete conditions.stationNumber
-  // }
 
   getSelfTableData()
 
@@ -434,9 +429,7 @@ const dialogConfirm = async (row: pscData) => {
 
 
   } else{ // 添加状态
-    // SelfAddConditions.companyNumber = store.state.companyNumber
-    // SelfAddConditions.stationNumber = route.params.id
-    // SelfAddConditions.id = saogpId
+
     SelfAddConditions.stationId = stationId.value
     SelfAddConditions.reportDate = convertDateFormat(row.reportDate, false)
     SelfAddConditions.inverterName = row.inverterName
@@ -485,9 +478,6 @@ const confirmAdd = async (row: pscData) => {
   // computedData(row)
   const saogpId = row.id
   if (row.addEdit) {
-    // SelfAddConditions.companyNumber = store.state.companyNumber
-    // SelfAddConditions.stationNumber = route.params.id
-    // SelfAddConditions.date = convertDateFormat(row.date, false)
     SelfAddConditions.id = saogpId
     SelfAddConditions.stationId = stationId.value
     SelfEditConditions.reportDate = convertDateFormat(row.reportDate, false)
@@ -536,9 +526,6 @@ const confirmAdd = async (row: pscData) => {
     SelfAddConditions.id = saogpId
     SelfAddConditions.stationId = stationId.value
     SelfEditConditions.reportDate = convertDateFormat(row.reportDate, false)
-    // SelfEditConditions.saogpId = row.saogpId
-    // SelfEditConditions.companyNumber = store.state.companyNumber
-    // SelfEditConditions.stationNumber = route.params.id
     SelfEditConditions.date = convertDateFormat(row.date, false)
     SelfEditConditions.inverterName = row.inverterName
     SelfEditConditions.electricityConsumptionTotal = parseFloat(row.electricityConsumptionTotal)
@@ -704,35 +691,35 @@ const stationNumber = computed(() => {
 }
 )
 
-//监听stationNumber
-watch(stationNumber, (newValue) => {
-  if (conditions.stationNumber === 'C001' || conditions.stationNumber === 'C002' || conditions.stationNumber === 'C003') {
-    conditions.stationNumber = '0000'
-  } else {
-    conditions.stationNumber = newValue
-  }
-
-}, {
-  deep: true
-})
 
 //导出Excel
-const exportExcel = () => {
-  const link = document.createElement('a');
+const exportExcel = async () => {
+  try {
+   const res = await getSelfFile({
+      stationId: stationId.value,
+      endDate: conditions.endDate,
+      startDate: condition.startDate
+    })
+   handleDownLoadFile(res.data, '.xlsx', '自用上网报表')
+  }catch (err){
+    console.error('request err', err)
+  }
 
-  const url = '?companyNumber=' + conditions.companyNumber + '&stationNumber=' + conditions.stationNumber +
+  // const link = document.createElement('a');
+
+/*  const url = '?companyNumber=' + conditions.companyNumber + '&stationNumber=' + conditions.stationNumber +
     '&startDate=' + conditions.startDate + '&endDate=' + conditions.endDate + '&page=' + conditions.page + '&pageSize=' + conditions.pageSize
   link.href = `${import.meta.env.VITE_APP_BASE_API}/api/selfAndOnGrid/export` + url
   link.setAttribute('download', '自由上网报表.xlsx');
   document.body.appendChild(link);
   link.click();
-  document.body.removeChild(link)
+  document.body.removeChild(link)*/
 }
 
 //上传文件
 const uploadFile = async () => {
 
-  console.log(fileList)
+  // console.log(fileList)
   //文件名
   let fileName = ''
   for (let i = 0; i < fileList.value.length; i++) {

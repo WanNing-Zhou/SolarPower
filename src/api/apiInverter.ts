@@ -67,7 +67,16 @@ export function getInvCapList(params:InvCapParams){
 }
 
 // 修改逆变器信息
-export function updateInvCap(params:InverterCap){
+export function updateInvCap(params:any){
     return Request.post('/api/inverter/edit',
         params)
+}
+
+// 逆变器报表下载
+export function getInvFile(params: {
+    stationId: string | number
+}){
+    return Request.get('/api/inverter/export', {
+        params
+    })
 }

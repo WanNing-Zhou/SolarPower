@@ -1,4 +1,4 @@
-
+<!--新光伏电站日报表-->
 <template>
   <div class="daily-report-photovoltaic-power-plant">
     <el-container>
@@ -7,6 +7,7 @@
         <el-date-picker v-model="queryConditions.reportDate" type="month" placeholder="选择月份" />
         &nbsp;&nbsp;
         <el-button type="primary" @click="getTableData">查询</el-button>
+        <el-button type="primary" @click="addData">添加数据</el-button>
       </el-header>
       <el-main>
         <el-table :header-cell-style="{ 'text-align': 'center' }" :data="tableData" height="380px">
@@ -65,7 +66,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-button type="primary" @click="addData">添加数据</el-button>
+
         <el-divider></el-divider>
       </el-main>
     </el-container>
@@ -158,10 +159,10 @@ const addData = () => {
 
 //确认添加
 const confirmAdd = async (row) => {
-  console.log(row)
+  // console.log(row)
 
   // const param = {...row, stationId: stationStore.stationId, powerGeneration: Number(row.powerGeneration), useHours: Number(row.useHours)}
-  const param = {...row, stationId: stationStore.stationId, powerGeneration: Number(editForm.value.powerGeneration), useHours: Number(editForm.value.useHours)}
+  const param:any = {...editForm.value, stationId: stationStore.stationId, powerGeneration: Number(editForm.value.powerGeneration), useHours: Number(editForm.value.useHours)}
   delete param.edit;
   delete param.addedit;
 

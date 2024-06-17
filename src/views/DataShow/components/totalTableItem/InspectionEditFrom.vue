@@ -107,7 +107,7 @@ const getEditTableData = computed(() => {
 //监听编辑的数据
 watch(getEditTableData, async () => {
     checklistFrom.value = store.state.EditTableData
-    photoArr.value = checklistFrom.value.photoAndVideo?.split('#') as string[]
+    photoArr.value = checklistFrom.value.files?.split('#') as string[]
     photoArr.value = photoArr.value?.filter(v => v !== "")
 
 
@@ -218,7 +218,7 @@ const workListSubmit = async () => {
 
     fileList.value = fileList.value.filter(o => typeof o?.flag != "undefined")
     fileList.value.forEach(o => fileName = fileName + o.url?.substring(o.url.indexOf('worksheet') + 10) + '#')
-    checklistFrom.value.photoAndVideo = fileName
+    checklistFrom.value.files = fileName
     await editWorkSheet(checklistFrom.value).then((res: any) => {
         if (res.code === 200) {
             ElMessage({

@@ -53,10 +53,10 @@
         <el-table-column prop="description" :show-overflow-tooltip="true" label="内容描述"></el-table-column>
         <el-table-column prop="sceneSituation" :show-overflow-tooltip="true" label="现场情况"></el-table-column>
         <el-table-column prop="comment" :show-overflow-tooltip="true" label="备注"></el-table-column>
-        <el-table-column prop="photoAndVideo" :show-overflow-tooltip="true" label="文件名称"></el-table-column>
+        <el-table-column prop="files" :show-overflow-tooltip="true" label="文件名称"></el-table-column>
 
 
-        <el-table-column label="操作" width="200">
+        <el-table-column label="操作" width="250">
           <template #default="scope">
             <el-button v-if="scope.row.edit" type="primary" size="small" @click="confirmAdd(scope.row)">
               <el-icon :size="10">
@@ -333,9 +333,9 @@ const deleteData = async(row: InspectionChecklist, index: number) => {
   )
     .then(() => {
       // 删除文件再删除数据
-      
-      
-      // let delFileArr = row.photoAndVideo?.split('#')
+
+
+      // let delFileArr = row.files?.split('#')
       // delFileArr =delFileArr?.filter(o=>o!='')
       // delFileArr?.forEach(o=>{
       //    deleteFile('worksheet',o)

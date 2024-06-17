@@ -230,7 +230,7 @@ const workListSubmit = async () => {
     }
 
   }
-  checklistFrom.value.photoAndVideo = fileName.value
+  checklistFrom.value.files = fileName.value
   emit('submit', checklistFrom.value)
   checklistFrom = ref({})
   fileList = ref<UploadUserFile[]>([])

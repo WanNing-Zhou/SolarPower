@@ -1,5 +1,5 @@
 /**
- * 
+ *
  * 自由上网报表的请求
  */
 import Request from "@/utils/request.ts";
@@ -33,6 +33,18 @@ export function addSelfTable(params:addSelfConditions){
 //删除请求
 export function deleteSelfTable(params:deleteSelfConditions){
     return Request.delete('/api/selfAndOnGrid/',{
+        params
+    })
+}
+
+export type SelfFileParam = {
+    stationId: string | number
+}
+
+
+// 下载自用报表
+export function getSelfFile(params: SelfFileParam) {
+    return Request.get('/api/selfAndOnGrid/export', {
         params
     })
 }

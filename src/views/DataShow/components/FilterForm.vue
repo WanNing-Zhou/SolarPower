@@ -34,53 +34,24 @@
 <script setup lang="ts">
 
 import { reactive, defineEmits, ref, onMounted, Ref, computed, watch } from "vue";
-import { invertImport, ReCount } from "@/api/apiInverter.ts";
+import {getInvFile, invertImport, ReCount} from "@/api/apiInverter.ts";
 import { uploadFile } from "@/api/upload.ts";
 import { ElMessage } from "element-plus";
 import { useStore } from 'vuex'
 import { Res } from '@/type/request/requestType'
 import { useRoute } from "vue-router";
+import {useStationStore} from "@/store/pinia/station";
+import {handleDownLoadFile} from "@/utils/fileUtils.ts";
 
 const emit = defineEmits(['confirm'])
 const store = useStore()
 const route = useRoute()
+const stationStore = useStationStore()
+
 const conditions = reactive({
   equipment: '全部', // 设备
   statisticalTime: [],// 统计时间
 })
-
-
-
-const options: any = ref([])
-const options1 = [
-  {
-    value: '陕西中铁科技园区光伏电站',
-    label: '陕西中铁科技园区光伏电站'
-  },
-  {
-    value: '神木富油科技能源有限公司',
-    label: '神木富油科技能源有限公司'
-  },
-  {
-    value: '西安京东亚一园站',
-    label: '西安京东亚一园站'
-  },
-]
-const options2 = [
-  {
-    value: '西安菲尔特2.5MW光伏项目',
-    label: '西安菲尔特2.5MW光伏项目',
-  }
-]
-const options3 = [
-  {
-    value: '望奎三马架发电站',
-    label: '望奎三马架发电站',
-  }
-]
-const tags = ref([
-
-])
 
 //监听左侧电站，如果电站的路由发生变化时就调用分页查询
 //计算电站
@@ -88,48 +59,13 @@ const stationRouter = computed(() => {
   return route.params.label as string
 })
 //监听
-watch(stationRouter, () => {
-  conditions.equipment = route.params.label
-  switch (route.params?.label) {
-    case '陕西信惠翔新能源有限公司':
-      options.value = options1
-      break
-    case '西安隆菲阳新能源有限公司':
-      options.value = options2
-      break
-    case '三马架新能源有限公司':
-      options.value = options3
-      break
-    default:
-      if (route.params?.label === '西安菲尔特2.5MW光伏项目') {
-        options.value = options2
-        store.commit('setcompanyNumber', 'C002')
-
-      } else if (route.params?.label === '望奎三马架发电站') {
-        options.value = options3
-        store.commit('setcompanyNumber', 'C003')
-      } else {
-        options.value = options1
-        store.commit('setcompanyNumber', 'C001')
-      }
-
-      break
-
-
-  }
-
-  handleConfirm()
-}, {
-  deep: true
-})
 
 
 onMounted(() => {
-  const end = new Date() 
+  const end = new Date()
   const start = new Date()
   end.setTime(end.getTime() -  3600 * 1000 * 24)
   start.setTime(end.getTime() - 3600 * 1000 * 24 * 14)
-
   conditions.statisticalTime = [start, end]
 })
 
@@ -181,13 +117,21 @@ const handleConfirm = () => {
 }
 
 // 导出数据
-const exportFile = () => {
+const exportFile = async () => {
   const link = document.createElement('a');
-  link.href = `${import.meta.env.VITE_APP_BASE_API}/api/inverter/export?stationName=` + route.params.label
-  link.setAttribute('download', '逆变器报表.xlsx');
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link)
+  // link.href = `${import.meta.env.VITE_APP_BASE_API}/api/inverter/export?stationName=` + route.params.label
+  try{
+    
+    const res = await getInvFile({stationId: stationStore.stationId});
+    handleDownLoadFile(res.data, '.xlsx', '逆变器报表' )
+
+  }catch (err){
+    console.error('request err', err)
+  }
+  // link.setAttribute('download', '逆变器报表.xlsx');
+  // document.body.appendChild(link);
+  // link.click();
+  // document.body.removeChild(link)
 }
 
 const fileUpload = ref()

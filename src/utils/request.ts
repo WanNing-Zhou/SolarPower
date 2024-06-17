@@ -74,8 +74,21 @@ request.interceptors.request.use(config => {
 // 响应拦截器
 request.interceptors.response.use((res:any) => {
         hideLoading()
+
+
+        // 如果是没有状态码的响应
+        if (!res.data.code) {
+            const resType = Object.prototype.toString.call(res.data);
+            const isBlob = resType === '[object Blob]';
+            // 如果blob
+            if (isBlob || resType === '[object String]') return res;
+        }
+
         // 未设置状态码则默认成功状态
         const code = res.data['code'] || 200;
+
+
+
         // 获取错误信息
         const msg = errorCodeType(code) || res.data['msg'] || errorCodeType('default')
         if(code === 200){
