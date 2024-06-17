@@ -6,19 +6,19 @@
     <th>容量Mwh</th>
     <th>发电量{{portData?.unit ? portData.unit : '万kwh'}}</th>
     <template v-for="item in portData?.powerGeneration">
-      <td>{{item}}</td>
+      <td>{{item || 0}}</td>
     </template>
-    <td>{{portData?.useHoursTotal}}</td>
+    <td>{{portData?.useHoursTotal || 0}}</td>
     <!-- <td rowspan="2">这是备注</td> -->
   </tr>
 
   <tr>
-    <td>{{portData?.capacity}}</td>
+    <td>{{portData?.capacity || 0}}</td>
     <th>利用小时h</th>
     <template v-for="item in portData?.usageDuration">
-      <td>{{item}}</td>
+      <td>{{item || 0}}</td>
     </template>
-    <td>{{portData?.generationTotal}}</td>
+    <td>{{portData?.generationTotal || 0}}</td>
   </tr>
 </template>
 
@@ -37,11 +37,15 @@ const porps = defineProps({
 
 <style lang="scss" scoped>
 th, td {
+
   border: 1px solid black;
   padding: 8px;
   text-align: center;
 }
 th {
-  background-color: #dddddd;
+  color: #909399;
+  background-color: #F5F7FA;
+  font-weight: 600;
+  font-size: 16px;
 }
 </style>

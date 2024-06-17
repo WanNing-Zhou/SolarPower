@@ -6,35 +6,35 @@
         <el-text class="mx-1">选择年月：</el-text>
         <el-date-picker v-model="queryConditions.reportDate" type="month" placeholder="选择月份" />
         &nbsp;&nbsp;
-        <el-button type="primary" @click="getReportTable">查询</el-button>
+        <el-button type="primary" @click="getTableData">查询</el-button>
       </el-header>
       <el-main>
         <el-table :header-cell-style="{ 'text-align': 'center' }" :data="tableData" height="380px">
           <!--  日期     -->
-          <el-table-column prop="date" label="日期" width="150">
+          <el-table-column prop="reportDate" label="日期" width="150">
             <template #default="scope">
-              <el-input size="small" v-if="scope.row.edit" v-model="scope.row.date"></el-input>
-              <span v-else>{{ convertDateFormat(scope.row.date, true) }}</span>
+              <el-input size="small" v-if="scope.row.edit" v-model="editForm.reportDate"></el-input>
+              <span v-else>{{ convertDateFormat(scope.row.reportDate, true) }}</span>
             </template>
           </el-table-column>
           <!--  京东    -->
           <el-table-column :label="stationStore.stationName">
-            <el-table-column prop="jingdong.dailyOperationStatus" label="当天运行情况" >
+            <el-table-column prop="operationStatus" label="当天运行情况" >
               <template #default="scope">
-                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.jingdong.dailyOperationStatus"></el-input>
-                <span v-else>{{ scope.row.jingdong.dailyOperationStatus }}</span>
+                <el-input size="small" v-if="scope.row.edit" v-model="editForm.operationStatus"></el-input>
+                <span v-else>{{ scope.row.operationStatus }}</span>
               </template>
             </el-table-column>z
-            <el-table-column prop="jingdong.dailyPowerGeneration" label="日发电量Mwh" >
+            <el-table-column prop="powerGeneration" label="日发电量Mwh" >
               <template #default="scope">
-                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.jingdong.dailyPowerGeneration"></el-input>
-                <span v-else>{{ scope.row.jingdong.dailyPowerGeneration }}</span>
+                <el-input size="small" v-if="scope.row.edit" v-model="editForm.powerGeneration"></el-input>
+                <span v-else>{{ scope.row.powerGeneration }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="jingdong.usageTime" label="利用小时h">
+            <el-table-column prop="useHours" label="利用小时h">
               <template #default="scope">
-                <el-input size="small" v-if="scope.row.edit" v-model="scope.row.jingdong.usageTime"></el-input>
-                <span v-else>{{ scope.row.jingdong.usageTime }}</span>
+                <el-input size="small" v-if="scope.row.edit" v-model="editForm.useHours"></el-input>
+                <span v-else>{{ scope.row.useHours }}</span>
               </template>
             </el-table-column>
           </el-table-column>
@@ -89,33 +89,51 @@ const stationStore = useStationStore()
 
 // 表格数据
 // const tableData: Ref<Array<DailyReportPhotovoltaicPowerPlantA>> = ref([])
-const tableDate = ref([])
+const tableData = ref([])
 //查询参数
-const queryConditions = reactive<ReportParams>({})
+const queryConditions = reactive<ReportParams>({
+  reportDate: new Date()
+})
 const getTableData =  async  () => {
+  const res = await getReport({
+    stationId: stationStore.stationId as string,
+    // 后端为为是心啊
+    reportDate: convertDateFormat(queryConditions.reportDate as string),
+  })
+  tableData.value = res.data.records;
   // const res = await getReport(queryConditions)
 }
 
+
 onMounted( () => {
-  queryConditions.reportDate = convertDateFormat(new Date())
+  // queryConditions.reportDate = convertDateFormat(new Date())
   getTableData()
 })
 
 
 //添加参数
-let insertConditions = reactive<DailyReportPhotovoltaicPowerPlantA>({
-  date: '',
-  jingdong: {
-    dailyOperationStatus: '',
-    dailyPowerGeneration: 0,
-    usageTime: 0
-  }
+let insertConditions = reactive({
+  edit: false,
+  addedit: false,
+  reportDate: '',
+  useHours: 0,
+  powerGeneration: 0,
+  operationStatus: '',
 })
 //添加数据的点击次数
 let addCount = 0
 //电站数组
 const stationNumber = ['PV001', 'PV002', 'PV003', 'PV004']
 
+const baseEditForm = {
+  operationStatus: '', // 当天运行情况
+  powerGeneration: 0 , // 日发电量
+  useHours: 0,
+  reportDate: '', // 时间
+  edit: false,
+}
+
+const editForm = ref({...baseEditForm})
 
 // 添加数据
 const addData = () => {
@@ -123,14 +141,12 @@ const addData = () => {
   addCount++
   //保存当前长度（数组长度加上新添数据的长度）
   const arrayLength = tableData.value.length + 1
-
   //添加数据，数组长度加一
   if (arrayLength == (tableData.value.length + addCount)) {
 
-    insertConditions.edit = true
-    insertConditions.date = convertDateFormat(queryConditions.reportDate, true)
-    insertConditions.addedit = true
-    tableData.value.push(insertConditions);
+    editForm.value = {...baseEditForm, edit: true, reportDate: convertDateFormat(queryConditions.reportDate as Date, true)}
+    // tableData.value.push(insertConditions);
+    tableData.value.push(editForm.value)
 
   } else {
     ElMessage({
@@ -138,156 +154,44 @@ const addData = () => {
       message: '请先完成当前操作！'
     })
   }
-
-
 }
 
 //确认添加
-const confirmAdd = (row: DailyReportPhotovoltaicPowerPlantA) => {
+const confirmAdd = async (row) => {
+  console.log(row)
 
-  //添加参数
-  let insertList = reactive<Array<ReportInsertParams>>([])
-  //修改参数
-  let modifyList = reactive<Array<ReportModifyParams>>([])
-  //发送请求的标志
-  let flag = true
+  // const param = {...row, stationId: stationStore.stationId, powerGeneration: Number(row.powerGeneration), useHours: Number(row.useHours)}
+  const param = {...row, stationId: stationStore.stationId, powerGeneration: Number(editForm.value.powerGeneration), useHours: Number(editForm.value.useHours)}
+  delete param.edit;
+  delete param.addedit;
 
-
-  if (row.addedit) {
-    for (let i = 0; i < 4; i++) {
-      let tempObj = reactive<ReportInsertParams>({})
-      tempObj.companyNumber = 'C001'
-      tempObj.reportDate = row.date
-      if (i === 0) {
-        tempObj.stationNumber = 'PV003'
-        tempObj.operationStatus = row.jingdong.dailyOperationStatus
-        tempObj.powerGeneration = parseFloat(row.jingdong.dailyPowerGeneration)
-        tempObj.useHours = parseFloat(row.jingdong.usageTime)
-      } else if (i === 1) {
-        tempObj.stationNumber = 'PV001'
-        tempObj.operationStatus = row.zhongtie.dailyOperationStatus
-        tempObj.powerGeneration = parseFloat(row.zhongtie.dailyPowerGeneration)
-        tempObj.useHours = parseFloat(row.zhongtie.usageTime)
-
-      } else if (i === 2) {
-        tempObj.stationNumber = 'PV002'
-        tempObj.operationStatus = row.fuyou.dailyOperationStatus
-        tempObj.powerGeneration = parseFloat(row.fuyou.dailyPowerGeneration)
-        tempObj.useHours = parseFloat(row.fuyou.usageTime)
-
-      } else {
-        tempObj.companyNumber = 'C002'
-        tempObj.stationNumber = 'PV004'
-        tempObj.operationStatus = row.feierte.dailyOperationStatus
-        tempObj.powerGeneration = parseFloat(row.feierte.dailyPowerGeneration)
-        tempObj.useHours = parseFloat(row.feierte.usageTime)
-      }
-
-      if (tempObj.operationStatus === '' || tempObj.powerGeneration === 0 || tempObj.useHours === 0) {
-        flag = false
-      } else {
-        insertList.push(tempObj)
-      }
-
+  try {
+    // id 存在为修改， 否则为添加
+    if(param.id){
+      delete param.stationId
+      const res = await modifyReport(param)
+      ElMessage.success('编辑成功')
+    }else{
+      const res = await insertReport(param)
+      ElMessage.success('添加成功')
     }
-    if (flag) {
-      //发送添加请求
-      insertReport(insertList).then(res => {
-        console.log(res)
-        if (res.code === 200) {
-          ElMessage({
-            type: 'success',
-            message: '添加成功'
-          })
-          getReportTable()
-          row.addedit = false
-          addCount = 0
-          row.edit = false
-          insertConditions = reactive<DailyReportPhotovoltaicPowerPlantA>({
-            date: '',
-            jingdong: {
-              dailyOperationStatus: '',
-              dailyPowerGeneration: 0,
-              usageTime: 0
-            },
-            zhongtie: {
-              dailyOperationStatus: '',
-              dailyPowerGeneration: 0,
-              usageTime: 0
-            },
-            fuyou: {
-              dailyOperationStatus: '',
-              dailyPowerGeneration: 0,
-              usageTime: 0
-            },
-            feierte: {
-              dailyOperationStatus: '',
-              dailyPowerGeneration: 0,
-              usageTime: 0
-            }
-          })
-        } else {
-          addCount = 0
-        }
-      })
-    } else {
-      ElMessage({
-        type: 'warning',
-        message: '数据未添加完整，请补充完整'
-      })
-    }
-  } else {
-    for (let i = 0; i < 4; i++) {
-      let tempObj = reactive<ReportModifyParams>({})
-
-      if (i === 0) {
-        tempObj.id = row.jingdong.id
-        tempObj.operationStatus = row.jingdong.dailyOperationStatus
-        tempObj.powerGeneration = parseFloat(row.jingdong.dailyPowerGeneration)
-        tempObj.useHours = parseFloat(row.jingdong.usageTime)
-
-      } else if (i === 1) {
-        tempObj.id = row.zhongtie.id
-        tempObj.operationStatus = row.zhongtie.dailyOperationStatus
-        tempObj.powerGeneration = parseFloat(row.zhongtie.dailyPowerGeneration)
-        tempObj.useHours = parseFloat(row.zhongtie.usageTime)
-
-      } else if (i === 2) {
-        tempObj.id = row.fuyou.id
-        tempObj.operationStatus = row.fuyou.dailyOperationStatus
-        tempObj.powerGeneration = parseFloat(row.fuyou.dailyPowerGeneration)
-        tempObj.useHours = parseFloat(row.fuyou.usageTime)
-
-      } else {
-        tempObj.id = row.feierte.id
-        tempObj.operationStatus = row.feierte.dailyOperationStatus
-        tempObj.powerGeneration = parseFloat(row.feierte.dailyPowerGeneration)
-        tempObj.useHours = parseFloat(row.feierte.usageTime)
-      }
-      modifyList.push(tempObj)
-
-
-    }
-
-    modifyReport(modifyList).then(res => {
-      if (res.code === 200) {
-        ElMessage({
-          type: 'success',
-          message: '修改成功'
-        })
-        getReportTable()
-        row.addedit = false
-        addCount = 0
-        row.edit = false
-      }
-    })
+    addCount = 0
+    insertConditions.addedit = false
+    insertConditions.edit = false
+    await getTableData()
+  }catch (err) {
+    console.log('request err', err)
   }
+
+  //发送请求的标志
+  // let flag = true
 }
 
 //修改
-const editData = (row: DailyReportPhotovoltaicPowerPlantA, index: number) => {
+const editData = (row: any, index: number) => {
   //避免编辑的同时，还可以添加数据
-  addCount++
+  addCount++;
+  editForm.value = {...row}
 
   for (let i = 0; i < tableData.value.length; i++) {
     if (i === index) {
@@ -295,33 +199,9 @@ const editData = (row: DailyReportPhotovoltaicPowerPlantA, index: number) => {
         type: 'info',
         message: '在修改数据时，只允许对一条数据进行操作'
       })
-
-
       tableData.value[i].edit = true
+      // 如果有添加数据， 就把当前添加的数据pop出去
       if (insertConditions.addedit) {
-        insertConditions = reactive({
-          date: '',
-          jingdong: {
-            dailyOperationStatus: '',
-            dailyPowerGeneration: 0,
-            usageTime: 0
-          },
-          zhongtie: {
-            dailyOperationStatus: '',
-            dailyPowerGeneration: 0,
-            usageTime: 0
-          },
-          fuyou: {
-            dailyOperationStatus: '',
-            dailyPowerGeneration: 0,
-            usageTime: 0
-          },
-          feierte: {
-            dailyOperationStatus: '',
-            dailyPowerGeneration: 0,
-            usageTime: 0
-          }
-        })
         tableData.value.pop()
         row.addedit = false
         // ElMessage({
@@ -338,20 +218,7 @@ const editData = (row: DailyReportPhotovoltaicPowerPlantA, index: number) => {
 }
 
 //删除
-const deleteData = (row: DailyReportPhotovoltaicPowerPlantA) => {
-  let idList = reactive<number[]>([])
-  for (let i = 0; i < 4; i++) {
-    if (i === 0) {
-      idList.push(row.jingdong.id as number)
-    } else if (i === 1) {
-      idList.push(row.zhongtie.id as number)
-    } else if (i === 2) {
-      idList.push(row.fuyou.id as number)
-    } else {
-      idList.push(row.feierte.id as number)
-    }
-  }
-
+const deleteData = (row) => {
   ElMessageBox.confirm(
       '确定要永久删除这条数据吗?',
       '警告',
@@ -362,14 +229,13 @@ const deleteData = (row: DailyReportPhotovoltaicPowerPlantA) => {
       }
   )
       .then(() => {
-        deleteReport(idList).then(res => {
+        deleteReport({id: row.id}).then(res => {
           if (res.code === 200) {
             ElMessage({
               type: 'success',
               message: '删除成功'
             })
-            getReportTable()
-
+            getTableData()
           }
         })
       })
@@ -393,172 +259,9 @@ const cancel = (row: DailyReportPhotovoltaicPowerPlantA) => {
     type: 'info',
     message: '取消操作'
   })
-  getReportTable()
-
-}
-//获取报表的数据
-const getReportTable = () => {
-  addCount = 0
-  tableData.value = []
-  // queryConditions.reportDate = convertDateFormat(queryConditions.reportDate, false)
-
-  for (let i = 0; i < stationNumber.length; i++) {
-    queryConditions.stationNumber = stationNumber[i]
-    if (queryConditions.stationNumber === 'PV004') {
-      queryConditions.companyNumber = 'C002'
-    } else {
-      queryConditions.companyNumber = 'C001'
-    }
-    console.log('查询参数', queryConditions)
-    // sendQueryReport(queryConditions)
-  }
-  console.log('报表A的数据', tableData.value)
+  getTableData()
 }
 
-//发送报表查询的请求
-const sendQueryReport = (condition: ReportParams) => {
-
-  getReport(condition).then(res => {
-    if (res.code === 200) {
-      if (res.data.length !== 0) {
-        console.log(res)
-        //定义一个电站的对象
-        let stationObj = reactive<DailyReportPhotovoltaicPowerPlantA>({
-          date: '',
-          jingdong: {
-            dailyOperationStatus: '',
-            dailyPowerGeneration: 0,
-            usageTime: 0
-          },
-          zhongtie: {
-            dailyOperationStatus: '',
-            dailyPowerGeneration: 0,
-            usageTime: 0
-          },
-          fuyou: {
-            dailyOperationStatus: '',
-            dailyPowerGeneration: 0,
-            usageTime: 0
-          },
-          feierte: {
-            dailyOperationStatus: '',
-            dailyPowerGeneration: 0,
-            usageTime: 0
-          }
-        })
-        //判断数组并添加数据
-        if (tableData.value.length === 0) {
-
-          if (res.data[0].records.length !== 0) {
-            for (let i = 0; i < res.data[0].records.length; i++) {
-              stationObj.date = res.data[0].records[i].date
-              if (res.data[0].stationName === '西安京东亚一园站') {
-                stationObj.jingdong.dailyOperationStatus = res.data[0].records[i].operationStatus
-                stationObj.jingdong.dailyPowerGeneration = res.data[0].records[i].powerGeneration
-                stationObj.jingdong.usageTime = res.data[0].records[i].useHours
-                stationObj.jingdong.id = res.data[0].records[i].id
-
-              } else if (res.data[0].stationName === '陕西中铁科技园区光伏电站') {
-                stationObj.zhongtie.dailyOperationStatus = res.data[0].records[i].operationStatus
-                stationObj.zhongtie.dailyPowerGeneration = res.data[0].records[i].powerGeneration
-                stationObj.zhongtie.usageTime = res.data[0].records[i].useHours
-                stationObj.zhongtie.id = res.data[0].records[i].id
-
-              } else if (res.data[0].stationName === '神木富油科技能源有限公司') {
-                stationObj.fuyou.dailyOperationStatus = res.data[0].records[i].operationStatus
-                stationObj.fuyou.dailyPowerGeneration = res.data[0].records[i].powerGeneration
-                stationObj.fuyou.usageTime = res.data[0].records[i].useHours
-                stationObj.fuyou.id = res.data[0].records[i].id
-
-              } else {
-                stationObj.feierte.dailyOperationStatus = res.data[0].records[i].operationStatus
-                stationObj.feierte.dailyPowerGeneration = res.data[0].records[i].powerGeneration
-                stationObj.feierte.usageTime = res.data[0].records[i].useHours
-                stationObj.feierte.id = res.data[0].records[i].id
-              }
-
-              tableData.value.push(stationObj)
-
-              stationObj = reactive<DailyReportPhotovoltaicPowerPlantA>({
-                date: '',
-                jingdong: {
-                  dailyOperationStatus: '',
-                  dailyPowerGeneration: 0,
-                  usageTime: 0
-                },
-                zhongtie: {
-                  dailyOperationStatus: '',
-                  dailyPowerGeneration: 0,
-                  usageTime: 0
-                },
-                fuyou: {
-                  dailyOperationStatus: '',
-                  dailyPowerGeneration: 0,
-                  usageTime: 0
-                },
-                feierte: {
-                  dailyOperationStatus: '',
-                  dailyPowerGeneration: 0,
-                  usageTime: 0
-                }
-              })
-
-            }
-          }
-        } else {
-          for (let i = 0; i < tableData.value.length; i++) {
-            if (res.data[0].records.length !== 0) {
-              for (let i = 0; i < res.data[0].records.length; i++) {
-                if (tableData.value[i].date === res.data[0].records[i].date) {
-                  if (res.data[0].stationName === '西安京东亚一园站') {
-                    tableData.value[i].jingdong.dailyOperationStatus = res.data[0].records[i].operationStatus
-                    tableData.value[i].jingdong.dailyPowerGeneration = res.data[0].records[i].powerGeneration
-                    tableData.value[i].jingdong.usageTime = res.data[0].records[i].useHours
-                    tableData.value[i].jingdong.id = res.data[0].records[i].id
-
-                  } else if (res.data[0].stationName === '陕西中铁科技园区光伏电站') {
-                    tableData.value[i].zhongtie.dailyOperationStatus = res.data[0].records[i].operationStatus
-                    tableData.value[i].zhongtie.dailyPowerGeneration = res.data[0].records[i].powerGeneration
-                    tableData.value[i].zhongtie.usageTime = res.data[0].records[i].useHours
-                    tableData.value[i].zhongtie.id = res.data[0].records[i].id
-
-                  } else if (res.data[0].stationName === '神木富油科技能源有限公司') {
-                    tableData.value[i].fuyou.dailyOperationStatus = res.data[0].records[i].operationStatus
-                    tableData.value[i].fuyou.dailyPowerGeneration = res.data[0].records[i].powerGeneration
-                    tableData.value[i].fuyou.usageTime = res.data[0].records[i].useHours
-                    tableData.value[i].fuyou.id = res.data[0].records[i].id
-
-                  } else {
-                    tableData.value[i].feierte.dailyOperationStatus = res.data[0].records[i].operationStatus
-                    tableData.value[i].feierte.dailyPowerGeneration = res.data[0].records[i].powerGeneration
-                    tableData.value[i].feierte.usageTime = res.data[0].records[i].useHours
-                    tableData.value[i].feierte.id = res.data[0].records[i].id
-                  }
-                }
-              }
-            }
-
-          }
-        }
-      }
-
-
-
-
-
-    }
-
-  })
-
-}
-
-onMounted(() => {
-  // tableData.value = summaryDataA
-
-  // queryConditions.companyNumber = 'C001'
-  queryConditions.reportDate = new Date()
-  getReportTable()
-})
 
 </script>
 

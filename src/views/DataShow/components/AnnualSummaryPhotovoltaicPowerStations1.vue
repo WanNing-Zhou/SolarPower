@@ -42,7 +42,7 @@ let protYearData: Ref<Array<PortData>> = ref([])
 //获取年报表的数据
 const getYearTableData = () => {
 
-  
+
   let year = tableYear.value.getFullYear()
   queryYearReport({ year }).then(res => {
     console.log('年报表的数据', res)
@@ -99,18 +99,21 @@ onMounted(() => {
 <style lang="scss" scoped>
 
 table {
+  min-width: 1000px;
   border-collapse: collapse;
   width: 100%;
 }
 
 th,
 td {
+  color: #909399;
   border: 1px solid black;
   padding: 8px;
   text-align: center;
 }
 
 th {
-  background-color: #dddddd;
+  //background-color: #dddddd;
+  background-color: #F5F7FA;
 }
 </style>
