@@ -76,6 +76,7 @@ import { fileParams } from '@/type/request/worksheet'
 import { uploadPhotoAndVideo } from '@/api/upload'
 import { deleteFile } from '@/api/upload'
 import { dataURLtoFile, compressImg } from '@/utils/imageUtils'
+import {convertDateFormat} from "@/utils/dateUtils.ts";
 const store = useStore()
 const route = useRoute()
 
@@ -214,6 +215,7 @@ const workListSubmit = async () => {
     checklistFrom.value.files = fileName
 
     const param = {...checklistFrom.value}
+    param.workDate = convertDateFormat(param.workDate, true)
    delete param.companyNumber;
    delete param.stationNumber;
    delete param.type;

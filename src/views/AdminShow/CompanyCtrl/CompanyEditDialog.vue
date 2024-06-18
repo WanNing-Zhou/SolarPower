@@ -48,7 +48,7 @@ const baseForm = {
   manager: '',
   contact: '',
 }
-const form = ref({...baseForm})
+const form = ref<any>({...baseForm})
 
 const company = computed(() => {
   return props.company
@@ -83,7 +83,14 @@ const cancelHandle = () => {
 const confirmHandle = async () => {
   // 当company为false时为添加
   if(!props.company){
-    const res: any = await addCompany(form.value);
+    const param = {
+      address: form.value.address,
+      contact: form.value.contact,
+      id: form.value.id,
+      manager: form.value.manager,
+      name: form.value.name
+    }
+    const res: any = await addCompany(param);
     if(res.code == 200){
       ElMessage.success('添加成功')
       emits('success')

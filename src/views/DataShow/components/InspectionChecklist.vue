@@ -121,6 +121,7 @@ import { getWorkSheet, deleteWorkSheet, printWorkSheet, addWorkSheet } from '@/a
 import { ElMessage, ElMessageBox } from "element-plus";
 import InspectionEditFrom from "./totalTableItem/InspectionEditFrom.vue";
 import { InspectionChecklist } from '@/type/worksheet'
+import {downFileFromUrl} from "@/utils/fileUtils.ts";
 // import {deleteFile} from '@/api/upload'
 
 //使用store
@@ -273,9 +274,11 @@ const EditdialogClose = (data?:any) => {
 }
 
 //确认添加
-const handleConfirmAdd = (data: addConditions) => {
+const handleConfirmAdd = (data: addConditions | any) => {
   // tableData.value.push(data)
 
+  // 修改日期格式
+  data.workDate = convertDateFormat(data.workDate, true)
   addWorkSheet(data).then((res:any) => {
     // console.log('添加返回的结果', res)
     if (res.code === 200) {
@@ -384,13 +387,17 @@ const checkListPrint = (row: InspectionChecklist) => {
         message: '打印已完成',
         type: 'success',
       })
+
+
+      downFileFromUrl(res.data, '工作单.xlsx')
+
       //下载工作单
-      const link = document.createElement('a');
-      link.href = `${import.meta.env.VITE_APP_BASE_API}/api/file/download/worksheet_print/` + res.data;
-      link.setAttribute('download', res.data);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link)
+      // const link = document.createElement('a');
+      // // link.href = `${import.meta.env.VITE_APP_BASE_API}/api/file/download/worksheet_print/` + res.data;
+      // link.setAttribute('download', res.data);
+      // document.body.appendChild(link);
+      // link.click();
+      // document.body.removeChild(link)
 
     }
   })
