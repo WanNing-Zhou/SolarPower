@@ -81,12 +81,12 @@ import { DailyReportPhotovoltaicPowerPlantA } from "@/type";
 import { convertDateFormat } from "@/utils/dateUtils.ts";
 import { ReportParams, ReportInsertParams, ReportModifyParams } from '@/type/request/report'
 import { getReport, insertReport, modifyReport, deleteReport } from '@/api/apireport'
-import {ElMessage, ElMessageBox, TableRefs} from 'element-plus'
+import {ElMessage, ElMessageBox, ElTable, TableRefs} from 'element-plus'
 import {useStationStore} from "@/store/pinia/station";
 
 const stationStore = useStationStore()
 
-const tableRef = ref<TableRefs>()
+const tableRef = ref<InstanceType<typeof ElTable>>()
 
 // 表格数据
 // const tableData: Ref<Array<DailyReportPhotovoltaicPowerPlantA>> = ref([])
@@ -138,6 +138,8 @@ const editForm = ref({...baseEditForm})
 
 // 添加数据
 const addData = () => {
+
+  console.log('tableRef')
   //自动加一
   addCount++
   //保存当前长度（数组长度加上新添数据的长度）
