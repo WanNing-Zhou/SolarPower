@@ -68,8 +68,10 @@ const getYearTableData = () => {
           tempObj.powerGeneration = new Array(12)
           for (let j = 0; j < res.data[i].records.length; j++) {
             let month = res.data[i].records[j].month - 1
-            tempObj.usageDuration[month] = res.data[i].records[j].generation
-            tempObj.powerGeneration[month] = res.data[i].records[j].useHours
+            // tempObj.usageDuration[month] = res.data[i].records[j].generation
+            // tempObj.powerGeneration[month] = res.data[i].records[j].useHours
+            tempObj.usageDuration[month] = res.data[i].records[j].useHours
+            tempObj.powerGeneration[month] = res.data[i].records[j].generation
           }
 
           protYearData.value.push(tempObj)

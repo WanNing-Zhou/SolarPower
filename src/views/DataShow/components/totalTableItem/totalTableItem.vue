@@ -8,17 +8,17 @@
     <template v-for="item in portData?.powerGeneration">
       <td>{{item || 0}}</td>
     </template>
-    <td>{{portData?.usageDuration || 0}}</td>
+    <td>{{portData?.generationTotal  || 0}}</td>
     <!-- <td rowspan="2">这是备注</td> -->
   </tr>
 
   <tr>
     <td>{{portData?.capacity || 0}}</td>
     <th>利用小时h</th>
-    <template v-for="item in portData?.useHoursTotal">
+    <template v-for="item in portData?.usageDuration">
       <td>{{item || 0}}</td>
     </template>
-    <td>{{portData?.generationTotal || 0}}</td>
+    <td>{{portData?.useHoursTotal || 0}}</td>
   </tr>
 </template>
 
