@@ -1,7 +1,7 @@
 <template>
   <el-dialog v-model="vis" title="修改密码" width="500">
     <div>
-      <el-form ref="formRef" :rules="rules" label-width="120">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="120">
         <el-form-item prop="oldPassword" label="旧密码">
           <el-input v-model="form.oldPassword" show-password type="password"></el-input>
         </el-form-item>
@@ -24,6 +24,7 @@
 import {computed, reactive, ref} from "vue";
 import {ElMessage, FormInstance, FormRules} from "element-plus";
 import {updatePassword} from "@/api/user.ts";
+import {logout} from "@/utils/logout.ts";
 
 type Prop = {
   visible: boolean
@@ -77,6 +78,7 @@ const confirmHandle  = async () =>{
       const res: any = await updatePassword({oldPassword, newPassword})
       if(res.code == 200){
         ElMessage.success('修改成功')
+        logout()
         // 关闭dialog
         emits('update:visible', false)
       }
