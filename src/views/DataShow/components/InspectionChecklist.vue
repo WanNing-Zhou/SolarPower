@@ -9,15 +9,15 @@
 <template>
   <div class="inspection-checklist">
     <el-container>
-      <el-header class="checklist-filter-from" height="38px">
+      <el-header  class="checklist-filter-from" height="38px">
         <el-form :model="conditions" status-icon label-width="80px">
           <el-form-item label="工作类型:">
-            <el-select v-model="conditions.type" class="m-2" placeholder="请选择">
-              <el-option v-for="item in workTypeOptions " :key="item.value" :label="item.label" :value="item.value" />
+            <el-select size="small" v-model="conditions.type" class="m-2" placeholder="请选择">
+              <el-option  v-for="item in workTypeOptions " :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
           <el-form-item label="工作人:">
-            <el-input v-model="conditions.workman" placeholder="请输入" clearable />
+            <el-input size="small" v-model="conditions.workman" placeholder="请输入" clearable />
           </el-form-item>
 
           <el-form-item label="记录时间" prop="filterTime" width="200px">
@@ -25,8 +25,9 @@
               start-placeholder="开始时间" end-placeholder="结束时间" :disabled-date="disabledDate" :shortcuts="shortcuts"
               range-separator="至" />
           </el-form-item>
-          <el-form-item label-width="50">
+          <el-form-item label-width="20">
             <el-button class="search-button" type="primary" size="small" @click="handleConfirm">查询</el-button>
+            <el-button  type="primary" size="small" @click="addData">添加工作单</el-button>
           </el-form-item>
         </el-form>
 
@@ -91,7 +92,7 @@
         :page-sizes="[5, 10, 15, 20, 40]" layout="total,sizes, prev, pager, next,jumper" :total="conditions.total"
         @size-change="handleSizeChange" @current-change="handleCurrentChange" />
 
-      <el-button style="margin-top: 10px" type="primary" @click="addData">添加工作单</el-button>
+
     </div>
     <!-- 添加工作单 -->
     <InspectionChecklistForm :addNumber="addNum" @submit="handleConfirmAdd" @close="dialogClose"
