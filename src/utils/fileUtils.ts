@@ -28,9 +28,9 @@ export function handleDownLoadFile(response: any, type: FileType, fileName: stri
  * @param src
  * @param fileName
  */
-export function downFileFromUrl(api:string,fileName: string){
-    const base = import.meta.env.VITE_APP_FILE_API
-    const src = base + api
+export function downFileFromUrl(src:string,fileName: string){
+    // const base = import.meta.env.VITE_APP_FILE_API
+    // const src = base + api
     // console.log('src', src)
     if(src) {
         let link = document.createElement('a');
