@@ -25,6 +25,7 @@ import {computed, reactive, ref} from "vue";
 import {ElMessage, FormInstance, FormRules} from "element-plus";
 import {updatePassword} from "@/api/user.ts";
 import {logout} from "@/utils/logout.ts";
+import { useRouter} from "vue-router";
 
 type Prop = {
   visible: boolean
@@ -32,6 +33,7 @@ type Prop = {
 
 const props = defineProps<Prop>()
 const emits = defineEmits(['update:visible'])
+const router = useRouter()
 
 const rules = reactive<FormRules>({
   oldPassword: [
@@ -80,6 +82,7 @@ const confirmHandle  = async () =>{
         ElMessage.success('修改成功')
         logout()
         // 关闭dialog
+        router.push('/login')
         emits('update:visible', false)
       }
     }else {
