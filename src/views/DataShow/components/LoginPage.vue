@@ -1,9 +1,12 @@
 <template>
     <el-row class="login-page">
-      <el-col :span="14" class="bg"></el-col>
-      <el-col :span="10"  class="form">
+      <!-- <el-col :span="14" class="bg"></el-col> -->
+      <el-col :span="24"  class="form">
         <!-- 登录 -->
         <el-form ref="form" :model="formModel" :rules="rules" size="large" autocomplete="off" style="width: 30%">
+          <el-form-item>
+            <h1 style="color: aliceblue;">分布式光伏电站发电量检测管理系统</h1>
+          </el-form-item>
           <el-form-item>
             <h1>登录</h1>
           </el-form-item>
@@ -26,7 +29,7 @@
           <el-form-item class="flex">
             <div class="flex">
               <el-checkbox v-model="oRemember" @change="rememberHandle">记住我</el-checkbox>
-              <el-link type="primary" :underline="false">忘记密码？</el-link>
+              <!-- <el-link type="primary" :underline="false">忘记密码？</el-link> -->
             </div>
           </el-form-item>
           <el-form-item>
@@ -184,7 +187,7 @@ watch(isRegister, () => {
   }
   .form {
     background:
-      url('@/assets/统计.png') no-repeat center / cover;
+      url('@/assets/solar.jpg') no-repeat center / cover;
     border-radius: 0 20px 20px 0;
     display: flex;
     flex-direction: column;
