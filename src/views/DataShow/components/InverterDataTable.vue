@@ -80,7 +80,7 @@ const getTableData = async () => {
 
 watch(analyseId, () => {
   if(analyseId.value) getTableData()
-  console.log('id',props.analyseId)
+  // console.log('id',props.analyseId)
 })
 
 
@@ -201,9 +201,9 @@ const getStateFlag = computed(() => {
 
 //监听vuex中查询被点击的标志
 //1.返回查询标志
-const getInverterSearchFlag = computed(() => {
-  return store.state.InverterSearchFlag
-})
+// const getInverterSearchFlag = computed(() => {
+//   return store.state.InverterSearchFlag
+// })
 //2.判断查询标志
 // watch(getInverterSearchFlag, () => {
 //   // if (store.state.InverterSearchFlag) {
@@ -218,21 +218,21 @@ const getInverterSearchFlag = computed(() => {
 
 //监听左侧电站，如果电站的路由发生变化时就调用分页查询
 //计算电站
-const stationRouter = computed(() => {
-  return route.params.label as string
-})
+// const stationRouter = computed(() => {
+//   return route.params.label as string
+// })
 //监听
-watch(stationRouter, () => {
-  // console.log('新值',newdata,old)
-  store.commit('setInvertParam', [])
-  pageCondition.stationName = route.params.label
-  console.log('分页逆变器查询参数', pageCondition)
-  // getInvertTableData(pageCondition)
-
-
-}, {
-  deep: true
-})
+// watch(stationRouter, () => {
+//   // console.log('新值',newdata,old)
+//   store.commit('setInvertParam', [])
+//   pageCondition.stationName = route.params.label
+//   console.log('分页逆变器查询参数', pageCondition)
+//   // getInvertTableData(pageCondition)
+//
+//
+// }, {
+//   deep: true
+// })
 
 
 
@@ -261,18 +261,18 @@ const getInvertTableData = (pageCondition: InverterPageParams) => {
 
 
   //重新分析逆变器数据
-  getInverterTableData(InverterCondition).then((res: any) => {
-    if (res.code === 200) {
-      console.log('重新分析', res)
-      //重新分页
-      console.log('分页查询条件', pageCondition)
-      // PageSearch(pageCondition).then(res => {
-      //   console.log('res', res)
-      //   tableData.value = res.data.data
-      // })
-
-    }
-  })
+  // getInverterTableData(InverterCondition).then((res: any) => {
+  //   if (res.code === 200) {
+  //     console.log('重新分析', res)
+  //     //重新分页
+  //     console.log('分页查询条件', pageCondition)
+  //     // PageSearch(pageCondition).then(res => {
+  //     //   console.log('res', res)
+  //     //   tableData.value = res.data.data
+  //     // })
+  //
+  //   }
+  // })
 
 
 }

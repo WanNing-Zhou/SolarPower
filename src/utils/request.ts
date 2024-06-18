@@ -74,7 +74,6 @@ request.interceptors.request.use(config => {
 // 响应拦截器
 request.interceptors.response.use((res:any) => {
         hideLoading()
-        console.log('res',res.data)
         // 如果是没有状态码的响应
         if (!res.data.code) {
             const resType = Object.prototype.toString.call(res.data);

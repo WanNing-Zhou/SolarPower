@@ -24,6 +24,7 @@ import { InverterParams } from "@/type/request/inverter.ts";
 import { convertDateFormat } from "@/utils/dateUtils.ts";
 import { InverterParam } from "@/type/inverter.ts";
 import {useStore} from 'vuex'
+import {useStationStore} from "@/store/pinia/station";
 
 
 interface Conditions {
@@ -33,15 +34,13 @@ interface Conditions {
 //使用useStore
 const store = useStore()
 const route = useRoute();
-// const {compId, pointId, pointName} = route.query
-// console.log('电站名称:', compId)
+const stationStore = useStationStore();
 
 
 // 电站名称
 const stationId = computed(() => {
-  // console.log('电站名称:', route.query)
-  // return route.params.label as string
-  return route.query.pointId
+  // return route.query.pointId
+  return stationStore.stationId
 })
 
 
@@ -52,11 +51,11 @@ const searchFlag = ref(false)
 const analyseId = ref('')
 
 // 获取表单数据
-const getAnalyseId = async (data?: InverterParams) => {
+const getAnalyseId = async (data?: InverterParams | any) => {
   if (!data) {
     const end = new Date()
     const start = new Date()
-    start.setTime(start.getTime() - 3600 * 1000 * 24 * 3) // 最近三天数据
+    start.setTime(start.getTime() - 3600 * 1000 * 24 * 14) // 最近三天数据
     data = {
       stationId: stationId.value,
       startTime: convertDateFormat(start, true),
@@ -72,7 +71,7 @@ const getAnalyseId = async (data?: InverterParams) => {
 
 // 筛选---拿到查询的参数
 const handFilter = (conditions: Conditions) => {
-  console.log('筛选条件:', conditions)
+  // console.log('筛选条件:', conditions)
   const startTime = conditions.statisticalTime[0];
   const endTime = conditions.statisticalTime[1]
 
@@ -83,21 +82,21 @@ const handFilter = (conditions: Conditions) => {
     endTime: convertDateFormat(endTime, true)
   })
 
-  watch(stationId, () => {
-    console.log('变化了')
-    getAnalyseId()
-  })
-
   // searchFlag.value = true
 
   //存入电站的名称
   // store.commit('setStationName',conditions.equipment)
 }
 
+watch(stationId, () => {
+  // console.log('变化了')
+  if (stationId.value) getAnalyseId()
+}, {deep: true, immediate: true})
+
 // 加载时计算
-onMounted(() => {
-  getAnalyseId()
-})
+// onMounted(() => {
+//   getAnalyseId()
+// })
 
 
 //弹出框显示
