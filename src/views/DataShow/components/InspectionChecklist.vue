@@ -376,7 +376,7 @@ const deleteData = async(row: InspectionChecklist, index: number) => {
 
 const checkListPrint = (row: InspectionChecklist) => {
   // chekListImgVisilbe.value = true;
-  console.log(row.id)
+  // console.log(row.id)
 
   printWorkSheet(row.id).then((res: any) => {
     if (res.code === 200) {
