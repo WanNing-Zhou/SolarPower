@@ -25,7 +25,7 @@
           </el-form-item>
           <el-form-item class="flex">
             <div class="flex">
-              <el-checkbox>记住我</el-checkbox>
+              <el-checkbox v-model="oRemember" @change="rememberHandle">记住我</el-checkbox>
               <el-link type="primary" :underline="false">忘记密码？</el-link>
             </div>
           </el-form-item>
@@ -41,7 +41,7 @@
   </template>
 <script lang="ts" setup>
 import {User, Lock, Message} from '@element-plus/icons-vue'
-import { ref, watch } from 'vue'
+import {onMounted, ref, watch} from 'vue'
 // import type { LoginForm } from '@/type/user/loginType'
 // import { userRegisterService, userLoginService } from '@/api/user'
 // import { useUserStore } from '@/stores'
@@ -50,12 +50,29 @@ import {login, getUserInfo} from "@/api/user.ts";
 import {ElMessage} from "element-plus";
 import {setToken} from "@/utils/tokenTool.ts";
 const isRegister = ref(false)
+
+
+const oRemember = ref(false)
+
+
+
 const formModel = ref({
     username: '',
     password: '',
     repassword: ''
   }
 )
+
+onMounted(() => {
+  const formStr = localStorage.getItem('acc-form')
+  //atob() 方法，可用于将数据编码为 Base64 或从 Base64 解码。
+  if(formStr){
+    oRemember.value = true
+    const form = JSON.parse(formStr)
+    formModel.value.username = form.username
+    formModel.value.password =  atob(form.password)
+  }
+})
 const form = ref()
 //校验时机
 //1.required：非空校验 message：提示信息 trigger：触发时机
@@ -106,6 +123,16 @@ const register = async () => {
 // const useUser = useUserStore()
 const router = useRouter()
 const confirm = async () => {
+  // btoa() 和 atob() 方法，可用于将数据编码为 Base64 或从 Base64 解码。
+  if(oRemember.value){
+    const form = JSON.stringify({
+      password: btoa(formModel.value.password),
+      username: formModel.value.username
+    })
+    localStorage.setItem('acc-form', form)
+  }else{
+    localStorage.removeItem('acc-form')
+  }
   try {
      await form.value.validate()
     const res = await login({username: formModel.value.username, password: formModel.value.password})
@@ -123,17 +150,20 @@ const confirm = async () => {
     }else {
       router.push('/admin')
     }
-
     ElMessage.success('登录成功')
-
-
-
-
-
   } catch (err) {
     ElMessage.error( err)
   }
 }
+
+// 记住密码功能
+const rememberHandle = (val) =>{
+  console.log('remember', val)
+  if(val = true){
+  }
+
+}
+
 //监视切换时清空表单
 watch(isRegister, () => {
   formModel.value = {
