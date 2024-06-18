@@ -129,14 +129,12 @@ function unique(arr: InverterParam[], name: string) {
 
 
 //逆变器查询条件
-const InverterCondition: InverterParams = reactive({
-
-})
+const InverterCondition: InverterParams | any = reactive({})
 
 
 
 //分页查询条件
-const pageCondition: InverterPageParams = reactive({
+const pageCondition = reactive({
   stationName: '',
   page: 1,
   pageSize: 10
@@ -254,31 +252,31 @@ const handleCurrentChange = (page: number) => {
   getTableData()
 }
 //获取逆变器报表的数据
-const getInvertTableData = (pageCondition: InverterPageParams) => {
-  InverterCondition.stationName = pageCondition.stationName
-  InverterCondition.startTime = store.state.InverterstartTime
-  InverterCondition.endTime = store.state.InverterendTime
+// const getInvertTableData = (pageCondition) => {
+//   InverterCondition.stationName = pageCondition.stationName
+//   InverterCondition.startTime = store.state.InverterstartTime
+//   InverterCondition.endTime = store.state.InverterendTime
+//
+//
+//   //重新分析逆变器数据
+//   // getInverterTableData(InverterCondition).then((res: any) => {
+//   //   if (res.code === 200) {
+//   //     console.log('重新分析', res)
+//   //     //重新分页
+//   //     console.log('分页查询条件', pageCondition)
+//   //     // PageSearch(pageCondition).then(res => {
+//   //     //   console.log('res', res)
+//   //     //   tableData.value = res.data.data
+//   //     // })
+//   //
+//   //   }
+//   // })
+//
+//
+// }
 
-
-  //重新分析逆变器数据
-  // getInverterTableData(InverterCondition).then((res: any) => {
-  //   if (res.code === 200) {
-  //     console.log('重新分析', res)
-  //     //重新分页
-  //     console.log('分页查询条件', pageCondition)
-  //     // PageSearch(pageCondition).then(res => {
-  //     //   console.log('res', res)
-  //     //   tableData.value = res.data.data
-  //     // })
-  //
-  //   }
-  // })
-
-
-}
-
-onMounted(() => {
-})
+// onMounted(() => {
+// })
 
 </script>
 

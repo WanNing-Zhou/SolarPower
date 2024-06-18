@@ -99,7 +99,9 @@ const confirmHandle = async () => {
       emits('update:visible')
     }
   }else{
-    const res: any = await updateStation({...form.value, id: pointData.value.id, companyId: props.companyId})
+    const param :any = {...form.value, id: pointData.value.id};
+    delete param.companyId
+    const res: any = await updateStation(param)
     if(res.code == 200){
       ElMessage.success('修改成功')
       emits('success')
