@@ -1,0 +1,1 @@
+import{B as o}from"./index-fd38cc11.js";function s(t){return o("/api/user/login",{method:"post",data:t})}function e(){return o.get("/api/user/info")}function u(t){return o.post("/api/user/changePassword",t)}function n(){return o.post("/api/user/logout")}export{u as a,e as g,s as l,n as u};
