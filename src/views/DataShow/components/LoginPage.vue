@@ -2,43 +2,46 @@
     <el-row class="login-page">
       <!-- <el-col :span="14" class="bg"></el-col> -->
       <el-col :span="24"  class="form">
-        <!-- 登录 -->
-        <el-form ref="form" :model="formModel" :rules="rules" size="large" autocomplete="off" style="width: 30%">
-          <el-form-item>
-            <h1 style="color: aliceblue;">分布式光伏电站发电量检测管理系统</h1>
-          </el-form-item>
-          <el-form-item>
-            <h1>登录</h1>
-          </el-form-item>
-          <el-form-item prop="username">
-            <el-input
-              prefix-icon="User"
-              v-model="formModel.username"
-              placeholder="请输入用户名"
-            ></el-input>
-          </el-form-item>
-          <el-form-item prop="password">
-            <el-input
-              name="password"
-              prefix-icon="Lock"
-              type="password"
-              v-model="formModel.password"
-              placeholder="请输入密码"
-            ></el-input>
-          </el-form-item>
-          <el-form-item class="flex">
-            <div class="flex">
-              <el-checkbox v-model="oRemember" @change="rememberHandle">记住我</el-checkbox>
-              <!-- <el-link type="primary" :underline="false">忘记密码？</el-link> -->
-            </div>
-          </el-form-item>
-          <el-form-item>
-            <el-button class="button" type="primary" @click="confirm" auto-insert-space>登录</el-button>
-          </el-form-item>
-          <el-form-item class="flex">
-<!--            <el-link  :underline="false" @click="isRegister = true"> 注册 → </el-link>-->
-          </el-form-item>
-        </el-form>
+        <div class="form-box" style="width: 30%">
+          <!-- 登录 -->
+          <el-form ref="form" :model="formModel" :rules="rules" size="large" autocomplete="off">
+            <el-form-item>
+              <h1 style="color: aliceblue;margin-bottom: 30px">分布式光伏电站发电量检测管理系统</h1>
+            </el-form-item>
+<!--            <el-form-item>-->
+<!--              <h1>登录</h1>-->
+<!--            </el-form-item>-->
+            <el-form-item prop="username">
+              <el-input
+                  prefix-icon="User"
+                  v-model="formModel.username"
+                  placeholder="请输入用户名"
+              ></el-input>
+            </el-form-item>
+            <el-form-item prop="password">
+              <el-input
+                  name="password"
+                  prefix-icon="Lock"
+                  type="password"
+                  v-model="formModel.password"
+                  placeholder="请输入密码"
+              ></el-input>
+            </el-form-item>
+            <el-form-item class="flex">
+              <div class="flex">
+                <el-checkbox v-model="oRemember">记住我</el-checkbox>
+                <!-- <el-link type="primary" :underline="false">忘记密码？</el-link> -->
+              </div>
+            </el-form-item>
+            <el-form-item>
+              <el-button class="button" type="primary" @click="confirm" auto-insert-space>登录</el-button>
+            </el-form-item>
+            <el-form-item class="flex">
+              <!--            <el-link  :underline="false" @click="isRegister = true"> 注册 → </el-link>-->
+            </el-form-item>
+          </el-form>
+        </div>
+
       </el-col>
     </el-row>
   </template>
@@ -159,13 +162,6 @@ const confirm = async () => {
   }
 }
 
-// 记住密码功能
-const rememberHandle = (val) =>{
-  console.log('remember', val)
-  if(val = true){
-  }
-
-}
 
 //监视切换时清空表单
 watch(isRegister, () => {
@@ -193,6 +189,18 @@ watch(isRegister, () => {
     flex-direction: column;
     justify-content: center;
     user-select: none;
+    align-items: center;
+
+    .form-box{
+      padding: 30px;
+      border-radius: 10px;
+      backdrop-filter: blur(6px);
+      min-width: 450px;
+      background-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 5px 15px rgba(20, 20, 20, 0.2);
+
+    }
+
     .el-form{
         margin: auto;
     }
