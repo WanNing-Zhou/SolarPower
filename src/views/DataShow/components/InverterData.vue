@@ -2,7 +2,7 @@
   <div class="inverter-data">
     <el-container>
       <el-header height="38px">
-        <filter-form  @confirm="handFilter" />
+        <filter-form :analyseId="analyseId"  @confirm="handFilter" />
       </el-header>
       <el-main>
         <inverter-data-table :analyseId="analyseId"  :searchFlag="searchFlag" @showInfo="showInfo"></inverter-data-table>

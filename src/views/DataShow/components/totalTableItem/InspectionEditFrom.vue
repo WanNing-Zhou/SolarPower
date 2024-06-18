@@ -1,5 +1,3 @@
-// 修改工作单管理dialog
-
 <template>
     <el-dialog v-model="visible" title="工作单修改" :before-close="handleBeforeClose" class="inspection-checklist-form">
         <el-form v-model="checklistFrom" label-width="100" title="工作单">
@@ -10,7 +8,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label-width="100" label="编号">
-                <el-input v-model="checklistFrom.id"></el-input>
+                <el-input v-model="checklistFrom.id" disabled></el-input>
             </el-form-item>
             <el-form-item label-width="100" label="工作人">
                 <el-input v-model="checklistFrom.workMan"></el-input>
@@ -94,7 +92,7 @@ const prop = defineProps({
 
 const emit = defineEmits(['closeEdit'])
 
-let checklistFrom = ref<editConditions>({})
+let checklistFrom = ref<editConditions | any>({})
 let photoArr = ref<string[]>([])
 // 文件列表
 let fileList = ref<UploadUserFile[]>([])
@@ -106,7 +104,7 @@ const getEditTableData = computed(() => {
 
 //监听编辑的数据
 watch(getEditTableData, async () => {
-    checklistFrom.value = store.state.EditTableData
+    checklistFrom.value = {...store.state.EditTableData}
     photoArr.value = checklistFrom.value.files?.split('#') as string[]
     photoArr.value = photoArr.value?.filter(v => v !== "")
 
@@ -163,8 +161,6 @@ watch(visible, () => {
         lastIndex = checklistFrom.value.index as number
         fileList.value = []
     }
-
-
 })
 
 
@@ -180,10 +176,7 @@ const workListSubmit = async () => {
         text: '图片正在上传，请耐心等待',
         background: 'rgba(0, 0, 0, 0.7)',
     })
-    checklistFrom.value.companyNumber = store.state.companyNumber
-    checklistFrom.value.stationNumber = route.params.id as string
-    checklistFrom.value.type = checklistFrom.value.typeCode
-    // delete checklistFrom.value.typeCode
+
     // 处理文件列表 文件名以#分割
     let fileArr: UploadUserFile[] = fileList.value.filter(o => typeof o?.flag == "undefined")
     //文件大小
@@ -219,17 +212,26 @@ const workListSubmit = async () => {
     fileList.value = fileList.value.filter(o => typeof o?.flag != "undefined")
     fileList.value.forEach(o => fileName = fileName + o.url?.substring(o.url.indexOf('worksheet') + 10) + '#')
     checklistFrom.value.files = fileName
-    await editWorkSheet(checklistFrom.value).then((res: any) => {
+
+    const param = {...checklistFrom.value}
+   delete param.companyNumber;
+   delete param.stationNumber;
+   delete param.type;
+   delete param.index;
+    await editWorkSheet(param).then((res: any) => {
         if (res.code === 200) {
             ElMessage({
                 message: res.data,
                 type: 'success',
             })
+          loading.close()
             emit('closeEdit', checklistFrom.value)
-            loading.close()
+
         }
     })
 }
+
+
 const dialogImageUrl = ref('')
 const dialogVisible = ref(false)
 const handlePictureCardPreview: UploadProps['onPreview'] = (uploadFile) => {

@@ -170,7 +170,7 @@ import { Res } from '@/type/request/requestType'
 import { fileParams } from '@/type/request/worksheet'
 import { uploadPhotoAndVideo } from '@/api/upload'
 import EditDialog from "@/views/DataShow/components/pcList/editDialog.vue";
-import {handleDownLoadFile} from "@/utils/fileUtils.ts";
+import {handleDownLoadFile, downFileFromUrl} from "@/utils/fileUtils.ts";
 
 //使用store
 const store = useStore()
@@ -230,8 +230,6 @@ const shortcuts = [
 
 //查询
 const handleConfirm = () => {
-
-
   getSelfTableData()
 
 }
@@ -269,36 +267,6 @@ watch(dialogVisible, ()=>{
 //添加
 const addData = () => {
   dialogVisible.value = true;
-  // //自动加一
-  // addCount++
-
-
-
-  // //保存当前长度（数组长度加上新添数据的长度）
-  // const arrayLength = tableData.value.length + 1
-  // console.log(arrayLength)
-
-  // //添加数据，数组长度加一
-  // if (arrayLength == (tableData.value.length + addCount)) {
-  //   ElMessage({
-  //     type: 'info',
-  //     message: '在添加数据时，自用电费、上网电费、自用电费不用添写，系统会自动计算'
-  //   })
-
-  //   SelfAddConditions.stationName = route.params.label
-
-  //   // SelfAddConditions.edit = true
-  //   // SelfAddConditions.addEdit = true
-  //   tableData.value.push(SelfAddConditions)
-  // } else {
-  //   ElMessage({
-  //     type: 'info',
-  //     message: '请先完成当前操作！'
-  //   })
-  // }
-
-  // fileList = ref<UploadUserFile[]>([])
-
 }
 
 //获取自用上网报表的数据
@@ -695,25 +663,21 @@ const stationNumber = computed(() => {
 //导出Excel
 const exportExcel = async () => {
   try {
-   const res = await getSelfFile({
+    const param = {
       stationId: stationId.value,
-      endDate: conditions.endDate,
-      startDate: condition.startDate
-    })
-   handleDownLoadFile(res.data, '.xlsx', '自用上网报表')
+      startDate: convertDateFormat(conditions.filterTime[0]),
+      endDate: convertDateFormat(conditions.filterTime[1]),
+    }
+   const res = await getSelfFile(param)
+
+    const url = res.data
+    downFileFromUrl(url, `自用和上网报表-${param.stationId}-${param.startDate}-${param.endDate}.xlsx`)
+
+   // handleDownLoadFile(res.data, '.xlsx', '自用上网报表')
   }catch (err){
     console.error('request err', err)
   }
 
-  // const link = document.createElement('a');
-
-/*  const url = '?companyNumber=' + conditions.companyNumber + '&stationNumber=' + conditions.stationNumber +
-    '&startDate=' + conditions.startDate + '&endDate=' + conditions.endDate + '&page=' + conditions.page + '&pageSize=' + conditions.pageSize
-  link.href = `${import.meta.env.VITE_APP_BASE_API}/api/selfAndOnGrid/export` + url
-  link.setAttribute('download', '自由上网报表.xlsx');
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link)*/
 }
 
 //上传文件

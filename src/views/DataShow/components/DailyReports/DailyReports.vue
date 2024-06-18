@@ -10,7 +10,7 @@
         <el-button type="primary" @click="addData">添加数据</el-button>
       </el-header>
       <el-main>
-        <el-table :header-cell-style="{ 'text-align': 'center' }" :data="tableData" height="380px">
+        <el-table ref="tableRef" :header-cell-style="{ 'text-align': 'center' }" :data="tableData" height="440px">
           <!--  日期     -->
           <el-table-column prop="reportDate" label="日期" width="150">
             <template #default="scope">
@@ -67,7 +67,7 @@
           </el-table-column>
         </el-table>
 
-        <el-divider></el-divider>
+<!--        <el-divider></el-divider>-->
       </el-main>
     </el-container>
   </div>
@@ -81,12 +81,12 @@ import { DailyReportPhotovoltaicPowerPlantA } from "@/type";
 import { convertDateFormat } from "@/utils/dateUtils.ts";
 import { ReportParams, ReportInsertParams, ReportModifyParams } from '@/type/request/report'
 import { getReport, insertReport, modifyReport, deleteReport } from '@/api/apireport'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import {ElMessage, ElMessageBox, TableRefs} from 'element-plus'
 import {useStationStore} from "@/store/pinia/station";
-// import { useRoute } from "vue-router";
-// const route = useRoute()
 
 const stationStore = useStationStore()
+
+const tableRef = ref<TableRefs>()
 
 // 表格数据
 // const tableData: Ref<Array<DailyReportPhotovoltaicPowerPlantA>> = ref([])
@@ -148,6 +148,7 @@ const addData = () => {
     editForm.value = {...baseEditForm, edit: true, reportDate: convertDateFormat(queryConditions.reportDate as Date, true)}
     // tableData.value.push(insertConditions);
     tableData.value.push(editForm.value)
+
 
   } else {
     ElMessage({

@@ -74,9 +74,18 @@ export function updateInvCap(params:any){
 
 // 逆变器报表下载
 export function getInvFile(params: {
-    stationId: string | number
+    // stationId: string | number
+    uuid: string | number
 }){
-    return Request.get('/api/inverter/export', {
+    return Request('/api/inverter/export',{
+        method: "get",
+        // responseType: 'blob',
+        // headers: {
+        //     Accept: '*/*',
+        //     'Content-Type': 'application/json; charset=utf-8',
+        //     withCredentials: true,
+        //     Withcredentials: true
+        // },
         params
     })
 }

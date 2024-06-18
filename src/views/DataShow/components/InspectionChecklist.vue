@@ -129,7 +129,7 @@ const route = useRoute()
 //时间绑定的变量
 // let filterTime = reactive([])
 //查询条件
-const conditions: workSheetCondition = reactive({
+const conditions: workSheetCondition | any = reactive({
   companyNumber: '',//公司编号
   stationNumber: '',//电站编号
   startDate: '',//起始时间
@@ -266,7 +266,7 @@ const EditdialogClose = (data?:any) => {
 
   EditdialogVisible.value = false
   if(data){
-    conditions.type = data.type as string
+    // conditions.type = data.type as string
     handleConfirm()
   }
 }
@@ -276,7 +276,7 @@ const handleConfirmAdd = (data: addConditions) => {
   // tableData.value.push(data)
 
   addWorkSheet(data).then((res:any) => {
-    console.log('添加返回的结果', res)
+    // console.log('添加返回的结果', res)
     if (res.code === 200) {
       ElMessage({
         message: res.data,
@@ -352,11 +352,7 @@ const deleteData = async(row: InspectionChecklist, index: number) => {
           handleConfirm()
 
         }
-
-
       })
-
-
     })
     .catch(() => {
       ElMessage({
@@ -465,9 +461,9 @@ const handleCurrentChange = (val: number) => {
 
 //监听左侧电站，如果电站的路由发生变化时就调用分页查询
 //计算电站
-const stationRouter = computed(() => {
-  return route.params.label as string
-})
+// const stationRouter = computed(() => {
+//   return route.params.label as string
+// })
 
 // 电站id
 // const pointId = computed(() => {

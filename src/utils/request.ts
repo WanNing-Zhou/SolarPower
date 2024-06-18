@@ -67,21 +67,20 @@ request.interceptors.request.use(config => {
     }
     return config
 }, error => {
-    console.log(error)
+    console.log('request err', error)
     Promise.reject(error)
 })
 
 // 响应拦截器
 request.interceptors.response.use((res:any) => {
         hideLoading()
-
-
+        console.log('res',res.data)
         // 如果是没有状态码的响应
         if (!res.data.code) {
             const resType = Object.prototype.toString.call(res.data);
             const isBlob = resType === '[object Blob]';
             // 如果blob
-            if (isBlob || resType === '[object String]') return res;
+            if (isBlob || resType === '[object String]') return Promise.resolve(res.data);
         }
 
         // 未设置状态码则默认成功状态

@@ -19,6 +19,27 @@ export function handleDownLoadFile(response: any, type: FileType, fileName: stri
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link); //下载完成移除元素
+    }
+}
+
+
+/**
+ * 根据地址下载文件
+ * @param src
+ * @param fileName
+ */
+export function downFileFromUrl(api:string,fileName: string){
+    const base = import.meta.env.VITE_APP_FILE_API
+    const src = base + api
+    // console.log('src', src)
+    if(src) {
+        let link = document.createElement('a');
+        link.style.display = 'none';
+        link.href = src;
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link); //下载完成移除元素
         window.URL.revokeObjectURL(src); //释放掉blob对象
     }
 }

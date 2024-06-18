@@ -41,7 +41,14 @@ import { useStore } from 'vuex'
 import { Res } from '@/type/request/requestType'
 import { useRoute } from "vue-router";
 import {useStationStore} from "@/store/pinia/station";
-import {handleDownLoadFile} from "@/utils/fileUtils.ts";
+import {downFileFromUrl, handleDownLoadFile} from "@/utils/fileUtils.ts";
+
+
+type Prop = {
+  analyseId: string | string
+}
+
+const props = defineProps<Prop>()
 
 const emit = defineEmits(['confirm'])
 const store = useStore()
@@ -55,10 +62,11 @@ const conditions = reactive({
 
 //监听左侧电站，如果电站的路由发生变化时就调用分页查询
 //计算电站
-const stationRouter = computed(() => {
-  return route.params.label as string
-})
+// const stationRouter = computed(() => {
+//   return route.params.label as string
+// })
 //监听
+
 
 
 onMounted(() => {
@@ -121,9 +129,12 @@ const exportFile = async () => {
   const link = document.createElement('a');
   // link.href = `${import.meta.env.VITE_APP_BASE_API}/api/inverter/export?stationName=` + route.params.label
   try{
-    
-    const res = await getInvFile({stationId: stationStore.stationId});
-    handleDownLoadFile(res.data, '.xlsx', '逆变器报表' )
+
+    const res = await getInvFile({uuid: props.analyseId});
+    const fileUrl = res.data;
+
+    downFileFromUrl(fileUrl, '逆变器报表.xlsx')
+    // handleDownLoadFile(res.data, '.xlsx', '逆变器报表' )
 
   }catch (err){
     console.error('request err', err)

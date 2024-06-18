@@ -55,8 +55,6 @@
         </section>
 
       </el-form-item>
-
-
     </el-form>
 
   </el-dialog>
@@ -92,7 +90,7 @@ const prop = defineProps({
 const emit = defineEmits(['close', 'submit'])
 //文件名
 const fileName = ref('')
-let checklistFrom = ref<addConditions>({})
+let checklistFrom = ref<addConditions | any>({})
 // 文件列表
 let fileList = ref<UploadUserFile[]>([])
 // 工作类型选项
