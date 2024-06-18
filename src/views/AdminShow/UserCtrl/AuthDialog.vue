@@ -114,7 +114,7 @@ watch(props,async ()=>{
 
 })
 
-const tags = ref(['kakxi', 'kakdong'])
+// const tags = ref(['kakxi', 'kakdong'])
 
 const vis = computed({
   get(){
@@ -141,9 +141,9 @@ const confirmHandle = async () => {
 }
 
 // 标签删除
-const handleTagClose = (tag: string) => {
-  tags.value = tags.value.filter((item) => item != tag)
-}
+// const handleTagClose = (tag: string) => {
+//   tags.value = tags.value.filter((item) => item != tag)
+// }
 
 const addAuth = () => {
 

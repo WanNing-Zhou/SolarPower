@@ -44,7 +44,7 @@ const userId = route.query.id;
 const baseForm = {
   username: '',
   password: '',
-  concat: '',
+  // concat: '',
   contact: '',
   address: ''
 }
