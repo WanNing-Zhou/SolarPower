@@ -1,7 +1,7 @@
 <template>
     <el-row class="login-page">
-      <!-- <el-col :span="12" class="bg"></el-col> -->
-      <el-col :span="24"  class="form">
+      <el-col :span="14" class="bg"></el-col>
+      <el-col :span="10"  class="form">
         <!-- 登录 -->
         <el-form ref="form" :model="formModel" :rules="rules" size="large" autocomplete="off" style="width: 30%">
           <el-form-item>
@@ -179,12 +179,12 @@ watch(isRegister, () => {
   background-color: #fff;
   .bg {
     background:
-      url('@/assets/solar.jpg') no-repeat center / cover;
+      url('@/assets/R-C.jpg') no-repeat center / cover;
     border-radius: 0 20px 20px 0;
   }
   .form {
     background:
-      url('@/assets/solar.jpg') no-repeat center / cover;
+      url('@/assets/统计.png') no-repeat center / cover;
     border-radius: 0 20px 20px 0;
     display: flex;
     flex-direction: column;
