@@ -96,8 +96,8 @@ const rules = {
   password: [
     { required: true, message: '密码不能为空', trigger: 'blur' },
     {
-      pattern: /^\S{5,15}$/,
-      message: '密码必须是5-15位的非空字符',
+      pattern: /^\S{5,32}$/,
+      message: '密码必须是5-32位的非空字符',
       trigger: 'blur'
     }
   ],

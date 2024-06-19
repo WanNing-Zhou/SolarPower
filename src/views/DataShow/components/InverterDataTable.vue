@@ -75,6 +75,7 @@ const getTableData = async () => {
     uuid: analyseId.value
   })
   tableData.value = res.data.data
+  paginationState.total = res.data.totalRecords
   // console.log(res)
 }
 

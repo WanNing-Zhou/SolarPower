@@ -86,7 +86,7 @@ const confirmHandle = async () => {
     const param = {
       address: form.value.address,
       contact: form.value.contact,
-      id: form.value.id,
+      // id: form.value.id,
       manager: form.value.manager,
       name: form.value.name
     }
@@ -97,7 +97,15 @@ const confirmHandle = async () => {
       emits('update:visible')
     }
   }else{
-    const res: any = await updateCompany({...form.value, id: company.value.id})
+
+    const param = {
+      address: form.value.address,
+      contact: form.value.contact,
+      id: form.value.id,
+      manager: form.value.manager,
+      name: form.value.name
+    }
+    const res: any = await updateCompany(param)
     if(res.code == 200){
       ElMessage.success('修改成功')
       emits('success')
