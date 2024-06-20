@@ -34,7 +34,7 @@
           <el-table-column prop="loss" label="少发电量" width="150">
             <template #default="scope">
               <el-input size="small" v-if="scope.row.edit" v-model="editForm.loss" placeholder=""></el-input>
-              <span v-else>{{ scope.row.loss }}</span>
+              <span v-else>{{ formatNumber(Number(scope.row.loss)) }}</span>
             </template>
           </el-table-column>
           <!--用户输入-->
@@ -173,7 +173,21 @@ const baseEditData = {
   stationName: stationStore.stationName, // 电站名称
   violationCount: 0 // 违章次数
 }
-
+const formatNumber = (value:number) => {
+      if (typeof value === 'number' && !isNaN(value)) {
+        return value.toFixed(2);
+      }
+      return '0.00'; // 默认值
+      
+    };
+const formattedLoss = computed({
+  get() {
+    return editForm.value.loss.toFixed(2);
+  },
+  set(newValue) {
+    editForm.value.loss = parseFloat(newValue);
+  }
+});
 // 编辑表单
 const editForm = ref({...baseEditData})
 
@@ -367,7 +381,7 @@ const getSummaries = (param: SummaryMethodProps) => {
         sums[index] = ` ${values.reduce((prev, curr) => {
           const value = Number(curr)
           if (!Number.isNaN(value)) {
-            return prev + curr
+            return (prev + curr)
           } else {
             return prev
           }

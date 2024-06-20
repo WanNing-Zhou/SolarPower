@@ -96,7 +96,7 @@ const emit = defineEmits(['closeEdit'])
 let checklistFrom = ref<editConditions | any>({})
 let photoArr = ref<string[]>([])
 // 文件列表
-let fileList = ref<UploadUserFile[]>([])
+let fileList = reactive<UploadUserFile[]>([])
 // 页面加载时更新checklistFrom中的数据
 //返回state中的编辑数据
 const getEditTableData = computed(() => {
@@ -108,22 +108,30 @@ watch(getEditTableData, async () => {
     checklistFrom.value = {...store.state.EditTableData}
     photoArr.value = checklistFrom.value.files?.split('#') as string[]
     photoArr.value = photoArr.value?.filter(v => v !== "")
-
-
-    for (const [idx, element] of photoArr.value.entries()) {
+    for (let i = 0; i < photoArr.value.length;i++) {
         const obj = {
-            url: import.meta.env.VITE_APP_BASE_API + `/api/file/download/worksheet/${element}`,
-            name: element,
-            flag: true
+            url: import.meta.env.VITE_APP_BASE_API + `/api/file/download/worksheet/${photoArr.value[i]}`,
+            name: photoArr.value[i],
+            flag: true,
         }
-        fileList.value[idx] = obj
+        fileList[i] = {...fileList[i],...obj}  
     }
+
+
+    // for (const [idx, element] of photoArr.value.entries()) {
+    //     const obj = {
+    //         url: import.meta.env.VITE_APP_BASE_API + `/api/file/download/worksheet/${element}`,
+    //         name: element,
+    //         flag: true,
+    //     }
+    //     fileList.value[idx] = {...fileList.value[idx]} && obj
+    // }
+    console.log(fileList)
 }, {
     immediate: true,
     deep: true
 })
 // console.log(photoArr.value)
-
 
 
 
@@ -160,14 +168,14 @@ let lastIndex = -1
 watch(visible, () => {
     if (lastIndex !== checklistFrom.value.index) {
         lastIndex = checklistFrom.value.index as number
-        fileList.value = []
+        fileList = []
     }
 })
 
 
 // 关闭前操作
 const handleBeforeClose = () => {
-    fileList.value = []
+    fileList = []
     emit('closeEdit')
 }
 // 修改数据
@@ -179,7 +187,7 @@ const workListSubmit = async () => {
     })
 
     // 处理文件列表 文件名以#分割
-    let fileArr: UploadUserFile[] = fileList.value.filter(o => typeof o?.flag == "undefined")
+    let fileArr: UploadUserFile[] = fileList.filter(o => typeof o?.flag == "undefined")
     //文件大小
     let fileSize = 0
     let fileName = ''
@@ -210,8 +218,8 @@ const workListSubmit = async () => {
         }
     }
 
-    fileList.value = fileList.value.filter(o => typeof o?.flag != "undefined")
-    fileList.value.forEach(o => fileName = fileName + o.url?.substring(o.url.indexOf('worksheet') + 10) + '#')
+    fileList= fileList.filter(o => typeof o?.flag != "undefined")
+    fileList.forEach(o => fileName = fileName + o.url?.substring(o.url.indexOf('worksheet') + 10) + '#')
     checklistFrom.value.files = fileName
 
     const param = {...checklistFrom.value}
