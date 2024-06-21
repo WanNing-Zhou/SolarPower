@@ -5,14 +5,9 @@
   @version
   @description 自用和上传报告的数据添加与编辑
  -->
-<template>
-  <el-dialog v-model="dialogVisible" width="50%" align-center :title="isEdit ? '编辑自由上网的数据' : '添加自由上网的数据'">
+ <template>
+  <el-dialog v-model="dialogVisible" width="50%"  :before-close="handleBeforeClose" align-center :title="isEdit ? '编辑自由上网的数据' : '添加自由上网的数据'">
     <el-form v-model="form" label-width="110px">
-<!--      <el-form-item class="form-item-short" label="选择电站:">-->
-<!--        <el-select v-model="form.stationName" class="m-2" placeholder="请选择">-->
-<!--          <el-option v-for="item in options " :key="item.value" :label="item.label" :value="item.value" />-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
       <el-form-item label="日期（年月）">
         <el-date-picker v-model="form.reportDate" type="month" placeholder="请选择日期" />
       </el-form-item>
@@ -20,13 +15,13 @@
         <el-input v-model="form.inverterName" style="width: 590px;" />
       </el-form-item>
       <el-form-item label="发电表总电量">
-        <el-input v-model="form.electricityConsumptionTotal" @mouseleave="computedData"/>
+        <el-input v-model="form.electricityConsumptionTotal" @mouseleave="computedData" />
       </el-form-item>
       <el-form-item label="上网总电量">
-        <el-input v-model="form.electricityOnGridTotal" @mouseleave="computedData"/>
+        <el-input v-model="form.electricityOnGridTotal" @mouseleave="computedData" />
       </el-form-item>
       <el-form-item label="上网电价">
-        <el-input v-model="form.onGridPowerPrice" @mouseleave="computedData"/>
+        <el-input v-model="form.onGridPowerPrice" @mouseleave="computedData" />
       </el-form-item>
       <el-form-item label="自用电价">
         <el-input v-model="form.selfUsePowerPrice" @mouseleave="computedData" />
@@ -49,54 +44,36 @@
         </el-col>
         <!-- 在这里继续添加 el-col 和 el-form-item -->
       </el-row>
-
-
-
       <el-form-item label="现场照片">
-        <el-upload v-model:file-list="fileList as Array<any>" action="" list-type="picture-card"
-          :on-preview="handlePictureCardPreview" :on-remove="removeHandle" :http-request="uploadFileHandle"
-          :before-remove="handleBeforeRemove" />
-      </el-form-item>
-      <el-form-item v-if="isEdit">
-        <el-row>
-          <el-col v-for="(image, index) in images" :key="index" :span="6">
-            <el-image :src="image.url" class="image-item">
-              <template #error>
-                <!-- 自定义加载失败的内容或字样 -->
-                <div></div>
-              </template></el-image>
-          </el-col>
-        </el-row>
-      </el-form-item>
-
-      <el-form-item>
-        <template v-for="tag in tags" :key="tag">
-          <el-tag closable @close="removeTagHandle(tag)" v-if="tag" width="200px">{{ tag }}</el-tag>
-        </template>
-
+        <el-upload v-model:file-list="fileList" :auto-upload="false" action="#" list-type="picture-card"
+          :on-preview="handlePictureCardPreview" :on-remove="handleRemove" accept=".png,.jpg,.gif,.jpeg,.svg">
+          <el-icon>
+            <Plus />
+          </el-icon>
+        </el-upload>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">提交</el-button>
         <el-button @click="onCancel">取消</el-button>
       </el-form-item>
     </el-form>
-
-
-
-
+  </el-dialog>
+  <el-dialog v-model="previewDialogVisible">
+    <el-image :src="dialogImageUrl" fit="cover" />
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-
-import { computed, onMounted, PropType, ref, watch, reactive } from "vue";
+import { Plus } from '@element-plus/icons-vue'
+import { computed, onMounted, PropType, ref, reactive } from "vue";
 import { pscData } from "@/type/request/selfTable.ts";
-import { ElMessage, UploadUserFile, UploadProps } from "element-plus";
+import { ElMessage, UploadUserFile, UploadProps, UploadStatus, ElLoading } from "element-plus";
 import { uploadPhotoAndVideo } from "@/api/upload.ts";
 import { useRoute } from "vue-router";
 import { deleteFile } from '@/api/upload'
+import { fileParams } from '@/type/request/worksheet'
+import { dataURLtoFile, compressImg } from '@/utils/imageUtils'
 const route = useRoute()
-const base = `${import.meta.env.VITE_APP_BASE_API}/api/file/download/self_and_on_grid/`
 const props = defineProps({
   // 弹窗的可见性 (v-modle)
   visible: {
@@ -115,9 +92,8 @@ const props = defineProps({
     default: () => { return {} }
   }
 })
-let images = ref([{
-  url: '#'
-}])
+const dialogImageUrl = ref('')
+const previewDialogVisible = ref(false)
 const emit = defineEmits<{
   // 更改visible可见性
   'update:visible': [value: Boolean]
@@ -144,64 +120,30 @@ const form = ref<pscData>({
   onGridElectricCharge: 0,//上网电费
   selfUseElectricCharge: 0,//自用电费
 })
-
-const options: any = ref([])
-const tags = ref([
-
-])
-const newImgName = ref([])
-let tagCount = 0 //tags标签的数量
-
+// 文件数组
+const fileList = ref<UploadUserFile[]>([]);
+let photoArr = ref<string[]>([])
 
 onMounted(() => {
-  // switch (route.params?.label) {
-  //   case '西安菲尔特2.5MW光伏项目':
-  //     options.value = options2
-  //     break
-  //   case '望奎三马架发电站':
-  //     options.value = options3
-  //     break
-  //   default:
-  //     options.value = options1
-  //     break
-  // }
-  // 判断是否是编辑状态, 为form赋初始值
   if (props.isEdit) {
+    console.log(props.editData)
     form.value = props.editData
-
-    try {
-      fileList.value = JSON.parse(<string>props.editData?.scenePicture)
-    } catch {
-      console.log('scenePicture 不为json格式')
-    }
-
-    const str = props.editData?.scenePicture as string
-
-    tags.value = str.split('#') || []
-
-    tagCount = tags.value.length
-
-    for (let i = 0; i < tags.value.length; i++) {
-      if (tags.value[i] !== '') {
-        let url = ''
-        url = base + tags.value[i]
-        newImgName.value.push(tags.value[i])
-        images.value.push({ url })
-        // console.log('编辑回显图片的名称', url)
+    photoArr.value = form.value.scenePicture?.split('#') as string[]
+    photoArr.value = photoArr.value?.filter(v => v !== "")
+    for (let i = 0; i < photoArr.value.length; i++) {
+      const obj = {
+        url: import.meta.env.VITE_APP_BASE_API + `/api/file/download/self_and_on_grid/${photoArr.value[i]}`,
+        name: photoArr.value[i],
+        flag: true,
+        status: 'success' as UploadStatus,
+        uid: 1718890059368
       }
+      // fileList[i] = {...fileList[i]} && obj  
+      fileList.value.push(obj)
     }
-    images.value.shift()
-
-  } else {
-    // form.value.stationName = route.params.label
+    console.log(fileList.value)
   }
 })
-
-// 文件数组
-const fileList = ref<UploadUserFile[]>([
-
-]);
-
 // 弹窗可见性
 const dialogVisible = computed({
   get() {
@@ -213,130 +155,86 @@ const dialogVisible = computed({
 })
 
 // 照片预览操作
-const handlePictureCardPreview = () => {
-
+const handlePictureCardPreview: UploadProps['onPreview'] = (uploadFile) => {
+  console.log(uploadFile)
+  dialogImageUrl.value = uploadFile.url!
+  previewDialogVisible.value = true
 }
 
-// 上传照片
-const uploadFileHandle = (fileData: any) => {
-  const file = {
-    file: fileData.file,
-    type: 'self_and_on_grid'
-  }
-
-  console.log('文件数组上传', fileList.value)
-  //添加
-  tags.value.push(fileData.file.name)
-
-  console.log('这里是文件', file.file);
-}
-//文件上传
-const uploadFileR = async (file: any) => {
-  const res: any = await uploadPhotoAndVideo(file)
-
-  if (res.code === 200) {
-    ElMessage({
-      message: '文件上传成功',
-      type: 'success',
-    })
-  }
-
-  newImgName.value.push(res.data)
-  console.log('form.value.scenePicture', newImgName.value)
-
-  console.log(res)
-
-  return {
-    url: res.url,
-    name: res.name + '#',
-  }
-}
 
 // 删除照片操作
-const removeHandle: UploadProps['onRemove'] = () => {
-
-}
-// 删除操作
-const removeTagHandle = (tag: string) => {
-
-  const index = tags.value.findIndex(item => item === tag)
-  const filename: string = tags.value[index]
-
-  if (filename.startsWith('169')) {
-    console.log('回显删除文件的名称：', filename)
-    console.log('tags.value', tags.value)
-    const type = 'self_and_on_grid'
-    const id = filename
-    deleteFile(type, id).then(res => {
-      console.log('res', res)
-      if (res.code === 200) {
-        ElMessage({
-          message: '文件删除成功',
-          type: 'success',
-        })
-        newImgName.value.splice(index, 1)
-        images.value.splice(index, 1)
-        console.log('images', images.value)
-
-      }
-
-    })
-  } else {
-    fileList.value.splice(index - tagCount, 1)
+const handleRemove: UploadProps['onRemove'] = (uploadFile) => {
+  console.log(uploadFile)
+  if ('flag' in uploadFile) {
+    deleteFile('self_and_on_grid', uploadFile.name)
   }
-  tags.value.splice(index, 1) // 删除操作
-  // fileList.value.splice(index - tagCount, 1)
-
-
-}
-//删除图片前的操作
-const handleBeforeRemove = (file: any, fileList: any) => {
-  const index = fileList.indexOf(file)
-  tags.value.splice(index - tagCount, 1) // 删除操作
-
 }
 
 //文件上传
 
 // 提交表单
 const onSubmit = async () => {
-  // 提交前对数据进行构造
-  // form.value.scenePicture = JSON.stringify(fileList.value)
-  console.log('文件数组上传', fileList.value)
+  const loading = ElLoading.service({
+    lock: true,
+    text: '图片正在上传，请耐心等待',
+    background: 'rgba(0, 0, 0, 0.7)',
+  })
 
-  for (let i = 0; i < fileList.value.length; i++) {
-    const file = reactive({
-      type: 'self_and_on_grid'
-    })
-    // if(i === fileList.value.length - 1){
-    //   file.file = fileList.value[i].raw
-    // }
-    console.log('xxxx', fileList.value[i], i)
-    file.file = fileList.value[i].raw
-    console.log('file', file)
-    await uploadFileR(file)
+  // 处理文件列表 文件名以#分割
+  let fileArr: UploadUserFile[] = fileList.value.filter(o => typeof o?.flag == "undefined")
+  //文件大小
+  let fileSize = 0
+  let fileName = ''
+  // 先上传新增文件
+  for (const [idx, element] of fileArr.entries()) {
+    fileSize += element.size!
+  }
+  for (let i = 0; i < fileArr.length; i++) {
+    let file: fileParams = reactive({})
+    // file.file = fileArr[i].raw
+    file.type = 'self_and_on_grid'
+    if (fileSize > 419430400) {
+      ElMessage({
+        message: '文件大小超过50MB，请重新上传',
+        type: 'error',
+      })
+    } else {
+      const compressedResult: any = await compressImg(fileArr[i].raw)
+      file.file = dataURLtoFile(compressedResult, fileArr[i].raw!.name)
+      const res: any = await uploadPhotoAndVideo(file)
+      if (res.code === 200) {
+        ElMessage({
+          message: '文件上传成功',
+          type: 'success',
+        })
+        fileName = fileName + res.data + '#'
+      }
+    }
   }
 
-  // //清空文件数组
-  // fileList.value.splice(0,fileList.value.length)
-
-  form.value.scenePicture = newImgName.value.join('#')
-  // console.log('form.value.scenePicture', form.value.scenePicture)
-  // console.log('form', form.value)
-
+  fileList.value = fileList.value.filter(o => typeof o?.flag != "undefined")
+  fileList.value.forEach(o => fileName = fileName + o.url?.substring(o.url.indexOf('self_and_on_grid') + 17) + '#')
+  form.value.scenePicture = fileName
+  console.log(form.value)
   emit('confirm', form.value)
+  loading.close()
 }
 
-
+const handleBeforeClose = () => {
+    fileList.value = []
+    emit('cancel')
+}
 // 取消操作
 const onCancel = () => {
+  fileList.value = []
   emit('cancel')
 }
+
 // 对数据进行计算
 const computedData = () => {
-  form.value.electricitySelfUseTotal = parseFloat(form.value.electricityConsumptionTotal - form.value.electricityOnGridTotal); //自用电量 = 发电表总电量 - 上网总电量
-  form.value.onGridElectricCharge = parseFloat(form.value.electricityOnGridTotal * form.value.onGridPowerPrice).toFixed(2); // 上网费用 = 上网总电量 * 上网电价
-  form.value.selfUseElectricCharge = parseFloat(form.value.electricitySelfUseTotal * form.value.selfUsePowerPrice).toFixed(2); // 自用电费 = 自用电量 * 自用电价
+  form.value.electricitySelfUseTotal = Number(parseFloat(form.value.electricityConsumptionTotal! - form.value.electricityOnGridTotal! + '')); //自用电量 = 发电表总电量 - 上网总电量
+  form.value.onGridElectricCharge = Number(parseFloat(form.value.electricityOnGridTotal! * form.value.onGridPowerPrice! + '').toFixed(2)); // 上网费用 = 上网总电量 * 上网电价
+  form.value.selfUseElectricCharge = Number(parseFloat(form.value.electricitySelfUseTotal! * form.value.selfUsePowerPrice! + '').toFixed(2)); // 自用电费 = 自用电量 * 自用电价
 }
 
 </script>

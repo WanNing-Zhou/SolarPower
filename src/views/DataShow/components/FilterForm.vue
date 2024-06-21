@@ -23,8 +23,8 @@
 
     <div class="data-operation">
       <input id="inverterUpload" ref="fileUpload" @change="upload" style="display: none" type="file">
-      <el-button size="small" @click="reCount">重新计算</el-button>
-      <el-button size="small" @click="uploadHandle" disabled>导入华为数据</el-button>
+      <!-- <el-button size="small" @click="reCount">重新计算</el-button>
+      <el-button size="small" @click="uploadHandle" disabled>导入华为数据</el-button> -->
       <el-button size="small" @click="exportFile">导出分析结果</el-button>
     </div>
 
