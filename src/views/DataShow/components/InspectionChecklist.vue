@@ -172,7 +172,7 @@ onMounted(() => {
 
 const shortcuts = [
   {
-    text: 'Last week',
+    text: '最近一周',
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -181,7 +181,7 @@ const shortcuts = [
     },
   },
   {
-    text: 'Last month',
+    text: '最近一个月',
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -190,7 +190,7 @@ const shortcuts = [
     },
   },
   {
-    text: 'Last 3 months',
+    text: '最近三个月',
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -442,7 +442,7 @@ const getWorkSheetData = (val: workSheetCondition) => {
   getWorkSheet(val).then((res: any) => {
     console.log(res)
     if (res.code === 200) {
-      console.log('工作单查询返回的结果', res)
+      // console.log('工作单查询返回的结果', res)
       tableData.value = res.data.data
       conditions.total = res.data.totalRecords
     } else {

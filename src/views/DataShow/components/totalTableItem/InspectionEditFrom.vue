@@ -96,7 +96,7 @@ const emit = defineEmits(['closeEdit'])
 let checklistFrom = ref<editConditions | any>({})
 let photoArr = ref<string[]>([])
 // 文件列表
-let fileList = reactive<UploadUserFile[]>([])
+const fileList = ref<UploadUserFile[]>([])
 // 页面加载时更新checklistFrom中的数据
 //返回state中的编辑数据
 const getEditTableData = computed(() => {
@@ -108,15 +108,23 @@ watch(getEditTableData, async () => {
     checklistFrom.value = {...store.state.EditTableData}
     photoArr.value = checklistFrom.value.files?.split('#') as string[]
     photoArr.value = photoArr.value?.filter(v => v !== "")
-    for (let i = 0; i < photoArr.value.length;i++) {
-        const obj = {
-            url: import.meta.env.VITE_APP_BASE_API + `/api/file/download/worksheet/${photoArr.value[i]}`,
-            name: photoArr.value[i],
+    // for (let i = 0; i < photoArr.value.length;i++) {
+    //     const obj = {
+    //         url: import.meta.env.VITE_APP_BASE_API + `/api/file/download/worksheet/${photoArr.value[i]}`,
+    //         name: photoArr.value[i],
+    //         flag: true,
+    //     }
+    //     fileList[i] = {...fileList[i],...obj}
+    // }
+
+  if(!photoArr.value) photoArr.value = []
+  fileList.value = photoArr.value.map(item => {
+    return {
+            url: import.meta.env.VITE_APP_BASE_API + `/api/file/download/worksheet/${item}`,
+            name: item ,
             flag: true,
         }
-        fileList[i] = {...fileList[i],...obj}  
-    }
-
+  })
 
     // for (const [idx, element] of photoArr.value.entries()) {
     //     const obj = {
@@ -125,13 +133,17 @@ watch(getEditTableData, async () => {
     //         flag: true,
     //     }
     //     fileList.value[idx] = {...fileList.value[idx]} && obj
-    // }
-    console.log(fileList)
+    // // }
+    // console.log('文件列表',fileList.value)
 }, {
     immediate: true,
     deep: true
 })
 // console.log(photoArr.value)
+
+// watch(fileList, (newValue) => {
+//   console.log('文件变化了', fileList.value.length)
+// })
 
 
 
@@ -168,14 +180,14 @@ let lastIndex = -1
 watch(visible, () => {
     if (lastIndex !== checklistFrom.value.index) {
         lastIndex = checklistFrom.value.index as number
-        fileList = []
+        // fileList.value = []
     }
 })
 
 
 // 关闭前操作
 const handleBeforeClose = () => {
-    fileList = []
+    // fileList.value = []
     emit('closeEdit')
 }
 // 修改数据
@@ -187,7 +199,7 @@ const workListSubmit = async () => {
     })
 
     // 处理文件列表 文件名以#分割
-    let fileArr: UploadUserFile[] = fileList.filter(o => typeof o?.flag == "undefined")
+    let fileArr: UploadUserFile[] = fileList.value.filter(o => typeof o?.flag == "undefined")
     //文件大小
     let fileSize = 0
     let fileName = ''
@@ -218,8 +230,8 @@ const workListSubmit = async () => {
         }
     }
 
-    fileList= fileList.filter(o => typeof o?.flag != "undefined")
-    fileList.forEach(o => fileName = fileName + o.url?.substring(o.url.indexOf('worksheet') + 10) + '#')
+    fileList.value= fileList.value.filter(o => typeof o?.flag != "undefined")
+    fileList.value.forEach(o => fileName = fileName + o.url?.substring(o.url.indexOf('worksheet') + 10) + '#')
     checklistFrom.value.files = fileName
 
     const param = {...checklistFrom.value}
@@ -249,7 +261,7 @@ const handlePictureCardPreview: UploadProps['onPreview'] = (uploadFile) => {
     dialogVisible.value = true
 }
 const handleRemove: UploadProps['onRemove'] = (uploadFile) => {
-    console.log(uploadFile)
+    // console.log(uploadFile)
     if ('flag' in uploadFile) {
         deleteFile('worksheet', uploadFile.name)
     }
